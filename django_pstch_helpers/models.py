@@ -33,7 +33,7 @@ class AutoPatterns(ModelInfo):
     URL_NAMESPACES = []
     @classmethod
     def get_url(self, action, args = None):
-        _namespaces = list(getattr(self, URL_ROOT_NAMESPACE, []))
+        _namespaces = list(getattr(self, 'URL_ROOT_NAMESPACE', []))
         for NS in self.URL_NAMESPACES:
             _namespaces.append(NS)
         _namespaces = ":".join(_namespaces)
