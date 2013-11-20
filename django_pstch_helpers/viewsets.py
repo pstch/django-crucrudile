@@ -1,5 +1,5 @@
-from views import CreateView, UpdateView, DeleteView, ListView, DetailView, SearchView
-from views import MultipleListView
+from .views import CreateView, UpdateView, DeleteView, ListView, DetailView, SearchView
+from .views import MultipleListView
 
 PK_ARG = "(?P<pk>\d+)"
 
