@@ -20,6 +20,7 @@ class ModelInfo(models.Model):
         return getattr(self,
                        'CUSTOM_LABEL',
                        self._meta.verbose_name)
+    @classmethod
     def get_plural_label(self):
         return getattr(self,
                        'CUSTOM_PLURAL_LABEL',
