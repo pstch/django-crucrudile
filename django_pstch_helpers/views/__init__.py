@@ -6,7 +6,7 @@ from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
-class View(View):
+class View(AuthMixin, View):
     pass
 
 class TemplateView(AuthMixin, TemplateView):
