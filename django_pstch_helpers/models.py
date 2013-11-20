@@ -41,10 +41,15 @@ class AutoPatterns(ModelInfo):
         _namespaces = list(getattr(self, 'URL_ROOT_NAMESPACE', []))
         for NS in self.URL_NAMESPACES:
             _namespaces.append(NS)
-        _namespaces = ":".join(_namespaces)
-        _name = "%s:%s-%s" % (_namespaces,
-                              self.URL_NAME,
-                              action)
+        _left = ":".join(_namespaces)
+
+        if self.URL_NAME:
+            _right = "-".join([self.URL_NAME, action])
+        else:
+            _right = action
+
+        _name = "%s:%s" % (_left,
+                           _right)
         try:
             return reverse(_name, args = args)
         except:
