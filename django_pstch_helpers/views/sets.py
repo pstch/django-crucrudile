@@ -1,5 +1,5 @@
-from views import CreateView, UpdateView, DeleteView, ListView, DetailView, SearchView
-from views import MultipleListView
+from django_pstch_helpers.views import CreateView, UpdateView, DeleteView, ListView, DetailView, SearchView
+from django_pstch_helpers.views import MultipleListView
 
 PK_ARG = "(?P<pk>\d+)"
 
