@@ -43,13 +43,15 @@ class AutoPatterns(ModelInfo):
             _namespaces.append(NS)
         _left = ":".join(_namespaces)
 
-        if self.URL_NAME:
-            _right = "-".join([self.URL_NAME, action])
-        else:
+        if self.URL_NAME is False:
             _right = action
+        else:
+            _right = "-".join([self.URL_NAME, action])
+
 
         _name = "%s:%s" % (_left,
-                           _right)
+                           _right )
+                              )
         try:
             return reverse(_name, args = args)
         except:
