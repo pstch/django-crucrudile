@@ -10,13 +10,14 @@ from setuptools import setup
 
 
 setup(
-    name='django-pstch-hlpers',
+    name='django-pstch-helpers',
     version='0.1.0',
     description='Various Django helpers that I use frequently in my projets',
     long_description="views, models, auto URL patterns, ...",
     author='Hugo Geoffroy',
     author_email='hugo@pstch.net',
-    packages = ['django_pstch_helpers'],
+    packages = ['django_pstch_helpers',
+		'django_pstch_helpers.views'],
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',
