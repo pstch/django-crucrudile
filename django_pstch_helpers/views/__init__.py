@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from django.contrib import messages
+#from django.shortcuts import render
+#from django.contrib import messages
 
-from django.views.generic import View as DjangoView, TemplateView as DjangoTemplateView, DetailView as DjangoDetailView, ListView as DjangoListView
+#from django.views.generic import View as DjangoView, TemplateView as DjangoTemplateView, DetailView as DjangoDetailView, ListView as DjangoListView
 
-from django.views.generic import TemplateView as HaystackSearchView
+#from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
