@@ -43,7 +43,7 @@ class AutoPatterns(ModelInfo):
             _namespaces.append(NS)
         _left = ":".join(_namespaces)
 
-        if self.URL_NAME is False:
+        if self.URL_PREFIX is False:
             _right = action
         else:
             _right = "-".join([self.URL_NAME, action])
