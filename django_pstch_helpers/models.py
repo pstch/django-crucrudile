@@ -4,7 +4,7 @@ from django_extensions.db.models import AutoSlugField, CreationDateTimeField
 
 from markitup.fields import MarkupField
 
-from django_pstch_helpers.viewsets import BASE_VIEWS
+from .views/sets.py import BASE_VIEWS
 
 class ModelInfo(models.Model):
     class Meta:
