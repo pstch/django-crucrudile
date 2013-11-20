@@ -51,7 +51,7 @@ class AutoPatterns(ModelInfo):
 
         _name = "%s:%s" % (_left,
                            _right )
-                              )
+
         try:
             return reverse(_name, args = args)
         except:
