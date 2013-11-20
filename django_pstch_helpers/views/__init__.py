@@ -25,7 +25,7 @@ class DetailView(AuthMixin, ModelInfoMixin, DetailView):
         names.append("%s/object_detail.html" % self.model._meta.app_label)
         return names
 
-class HomeView(AuthMixin, TemplateView):
+class HomeView(TemplateView):
     pass
 
 class SearchView(AuthMixin, HaystackSearchView):
