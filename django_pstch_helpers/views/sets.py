@@ -11,6 +11,7 @@ EDIT_VIEWS = [ ('create' , CreateView, None , None),
 LIST_VIEWS = [ ('list' , ListView, None, None), ]
 DETAIL_VIEWS = [ ('detail' , DetailView, [PK_ARG, ], None), ]
 
+PAGINATED_LIST_VIEWS = [ ('list' , ListView, None, { 'paginate_by' : '50', }), ]
 
 BASE_VIEWS = LIST_VIEWS + EDIT_VIEWS
 FULL_VIEWS = BASE_VIEWS + DETAIL_VIEWS
