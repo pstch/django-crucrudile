@@ -87,6 +87,10 @@ class RedirectMixin(ModelFormMixin):
         #  - OR no form data was submitted
         #  - OR ( no token matched the form data AND no fallback token was defined )
 
+        # We try to find 'next' in form data
+        if data.get('next'):
+            return data.get('next')
+
         # We try to use success_url
         if self.success_url:
             return parse_redirect(self.success_url)
