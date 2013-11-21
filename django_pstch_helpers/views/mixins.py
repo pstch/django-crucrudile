@@ -72,7 +72,7 @@ class RedirectMixin(ModelFormMixin):
             # We have some redirects defined, let's first try to get the success URL using them
             if data:
                 for token, destination in self.redirects.items():
-                    if token is data:
+                    if token in data:
                         # Token found in submit data keys
                         return parse_redirect(destination)
             # If at this point, we have not returned
@@ -88,7 +88,7 @@ class RedirectMixin(ModelFormMixin):
         #  - OR ( no token matched the form data AND no fallback token was defined )
 
         # We try to find 'next' in form data
-        if data.get('next'):
+        if data and data.get('next'):
             return data.get('next')
 
         # We try to use success_url
