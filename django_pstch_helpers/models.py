@@ -34,6 +34,7 @@ class ModelInfo(models.Model):
 class AutoPatterns(ModelInfo):
     URL_NAME = None
     URL_VIEWS = BASE_VIEWS
+    URL_VIEW_ARGS = {}
     URL_PREFIX = None
     URL_NAMESPACES = []
     @classmethod
