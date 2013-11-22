@@ -102,7 +102,7 @@ class MultipleModelMultipleObjectTemplateResponseMixin(TemplateResponseMixin):
 
             model_names.append(model._meta.module_name)
         model_names.sort()
-        model_names = '_'.join(model_names)
+        model_names = '+'.join(model_names)
         names.append("%s/%s%s.html" % (app_label, model_names, self.template_name_suffix))
 
         return names
