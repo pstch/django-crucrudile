@@ -1,0 +1,7 @@
+{% load django_bootstrap_breadcrumbs %}
+
+{% breadcrumb "Groups" list_url %}
+
+{% breadcrumb object.name object.get_absolute_url %}
+{% breadcrumb "Delete" request.path %}
+
