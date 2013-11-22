@@ -53,7 +53,7 @@ class RedirectMixin(ModelFormMixin):
         If the form is valid, redirect to the computed URL
         """
         self.object = form.save()
-
+        raise Exception("test")
         # Give form data to get_success_url
         return HttpResponseRedirect(self.get_success_url(form.data))
 
@@ -88,7 +88,6 @@ class RedirectMixin(ModelFormMixin):
         #  - OR ( no token matched the form data AND no fallback token was defined )
 
         # We try to find 'next' in form data
-        raise Exception("test")
         if data and data.get('next'):
             return data.get('next')
 
