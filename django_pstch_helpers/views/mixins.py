@@ -53,7 +53,7 @@ class RedirectMixin(ModelFormMixin):
         If the form is valid, redirect to the computed URL
         """
         self.object = form.save()
-        raise Exception("test")
+
         # Give form data to get_success_url
         return HttpResponseRedirect(self.get_success_url(form.data))
 
