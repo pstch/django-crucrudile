@@ -15,4 +15,4 @@ class SettingNode (template.Node):
         self.option = option
     def render (self, context): 
         context[self.option] = getattr(settings,self.option)
-        return None
+
