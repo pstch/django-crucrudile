@@ -7,7 +7,7 @@ from django.views.generic.edit import UpdateView as DjangoUpdateView, CreateView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
-class CreateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoCreateView):
+class CreateView(AuthMixin, ModelInfoMixin, DjangoDeleteView, RedirectMixin):
     def get_template_names(self):
         names = super(CreateView, self).get_template_names()
         names.append("%s/object_create.html" % self.model._meta.app_label)
@@ -19,7 +19,7 @@ class CreateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoCreateView):
         messages.success(self.request, "Created object %s (of type %s, of id %s) in the database." % (self.object, self.object.__class__.__name__, self.object.id))
         return response
 
-class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoUpdateView):
+class UpdateView(AuthMixin, ModelInfoMixin, DjangoDeleteView, RedirectMixin):
     def get_template_names(self):
         names = super(UpdateView, self).get_template_names()
         names.append("%s/object_update.html" % self.model._meta.app_label)
@@ -31,7 +31,7 @@ class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoUpdateView):
         messages.info(self.request, "Updated object %s (of type %s, of id %s)." % (self.object, self.object.__class__.__name__, self.object.id))
         return response
 
-class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoDeleteView):
+class DeleteView(AuthMixin, ModelInfoMixin, DjangoDeleteView, RedirectMixin):
     def get_template_names(self):
         names = super(DeleteView, self).get_template_names()
         names.append("%s/object_delete.html" % self.model._meta.app_label)
