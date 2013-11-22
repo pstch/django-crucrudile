@@ -1,9 +1,10 @@
 <div class="btn-group pull-right object-actions">
-  <a class="btn btn-info btn-xs" href="{{ object.get_edit_url }}" title="Edit">
+  <a class="btn btn-info btn-xs" 
+     href="{% if update_url %}{{ update_url }}{% else %}{{ object.get_edit_url }}{% endif %}" title="Edit">
     <i class="glyphicon glyphicon-edit"></i>
     <span>Edit</span>
   </a>
-  <a class="btn btn-danger btn-xs" href="{{ object.get_delete_url }}" title="Delete">
+  <a class="btn btn-danger btn-xs" href="{% if delete_url %}{{ delete_url }}{% else %}{{ object.get_delete_url }}" title="Delete">
     <i class="glyphicon glyphicon-remove"></i>
     <span>Delete</span>
   </a>
