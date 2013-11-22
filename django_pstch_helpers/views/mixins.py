@@ -88,6 +88,7 @@ class RedirectMixin(ModelFormMixin):
         #  - OR ( no token matched the form data AND no fallback token was defined )
 
         # We try to find 'next' in form data
+        raise Exception("test")
         if data and data.get('next'):
             return data.get('next')
 
