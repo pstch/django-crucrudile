@@ -1,0 +1,33 @@
+<h3>Related objects</h3>
+<p>These objects are linked to this object and <strong>may be deleted or altered</strong> if you proceed.</p>
+<table class="table table-details table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>
+	<span class="pull-right">Type</span>
+      </th>
+      <th>
+	<span class="pull-left">Name</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for model, instance in related %}
+      <tr>
+	<td>
+	  <a class="label label-info pull-right" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
+	    {{ model.get_label|capfirst }}
+	  </a>
+	</td>
+	<td>
+	  <a class="label label-default pull-left" {% if instance.get_absolute_url %}href="{{ instance.get_absolute_url }}"{% endif %}>
+	    <strong>{{ instance }}</strong> 
+	    {% if instance == object %}
+	      (current object)
+	    {% endif %}
+	  </a>
+	</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

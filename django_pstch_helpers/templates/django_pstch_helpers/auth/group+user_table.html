@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-md-6">
+    <h2>Users
+      <small class="pull-right btn-group">
+	<a class="btn btn-info"
+	   href="{% url 'home:user-list' %}">Open list</a>
+	<a class="btn btn-primary"
+	   href="{% url 'home:user-create' %}">Create user</a>
+      </small>
+    </h2>
+    <hr/>
+    {% include "django_pstch_helpers/auth/user/table.html" with object_list=user_list %}
+  </div>
+  <div class="col-md-6">
+    <h2>Groups
+      <small class="pull-right btn-group">
+	<a class="btn btn-info"
+	   href="{% url 'home:group-list' %}">Open list</a>
+	<a class="btn btn-primary"
+	   href="{% url 'home:group-create' %}">Create group</a>
+      </small>
+    </h2>
+    <hr/>
+    {% include "django_pstch_helpers/list/description+actions_table.html" with object_list=group_list %}
+  </div>
+</div>

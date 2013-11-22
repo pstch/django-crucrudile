@@ -1,0 +1,19 @@
+{% if head %}
+  {% if object %}
+    Edit permission - {{ object.name }}
+  {% else %}
+    Create permission
+  {% endif %}
+{% else %}
+  {% if object %}
+    Edit permission <small>{{ object.name }}</small>
+  {% else %}
+    Create permission
+  {% endif %}
+
+  <div class="pull-right">
+    <a class="btn btn-primary"
+       href="{% url list_url %}">Permission list</a>
+  </div>
+
+{% endif %}

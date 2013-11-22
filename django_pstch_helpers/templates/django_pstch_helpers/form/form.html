@@ -1,0 +1,8 @@
+<form class="form form-horizontal" 
+      method="post">
+  {% csrf_token %}
+  {{ form|bootstrap_horizontal }}
+  <div class="form-group">
+    <input type="submit" class="btn btn-lg btn-primary pull-right" value="Submit">
+  </div>
+</form>

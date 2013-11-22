@@ -1,0 +1,9 @@
+{% if head %}
+User list
+{% else %}
+User list
+<div class="pull-right">
+  <a class="btn btn-primary"
+     href="{% url create_url %}">Create user</a>
+</div>
+{% endif %}

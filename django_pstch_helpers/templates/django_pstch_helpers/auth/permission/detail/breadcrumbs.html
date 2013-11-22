@@ -1,0 +1,5 @@
+{% load django_bootstrap_breadcrumbs %}
+
+{% breadcrumb "Permissions" list_url %}
+{% breadcrumb object.name request.path %}
+{% breadcrumb "Detail" request.path %}

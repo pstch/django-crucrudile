@@ -1,0 +1,12 @@
+{% if head %}
+  {{ model.get_model_verbose_name|capfirst }} detail - {{ object }}
+{% else %}
+  {{ model.get_model_verbose_name|capfirst }} detail <small class="label label-default"> {{ object }} </small>
+  {% if not no_buttons %}
+  <div class="pull-right btn-group">
+    <a class="btn btn-success" href="{{ model.get_create_url }}">Create another</a>
+    <a class="btn btn-info" href="{{ object.get_edit_url }}">Edit</a>
+    <a class="btn btn-danger" href="{{ object.get_delete_url }}">Delete</a>
+  </div>
+  {% endif %}
+{% endif %}

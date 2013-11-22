@@ -1,0 +1,9 @@
+{% load django_bootstrap_breadcrumbs %}
+
+{% breadcrumb "Permissions" list_url %}
+
+{% if object %}
+{% breadcrumb "Edit" request.path %}
+{% else %}
+{% breadcrumb "Create" request.path %}
+{% endif %}

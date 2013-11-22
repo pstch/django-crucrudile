@@ -1,0 +1,20 @@
+<div class="col-md-3">
+  <div class="well">
+    <h2>
+      {{ model.get_count }} 
+      <small>
+      {% if model.get_count == 0 or model.get_count > 1  %}
+	{{ model.get_plural_label|capfirst }}
+      {% elif model.get_count == 1 %}
+	{{ model.get_label|capfirst }}
+      {% endif %}
+      </small>
+    </h2>
+    <p>
+      <div class="btn-group-vertical btn-block">
+	<a href="{{ model.get_list_url }}" class="btn btn-lg btn-primary">View list</a>
+	<a href="{{ model.get_create_url }}" class="btn btn-info">Add new</a>
+      </div>
+    </p>
+  </div>
+</div>

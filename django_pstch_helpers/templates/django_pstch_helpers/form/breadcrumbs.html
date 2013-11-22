@@ -1,0 +1,10 @@
+{% load django_bootstrap_breadcrumbs %}
+
+{% breadcrumb model.get_model_verbose_name|capfirst model.get_list_url %}
+
+{% if object %}
+{% breadcrumb object object.get_absolute_url %}
+{% breadcrumb "Edit" request.path %}
+{% else %}
+{% breadcrumb "Create" request.path %}
+{% endif %}

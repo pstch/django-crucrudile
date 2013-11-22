@@ -1,0 +1,19 @@
+<tr>
+  <td>
+    <h4 type="pull-left">
+      {{ label }}
+      <small class="pull-right">{{ count }} objects</small>
+    </h4>
+    {% if info %}<span class="text-info">{{ info|safe }}</span>{% endif %}
+  </td>
+  <td>
+    <div class="btn-group-vertical pull-right">
+      {% if list_url %}
+      <a class="btn btn-primary" href="{{ list_url }}">List</a>
+      {% endif %}
+      {% if create_url %}
+      <a class="btn btn-success" href="{{ create_url }}">Create</a>
+      {% endif %}
+    </div>
+  </td>
+</tr>

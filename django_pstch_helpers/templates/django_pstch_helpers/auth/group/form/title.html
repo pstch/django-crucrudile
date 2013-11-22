@@ -1,0 +1,19 @@
+{% if head %}
+  {% if object %}
+    Edit group - {{ object.name }}
+  {% else %}
+    Create group
+  {% endif %}
+{% else %}
+  {% if object %}
+    Edit group <small>{{ object.name }}</small>
+  {% else %}
+    Create group
+  {% endif %}
+
+  <div class="pull-right">
+    <a class="btn btn-primary"
+       href="{% url list_url %}">Group list</a>
+  </div>
+
+{% endif %}

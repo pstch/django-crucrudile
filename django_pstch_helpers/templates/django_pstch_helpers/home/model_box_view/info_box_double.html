@@ -1,0 +1,15 @@
+<div class="col-md-3">
+  <div class="well">
+    <h2><small>{{ first.get_label|capfirst }} and {{ second.get_label|capfirst }} list</small></h2>
+    <p>
+      <div class="btn-group btn-group-justified">
+	<a href="{{ first.get_list_url }}" class="btn btn-primary"><strong>{{ first.get_label|capfirst }}<br/> list</strong></a>
+	<a href="{{ first.get_create_url }}" class="btn btn-info">Add new</a>
+      </div>
+      <div class="btn-group btn-group-justified">
+	<a href="{{ second.get_list_url }}" class="btn btn-primary"><strong>{{ second.get_label|capfirst }}<br/> list</strong></a>
+	<a href="{{ second.get_create_url }}" class="btn btn-info">Add new</a>
+      </div>
+    </p>
+  </div>
+</div>

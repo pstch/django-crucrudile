@@ -1,0 +1,5 @@
+{% if head %}
+Delete {{ model.get_model_verbose_name|capfirst }} object
+{% else %}
+Are you sure you want to delete this <strong>{{ model.get_model_verbose_name|capfirst }}</strong> object ?
+{% endif %}

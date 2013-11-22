@@ -1,0 +1,16 @@
+<p class="navbar-text navbar-right">
+  {% if user.is_authenticated %}
+  Logged in as <a href="#" class="navbar-link label label-warning">{{ user.username }}</a>
+  <a class="btn btn-danger"
+     data-toggle="modal"
+     data-target="#logout-modal">
+    Log out</a>
+  {% else %}
+  Not logged in 
+  <a class="btn btn-success"
+     data-toggle="modal"
+     data-target="#login-modal">
+    Log in
+  </a>
+  {% endif %}
+</p>
