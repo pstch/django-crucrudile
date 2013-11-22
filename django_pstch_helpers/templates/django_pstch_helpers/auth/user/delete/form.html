@@ -8,7 +8,7 @@
   </div>
   <div class="col-sm-9">
     <table class="table table-details table-condensed">
-      {% if object.username %}{% include "django_pstch_helpers/detail/object_field_row.html" with field="Name" value=object.name %}{% endif %}
+      {% if object.username %}{% include "django_pstch_helpers/detail/object_field_row.html" with field="Name" value=object.username %}{% endif %}
       {% if object.description %}{% include "django_pstch_helpers/detail/object_field_row.html" with field="Description" value=object.description %}{% endif %}
     </table>
     {% if related %}
