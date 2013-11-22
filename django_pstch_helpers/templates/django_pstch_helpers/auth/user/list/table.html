@@ -26,7 +26,7 @@
 	{% if object.is_staff %}<span class="label label-info">Admin</span>{% endif %}
       </td>
       <td>
-        {% include "django_pstch_helpers/list/actions.html" with %}
+        {% include "django_pstch_helpers/list/actions.html" with object update_url delete_url %}
       </td>
     </tr>
     {% empty %}
