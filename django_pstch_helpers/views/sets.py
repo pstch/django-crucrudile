@@ -1,56 +1,69 @@
 from . import ListView, DetailView, SearchView
 from .multiple import MultipleListView
 from .edit import CreateView, DeleteView, UpdateView 
-
+from .filtered import FilteredListView
+from .specific import SpecificCreateView
 PK_ARG = "(?P<pk>\d+)"
 FILTER_ARGS = "of-(?P<filter_key>\w+)/(?P<filter_value>\d+)"
 
-EDIT_VIEWS = { 'create' : ('create',
-                           CreateView,
-                           {}),
-               'update' : ('update/%s' % PK_ARG,
-                           UpdateView,
-                           {}),
-               'delete' : ('delete/%s' % PK_ARG,
-                           DeleteView,
-                           {}),
-           } 
 
-LIST_VIEWS = { 'list' : ('list',
+
+CREATE_VIEW = { 'create' : ('create',
+                           CreateView,
+                           {})}
+
+SPECIFIC_CREATE_VIEW = { 'create' : ('create/of-%s' % SPECIFIC_ARGS),
+                         SpecificCreateView,
+                         {}),}
+
+UPDATE_VIEW =  { 'update' : ('update/%s' % PK_ARG,
+                             UpdateView,
+                             {}),}
+DELETE_VIEW = { 'delete' : ('delete/%s' % PK_ARG,
+                           DeleteView,
+                           {}),}
+
+LIST_VIEW = { 'list' : ('list',
                          ListView,
                          {})
            }
 
-MULTIPLE_LIST_VIEWS = { 'list' : ('list',
+MULTIPLE_LIST_VIEW = { 'list' : ('list',
                                   MultipleListView,
                                   {})
                     }
-FILTERED_LIST_VIEWS = { 'list' : ('list/%s' % FILTER_ARGS,
+FILTERED_LIST_VIEW = { 'list' : ('list/%s' % FILTER_ARGS,
                                   FilteredListView,
                                   {}),
                     }
 
-DETAIL_VIEWS = { 'detail': ('detail/%s' % PK_ARG,
+DETAIL_VIEW = { 'detail': ('detail/%s' % PK_ARG,
                             DetailView,
                             {})
              }
 
-PAGINATED_LIST_VIEWS = { 'list' : ('list',
+PAGINATED_LIST_VIEW = { 'list' : ('list',
                                    ListView,
                                    lambda action, view, model: { 'paginate_by' : getattr(model,
                                                                                          'PAGINATE_BY',
                                                                                          50) })
 }
 
-BASE_VIEWS = dict(LIST_VIEWS,
-                  **EDIT_VIEWS)
-
-FULL_VIEWS = dict(BASE_VIEWS,
-                  **DETAIL_VIEWS)
-
 SEARCH_VIEWS = { 'search' : ('search',
                              SearchView,
                              {})
 }
 
+BASE_VIEWS = dict(LIST_VIEWS,
+                  **EDIT_VIEWS)
 
+EDIT_VIEWS = dict(dict(CREATE_VIEW,
+                       **UPDATE_VIEW),
+                  **DELETE_VIEW)
+
+FULL_VIEWS = dict(BASE_VIEWS,
+                  **DETAIL_VIEWS)
+
+SPECIFIC_EDIT_VIEWS = dict(dict(SPECIFIC_CREATE_VIEW,
+                       **UPDATE_VIEW),
+                  **DELETE_VIEW)
