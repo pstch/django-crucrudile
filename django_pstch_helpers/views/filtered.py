@@ -4,36 +4,6 @@ from django.contrib.contenttypes.models import ContentType
 from . import ListView
 
 class FilteredListView(ListView):
-    filter_model = None
-    filter_attribute = None
-    filter_instance = None
-
-    def get_filter_model(self):
-        """
-        Return the model class specified by filter_key
-
-        """
-        if not self.filter_model:
-            self.filter_model = get_object_or_404(ContentType, model = self.kwargs['filter_key']).model_class()
-        return self.filter_model
-
-    def get_filter_instance(self):
-        """
-        Return the instance of the filter model specified by filter_value
-
-        """
-        if not self.filter_instance:
-            self.filter_instance = get_object_or_404(self.get_filter_model(),
-                                                     pk = self.kwargs['filter_value'])
-        return self.filter_instance
-        
-    def get_django_filter_dict(self):
-        if not self.filter_attribute:
-            attribute = "%s__pk" % self.kwargs['filter_key']
-        else:
-            attribute = self.filter_attribute
-        return { attribute : self.get_filter_instance().id }
-
     def get_queryset(self):
         """
         Return the list of items for this view.
@@ -41,7 +11,7 @@ class FilteredListView(ListView):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        filter = self.get_django_filter_dict()
+        filter = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value']
 
         if self.queryset is not None:
             queryset = self.queryset
