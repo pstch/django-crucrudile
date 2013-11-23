@@ -27,7 +27,7 @@ MULTIPLE_LIST_VIEWS = { 'list' : ('list',
 
 DETAIL_VIEWS = { 'detail': ('detail/%s' % PK_ARG,
                             DetailView,
-                            {})
+                            {}
 }
 
 PAGINATED_LIST_VIEWS = { 'list' : ('list',
@@ -35,8 +35,11 @@ PAGINATED_LIST_VIEWS = { 'list' : ('list',
                                    { 'paginate_by' : lambda action, view, model: model.PAGINATE_BY })
 }
 
-BASE_VIEWS = LIST_VIEWS + EDIT_VIEWS
-FULL_VIEWS = BASE_VIEWS + DETAIL_VIEWS
+BASE_VIEWS = dict(LIST_VIEWS,
+                  **EDIT_VIEWS)
+
+FULL_VIEWS = dict(BASE_VIEWS,
+                  **DETAIL_VIEWS)
 
 SEARCH_VIEWS = { 'search' : ('search',
                              SearchView,
