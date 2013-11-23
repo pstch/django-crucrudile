@@ -22,13 +22,13 @@ class FilteredListView(ListView):
         Return the instance of the filter model specified by filter_value
 
         """
-        if not self.filter_instance(self):
+        if not self.filter_instance:
             self.filter_instance = get_object_or_404(self.get_filter_model(),
                                                      pk = self.kwargs['filter_value'])
         return self.filter_instance()
         
     def get_django_filter_dict(self):
-        return { self.kwargs['filter_key'] : self.get_filter_instance() }
+        return { self.kwargs['filter_key'] if not self.filter_attribute else self.filter_attribute : self.get_filter_instance() }
 
     def get_queryset(self):
         """
