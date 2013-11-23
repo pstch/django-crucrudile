@@ -11,6 +11,8 @@ class FilteredListView(ListView):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
+        filter_dict = None
+
         if filter:
             filter_dict = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value'] }
 
