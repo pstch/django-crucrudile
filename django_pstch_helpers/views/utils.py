@@ -1,9 +1,6 @@
 def mix_intersection(first, second):
     if first and second and set(first) & set(second):
         for intersection in list(set(first) & set(second)):
-            print "## FOUND intersection %s" % intersection
-            print "## IS: %s <--> %s" % (first[intersection], second[intersection])
-
             if isinstance(first[intersection],(list)) and isinstance(second[intersection], (list)):
                 first[intersection] += second[intersection]
             elif isinstance(first[intersection],(list)):
@@ -14,8 +11,6 @@ def mix_intersection(first, second):
             else:
                 first[intersection] = [first[intersection],
                                        second[intersection]]
-
-                print "## INTERSECT VALUE : %s" % first[intersection]
             second.pop(intersection)
     return first, second
 
