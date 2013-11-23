@@ -3,3 +3,4 @@
 build/
 dist/
 *.egg-info/
+django-pstch-helpers.org
