@@ -35,7 +35,6 @@ class AutoPatterns(ModelInfo):
     URL_NAME = None
     URL_VIEWS = BASE_VIEWS
     URL_VIEW_ARGS = {}
-    URL_NO_PREFIX = None
     URL_NAMESPACES = []
     @classmethod
     def get_url(self, action, args = None):
@@ -44,11 +43,10 @@ class AutoPatterns(ModelInfo):
             _namespaces.append(NS)
         _left = ":".join(_namespaces)
 
-        if self.URL_NO_PREFIX:
-            _right = action
-        else:
+        if self.URL_NAME:
             _right = "-".join([self.URL_NAME, action])
-
+        else:
+            _right = action
 
         _name = "%s:%s" % (_left,
                            _right )
