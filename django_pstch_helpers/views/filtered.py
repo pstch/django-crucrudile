@@ -15,7 +15,7 @@ class FilteredListView(ListView):
         """
         if not self.filter_model:
             self.filter_model = get_object_or_404(ContentType, model = self.kwargs['filter_key']).model_class()
-        return self.filter_model()
+        return self.filter_model
 
     def get_filter_instance(self):
         """
@@ -25,7 +25,7 @@ class FilteredListView(ListView):
         if not self.filter_instance:
             self.filter_instance = get_object_or_404(self.get_filter_model(),
                                                      pk = self.kwargs['filter_value'])
-        return self.filter_instance()
+        return self.filter_instance
         
     def get_django_filter_dict(self):
         return { self.kwargs['filter_key'] if not self.filter_attribute else self.filter_attribute : self.get_filter_instance() }
