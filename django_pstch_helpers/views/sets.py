@@ -7,7 +7,7 @@ PK_ARG = "(?P<pk>\d+)"
 FILTER_ARGS = "of-(?P<filter_key>\w+)/(?P<filter_value>\d+)"
 
 
-n
+
 CREATE_VIEW = { 'create' : ('create',
                            CreateView,
                            {})}
