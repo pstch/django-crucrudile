@@ -4,11 +4,11 @@ def mix_intersection(first, second):
             print "## FOUND intersection %s" % intersection
             print "## IS: %s <--> %s" % (first[intersection], second[intersection])
 
-            if isinstance(first[intersection],(list, tuple)) and isinstance(second[intersection], (list, tuple)):
+            if isinstance(first[intersection],(list)) and isinstance(second[intersection], (list)):
                 first[intersection] += second[intersection]
-            elif isinstance(first[intersection],(list, tuple)):
+            elif isinstance(first[intersection],(list)):
                 first[intersection].append(second[intersection])
-            elif isinstance(second[intersection], (list, tuple)):
+            elif isinstance(second[intersection], (list)):
                 second[intersection].append(first[intersection])
                 first[intersection] = second[intersection]
             else:
