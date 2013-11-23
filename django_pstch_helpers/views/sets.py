@@ -27,7 +27,7 @@ MULTIPLE_LIST_VIEWS = { 'list' : ('list',
 
 DETAIL_VIEWS = { 'detail': ('detail/%s' % PK_ARG,
                             DetailView,
-                            {}
+                            {})
 }
 
 PAGINATED_LIST_VIEWS = { 'list' : ('list',
