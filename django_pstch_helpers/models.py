@@ -73,7 +73,7 @@ class AutoPatterns(ModelInfo):
     class Meta:
         abstract = True
 
-class UserNamed(ModelInfo):
+Class UserNamed(ModelInfo):
     name = models.CharField(max_length = 128, verbose_name = "name")
     slug = AutoSlugField(populate_from = 'name')
     def __unicode__(self):

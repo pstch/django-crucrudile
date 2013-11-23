@@ -1,8 +1,11 @@
+from .utils import mix_views
+
 from . import ListView, DetailView, SearchView
 from .multiple import MultipleListView
 from .edit import CreateView, DeleteView, UpdateView 
 from .filtered import FilteredListView
 from .specific import SpecificCreateView
+
 PK_ARG = "(?P<pk>\d+)"
 FILTER_ARGS = "of-(?P<filter_key>\w+)/(?P<filter_value>\d+)"
 SPECIFIC_ARGS = "of-(?P<specific_key>\w+)/(?P<specific_value>\d+)"
@@ -54,13 +57,12 @@ SEARCH_VIEWS = { 'search' : ('search',
                              {})
 }
 
-EDIT_VIEWS = dict(dict(CREATE_VIEW,
-                       **UPDATE_VIEW),
-                  **DELETE_VIEW)
+EDIT_VIEWS = mix_views(CREATE_VIEW,
+                       UPDATE_VIEW,
+                       DELETE_VIEW)
 
-BASE_VIEWS = dict(LIST_VIEW,
-                  **EDIT_VIEWS)
+BASE_VIEWS = mix_views(EDIT_VIEWS,
+                       LIST_VIEW)
 
-FULL_VIEWS = dict(BASE_VIEWS,
-                  **DETAIL_VIEW)
-
+FULL_VIEWS = mix_views(BASE_VIEWS,
+                       DETAIL_VIEW)
