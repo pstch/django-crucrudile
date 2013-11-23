@@ -6,7 +6,7 @@ PK_ARG = "(?P<pk>\d+)"
 
 EDIT_VIEWS = { 'create' : ('create/%s',
                            CreateView,
-                           {})
+                           {}),
                'update' : ('update/%s' % PK_ARG,
                            UpdateView,
                            {}),
