@@ -14,7 +14,7 @@ class FilteredListView(ListView):
 
         """
         if not self.filter_model:
-            self.filter_model = get_object_or_404(ContentType, name = self.kwargs['filter_key']).model_class()
+            self.filter_model = get_object_or_404(ContentType, model = self.kwargs['filter_key']).model_class()
         return self.filter_model()
 
     def get_filter_instance(self):
