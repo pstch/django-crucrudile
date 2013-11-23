@@ -1,4 +1,4 @@
-from . import CreateView
+from .edit import CreateView
 
 class SpecificCreateView(CreateView):
     pass
