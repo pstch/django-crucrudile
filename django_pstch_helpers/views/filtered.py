@@ -1,4 +1,4 @@
-*wfrom django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 
 from . import ListView
