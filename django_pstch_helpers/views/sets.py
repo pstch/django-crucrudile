@@ -4,7 +4,7 @@ from .edit import CreateView, DeleteView, UpdateView
 
 PK_ARG = "(?P<pk>\d+)"
 
-EDIT_VIEWS = { 'create' : ('create/%s',
+EDIT_VIEWS = { 'create' : ('create',
                            CreateView,
                            {}),
                'update' : ('update/%s' % PK_ARG,
