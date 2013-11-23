@@ -16,9 +16,9 @@ class FilteredListView(ListView):
         if self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
-                queryset = queryset.filter(*filter)
+                queryset = queryset.filter(**filter)
         elif self.model is not None:
-            queryset = self.model._default_manager.filter(*filter)
+            queryset = self.model._default_manager.filter(**filter)
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
