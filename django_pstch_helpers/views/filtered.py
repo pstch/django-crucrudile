@@ -28,7 +28,7 @@ class FilteredListView(ListView):
         return self.filter_instance()
         
     def get_django_filter_dict(self):
-        return { self.kwargs['filter_key'] : self.get_filter_instance }
+        return { self.kwargs['filter_key'] : self.get_filter_instance() }
 
     def get_queryset(self):
         """
