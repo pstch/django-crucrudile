@@ -32,7 +32,7 @@ DETAIL_VIEWS = { 'detail': ('detail/%s' % PK_ARG,
 
 PAGINATED_LIST_VIEWS = { 'list' : ('list',
                                    ListView,
-                                   { 'paginate_by' : lambda action, view, model: model.PAGINATE_BY })
+                                   lambda action, view, model: { 'paginate_by' : PAGINATE_BY })
 }
 
 BASE_VIEWS = dict(LIST_VIEWS,
