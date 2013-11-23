@@ -42,7 +42,7 @@ class AutoPatterns(ModelInfo):
         for NS in self.URL_NAMESPACES:
             _namespaces.append(NS)
         _left = ":".join(_namespaces)
-
+
         if self.URL_NAME:
             _right = "-".join([self.URL_NAME, action])
         else:
@@ -73,7 +73,7 @@ class AutoPatterns(ModelInfo):
     class Meta:
         abstract = True
 
-Class UserNamed(ModelInfo):
+class UserNamed(ModelInfo):
     name = models.CharField(max_length = 128, verbose_name = "name")
     slug = AutoSlugField(populate_from = 'name')
     def __unicode__(self):
