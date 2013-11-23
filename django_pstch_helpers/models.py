@@ -42,7 +42,7 @@ class AutoPatterns(ModelInfo):
         for NS in self.URL_NAMESPACES:
             _namespaces.append(NS)
         _left = ":".join(_namespaces)
-
+
         if self.URL_NAME:
             _right = "-".join([self.URL_NAME, action])
         else:
