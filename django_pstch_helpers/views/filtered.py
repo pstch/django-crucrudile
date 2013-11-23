@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+*wfrom django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 
 from . import ListView
@@ -11,7 +11,7 @@ class FilteredListView(ListView):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        filter = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value']
+        filter = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value'] }
 
         if self.queryset is not None:
             queryset = self.queryset
