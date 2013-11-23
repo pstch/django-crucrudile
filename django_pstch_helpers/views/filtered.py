@@ -28,3 +28,13 @@ class FilteredListView(ListView):
                 }
             )
         return queryset
+    def get_context_data(self, *args, **kwargs):
+        context = super(FilteredListView, self).get_context_data(*args, **kwargs)
+        model = getattr(self.model,
+                        self.kwargs['filter_key']).field.rel.to)
+        instance = get_object_or_404(model, pk = context['filter_value'])
+        
+        context['filter_key'] = model
+        context['filter_value'] = instance
+
+        return context
