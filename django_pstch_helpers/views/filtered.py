@@ -32,7 +32,7 @@ class FilteredListView(ListView):
             attribute = "%s__pk" % self.kwargs['filter_key']
         else:
             attribute = self.filter_attribute
-        return { attribute : self.get_filter_instance() }
+        return { attribute : self.get_filter_instance().id }
 
     def get_queryset(self):
         """
