@@ -1,4 +1,4 @@
--from . import ListView, DetailView, SearchView
+from . import ListView, DetailView, SearchView
 from .multiple import MultipleListView
 from .edit import CreateView, DeleteView, UpdateView 
 from .filtered import FilteredListView
