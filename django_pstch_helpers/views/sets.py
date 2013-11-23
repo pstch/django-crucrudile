@@ -5,7 +5,7 @@ from .filtered import FilteredListView
 from .specific import SpecificCreateView
 PK_ARG = "(?P<pk>\d+)"
 FILTER_ARGS = "of-(?P<filter_key>\w+)/(?P<filter_value>\d+)"
-
+SPECIFIC_ARGS = "of-(?P<specific_key>\w+)/(?P<specific_value>\d+)"
 
 
 CREATE_VIEW = { 'create' : ('create',
