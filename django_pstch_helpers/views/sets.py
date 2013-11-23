@@ -64,6 +64,3 @@ EDIT_VIEWS = dict(dict(CREATE_VIEW,
 FULL_VIEWS = dict(BASE_VIEWS,
                   **DETAIL_VIEWS)
 
-SPECIFIC_EDIT_VIEWS = dict(dict(SPECIFIC_CREATE_VIEW,
-                       **UPDATE_VIEW),
-                  **DELETE_VIEW)
