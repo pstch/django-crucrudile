@@ -54,12 +54,12 @@ SEARCH_VIEWS = { 'search' : ('search',
                              {})
 }
 
-BASE_VIEWS = dict(LIST_VIEW,
-                  **EDIT_VIEWS)
-
 EDIT_VIEWS = dict(dict(CREATE_VIEW,
                        **UPDATE_VIEW),
                   **DELETE_VIEW)
+
+BASE_VIEWS = dict(LIST_VIEW,
+                  **EDIT_VIEWS)
 
 FULL_VIEWS = dict(BASE_VIEWS,
                   **DETAIL_VIEW)
