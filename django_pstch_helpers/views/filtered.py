@@ -4,21 +4,22 @@ from django.contrib.contenttypes.models import ContentType
 from . import ListView
 
 class FilteredListView(ListView):
-    def get_queryset(self):
+    def get_queryset(self, filter = True):
         """
         Return the list of items for this view.
 
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        filter = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value'] }
+        if filter:
+            filter_dict = { "%s__pk" % self.kwargs['filter_key'] : self.kwargs['filter_value'] }
 
         if self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
-                queryset = queryset.filter(**filter)
+                queryset = queryset.filter(**filter_dict)
         elif self.model is not None:
-            queryset = self.model._default_manager.filter(**filter)
+            queryset = self.model._default_manager.filter(**filter_dict)
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -37,5 +38,7 @@ class FilteredListView(ListView):
         
         context['filter_key'] = model
         context['filter_value'] = instance
+
+        context['unfiltered_count'] = self.get_queryset(filter = False).count()
 
         return context
