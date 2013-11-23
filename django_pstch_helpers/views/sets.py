@@ -34,7 +34,7 @@ MULTIPLE_LIST_VIEW = { 'list' : ('list',
                     }
 FILTERED_LIST_VIEW = { 'list' : ('list/%s' % FILTER_ARGS,
                                   FilteredListView,
-                                  {}),
+                                  lambda caca: 0),
                     }
 
 DETAIL_VIEW = { 'detail': ('detail/%s' % PK_ARG,
