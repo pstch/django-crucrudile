@@ -1,4 +1,4 @@
-from . import ListView, DetailView, SearchView
+-from . import ListView, DetailView, SearchView
 from .multiple import MultipleListView
 from .edit import CreateView, DeleteView, UpdateView 
 from .filtered import FilteredListView
@@ -54,7 +54,7 @@ SEARCH_VIEWS = { 'search' : ('search',
                              {})
 }
 
-BASE_VIEWS = dict(LIST_VIEWS,
+BASE_VIEWS = dict(LIST_VIEW,
                   **EDIT_VIEWS)
 
 EDIT_VIEWS = dict(dict(CREATE_VIEW,
@@ -62,5 +62,5 @@ EDIT_VIEWS = dict(dict(CREATE_VIEW,
                   **DELETE_VIEW)
 
 FULL_VIEWS = dict(BASE_VIEWS,
-                  **DETAIL_VIEWS)
+                  **DETAIL_VIEW)
 
