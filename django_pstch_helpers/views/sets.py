@@ -36,7 +36,7 @@ MULTIPLE_LIST_VIEW = { 'list' : ('list$',
                                   {})
                     }
 FILTERED_LIST_VIEW = { 'filtered-list' : ('list/%s$' % FILTER_ARGS,
-                                  RelatedListView,
+                                          FilteredListView,
                                   {}),
                     }
 
