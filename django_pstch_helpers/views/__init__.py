@@ -10,7 +10,7 @@ class View(AuthMixin, DjangoView):
     context_lambda = None
     def get_context_data(self, *args, **kwargs):
         if self.context_lambda:
-            context = self.context_lambda(self, args, kwargs))
+            context = self.context_lambda(self, args, kwargs)
         else:
             context = {}
         return context
