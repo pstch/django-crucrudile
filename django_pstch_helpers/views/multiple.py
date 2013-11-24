@@ -4,8 +4,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.query import QuerySet
 from django.http import Http404
 from django.utils.translation import ugettext as _
-from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
+from django.views.generic.base import TemplateResponseMixin, ContextMixin
 
+from . import View
 from .mixins import AuthMixin
 
 class MultipleModelMultipleObjectMixin(ContextMixin):
@@ -107,7 +108,7 @@ class MultipleModelMultipleObjectTemplateResponseMixin(TemplateResponseMixin):
 
         return names
 
-class MultipleListView(AuthMixin, MultipleModelMultipleObjectTemplateResponseMixin, BaseMultipleListView):
+class MultipleListView(MultipleModelMultipleObjectTemplateResponseMixin, BaseMultipleListView):
     """
     Render some lists of objects, set by `self.models` or `self.querysets`.
     `self.queryset` can actually be any list of iterables of items, not just a list of querysets.

@@ -18,20 +18,20 @@ class View(AuthMixin, View):
 class TemplateView(AuthMixin, TemplateView):
     pass
 
-class ListView(AuthMixin, ModelInfoMixin, ListView):
+class ListView(View, ModelInfoMixin, ListView):
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
         names.append("%s/object_list.html" % self.model._meta.app_label)
         return names
 
-class DetailView(AuthMixin, ModelInfoMixin, DetailView):
+class DetailView(View, ModelInfoMixin, DetailView):
     def get_template_names(self):
         names = super(DetailView, self).get_template_names()
         names.append("%s/object_detail.html" % self.model._meta.app_label)
         return names
 
-class HomeView(TemplateView):
+class HomeView(View,TemplateView):
     pass
 
-class SearchView(AuthMixin, HaystackSearchView):
+class SearchView(View, HaystackSearchView):
     pass
