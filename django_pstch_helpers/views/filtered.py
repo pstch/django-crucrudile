@@ -55,6 +55,7 @@ class FilteredListView(ListView):
             context['filter_key'] = self.kwargs['filter_key']
             context['filter_value'] = self.kwargs['filter_value']
 
+        context['filter_list'] = {}
         for key in self.filter_keys:
             if type(getattr(self.model,key).field) in [ForeignKey, ManyToManyField]:
                 context['filter_list'][str(key)] = getattr(self.model,key).field.rel.to.objects.all()
