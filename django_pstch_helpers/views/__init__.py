@@ -9,10 +9,10 @@ from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 class View(AuthMixin, DjangoView):
     context_lambda = None
     def get_context_data(self, *args, **kwargs):
-        context = super(DjangoView, self).get_context_data( *args, **kwargs)
         if self.context_lambda:
-            context = dict(context,
-                           **self.context_lambda(self, args, kwargs))
+            context = self.context_lambda(self, args, kwargs))
+        else:
+            context = {}
         return context
 
 class TemplateView(AuthMixin, TemplateView):
