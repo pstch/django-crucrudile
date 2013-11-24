@@ -1,20 +1,13 @@
 from django.shortcuts import render
 from django.contrib import messages
 
-from django.views.generic import View, TemplateView, ListView, DetailView
+from django.views.generic import View as View, TemplateView, ListView, DetailView
 from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
 class View(AuthMixin, View):
-    context_lambda = None
-    def get_context_data(self, *args, **kwargs):
-        context = super(View, self).get_context_data( *args, **kwargs)
-        print "HALLO"
-        if self.context_lambda:
-            context = dict(context,
-                           **self.context_lambda(self, args, kwargs))
-        return context
+    pass
 
 class TemplateView(AuthMixin, TemplateView):
     pass
