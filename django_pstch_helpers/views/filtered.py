@@ -45,7 +45,7 @@ class FilteredListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(FilteredListView, self).get_context_data(*args, **kwargs)
 
-        if type(getattr(self.model,self.kwargs['filter_key']).field) is (ForeignKey or ManyToManyField):
+        if type(getattr(self.model,self.kwargs['filter_key']).field) is in [ForeignKey,ManyToManyField]):
             context['filter_key'] = getattr(self.model,
                                             self.kwargs['filter_key']).field.rel.to
 
@@ -56,7 +56,7 @@ class FilteredListView(ListView):
             context['filter_value'] = self.kwargs['filter_value']
 
         for key in self.filter_keys:
-            if type(getattr(self.model,key).field) is (ForeignKey or ManyToManyField):
+            if type(getattr(self.model,key).field) is in [ForeignKey, ManyToManyField]):
                 context['%s_list' % key] = getattr(self.model,key).field.rel.to.objects.all()
         
         context['unfiltered_count'] = self.get_queryset(filter = False).count()
