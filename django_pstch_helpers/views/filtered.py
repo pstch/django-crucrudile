@@ -18,7 +18,8 @@ class FilteredListView(ListView):
 
         if not self.kwargs['filter_key'] in self.filter_keys:
             raise ImproperlyConfigured(
-                "%s is not present in filter_keys"
+                "%s is not present in filter_keys (%s)" % (self.kwargs['filter_key'], self.filter_keys)
+% self.kwargs['filter_key']
             )
 
         if filter:
