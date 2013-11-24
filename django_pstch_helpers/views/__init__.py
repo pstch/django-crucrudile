@@ -7,7 +7,13 @@ from django.views.generic import TemplateView as HaystackSearchView
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
 class View(AuthMixin, View):
-    pass
+    context_lambda = None
+    def get_context_data(self, *args, **kwargs):
+        context = self.get_context_data( *args, *kwargs)
+        if self.context_lambda:
+            context = dict(context,
+                           **self.context_lambda(self, args, kwargs))
+        return context
 
 class TemplateView(AuthMixin, TemplateView):
     pass
