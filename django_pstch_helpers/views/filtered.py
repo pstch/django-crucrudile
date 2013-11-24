@@ -3,6 +3,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+
 from . import ListView
 
 class FilteredListView(ListView):
@@ -42,15 +44,21 @@ class FilteredListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(FilteredListView, self).get_context_data(*args, **kwargs)
-        model = getattr(self.model,self.kwargs['filter_key']).field.rel.to
-        instance = get_object_or_404(model, pk = self.kwargs['filter_value'])
+
+        if type(getattr(self.model,self.kwargs['filter_key']).field) is (ForeignKey or ManyToManyField):
+            context['filter_key'] = getattr(self.model,
+                                            self.kwargs['filter_key']).field.rel.to
+
+            context['filter_value'] = get_object_or_404(context['filter_key'],
+                                                        pk = self.kwargs['filter_value'])
+        else:
+            context['filter_key'] = self.kwargs['filter_key']
+            context['filter_value'] = self.kwargs['filter_value']
 
         for key in self.filter_keys:
-            context['%s_list' % key] = getattr(self.model,key).field.rel.to.objects.all()
+            if type(getattr(self.model,key).field) is (ForeignKey or ManyToManyField):
+                context['%s_list' % key] = getattr(self.model,key).field.rel.to.objects.all()
         
-        context['filter_key'] = model
-        context['filter_value'] = instance
-
         context['unfiltered_count'] = self.get_queryset(filter = False).count()
 
         return context
