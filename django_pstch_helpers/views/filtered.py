@@ -57,7 +57,7 @@ class FilteredListView(ListView):
 
         context['filter_list'] = {}
         for key in self.filter_keys:
-            if type(getattr(self.model,key).field) in [ForeignKey, ManyToManyField]:
+            if type(getattr(self.model,key).field) is ForeignKey:
                 context['filter_list'][str(key)] = getattr(self.model,key).field.rel.to.objects.all()
         
         context['unfiltered_count'] = self.get_queryset(filter = False).count()
