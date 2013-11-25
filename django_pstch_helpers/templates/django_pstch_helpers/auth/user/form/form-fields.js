@@ -1,7 +1,6 @@
 (function($){
     $(function(){
-	$('select#id_groups').multiSelect({});
-	$('select#id_user_permissions').multiSelect({});
+	$('select').chosen();
 	$( "#id_date_joined" ).datepicker();
     });
 })(jQuery);
