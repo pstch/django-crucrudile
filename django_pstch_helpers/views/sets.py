@@ -61,8 +61,8 @@ SEARCH_VIEWS = { 'search' : ('search',
 FORM_VIEWS = mix_views(CREATE_VIEW,
                        UPDATE_VIEW)
 
-EDIT_VIEWS = mix_views(CREATE_VIEW,
-                       UPDATE_VIEW,
+EDIT_VIEWS = mix_views(FORM_VIEWS,
+                    FORM_VIEWSUPDATE_VIEW,
                        DELETE_VIEW)
 
 BASE_VIEWS = mix_views(EDIT_VIEWS,
