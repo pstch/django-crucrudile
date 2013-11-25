@@ -16,6 +16,9 @@ class ModelInfo(models.Model):
     def get_count(self):
         return self.objects.count()
     @classmethod
+    def model_name(self):
+        return self._meta.model_name
+    @classmethod
     def get_label(self):
         return getattr(self,
                        'CUSTOM_LABEL',
