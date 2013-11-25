@@ -10,6 +10,11 @@ from .edit import CreateView
 class SpecificCreateView(CreateView):
     initial_keys = []
     def get_initial(self):
+        
         initial = super(SpecificCreateView, self).get_initial()
+        print self.kwargs
         if self.kwargs.get('specific_key') in self.initial_keys:
+            print "HAHAHAHA"
             initial[self.kwargs.get('specific_key')] = self.kwargs.get('specific_value')
+        else:
+            print "BUH"
