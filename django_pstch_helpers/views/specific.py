@@ -37,6 +37,7 @@ class SpecificCreateView(CreateView):
             context['specific_key'] = self.kwargs['specific_key']
             context['specific_value'] = self.kwargs['specific_value']
 
+        return context
 
     def get_template_names(self):
         names = super(SpecificCreateView, self).get_template_names()
