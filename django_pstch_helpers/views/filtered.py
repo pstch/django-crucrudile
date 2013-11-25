@@ -68,7 +68,7 @@ class FilteredListView(ListView):
 
 
     def get_template_names(self):
-        names = super(ListView, self).get_template_names()
+        names = super(FilteredListView, self).get_template_names()
         names.append("%s/%s_list_filtered.html" % (self.model._meta.app_label,
                                                      self.model._meta.model_name))
         names.append("%s/object_list_filtered.html" % self.model._meta.app_label)
