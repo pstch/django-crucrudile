@@ -22,3 +22,8 @@ class SpecificCreateView(CreateView):
             print self.initial_keys
 
         return initial
+
+    def get_template_names(self):
+        names = super(ListView, self).get_template_names()
+        names.append("%s/object_create_specific.html" % self.model._meta.app_label)
+        return names
