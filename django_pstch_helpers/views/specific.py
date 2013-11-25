@@ -23,6 +23,21 @@ class SpecificCreateView(CreateView):
 
         return initial
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(SpecificCreateView, self).get_context_data(*args, **kwargs)
+
+        field = getattr(self.model, self.kwargs['specific_key']).field
+
+        if type(field) in [ForeignKey, ManyToManyField]:
+            context['specific_key'] = field.rel.to
+
+            context['specific_value'] = get_object_or_404(context['specific_key'],
+                                                        pk = self.kwargs['specific_value'])
+        else:
+            context['specific_key'] = self.kwargs['specific_key']
+            context['specific_value'] = self.kwargs['specific_value']
+
+
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
         names.append("%s/object_create_specific.html" % self.model._meta.app_label)
