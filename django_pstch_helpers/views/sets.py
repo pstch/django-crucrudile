@@ -15,7 +15,7 @@ CREATE_VIEW = { 'create' : ('create$',
                            CreateView,
                            {})}
 
-SPECIFIC_CREATE_VIEW = { 'create' : ('create/%s$' % SPECIFIC_ARGS,
+SPECIFIC_CREATE_VIEW = { 'create-specific' : ('create/%s$' % SPECIFIC_ARGS,
                          SpecificCreateView,
                          {}),}
 
@@ -36,7 +36,7 @@ MULTIPLE_LIST_VIEW = { 'list' : ('list$',
                                   MultipleListView,
                                   {})
                     }
-FILTERED_LIST_VIEW = { 'filtered-list' : ('list/%s$' % FILTER_ARGS,
+FILTERED_LIST_VIEW = { 'list-filtered' : ('list/%s$' % FILTER_ARGS,
                                           FilteredListView,
                                   {}),
                     }

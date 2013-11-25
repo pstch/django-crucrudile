@@ -18,3 +18,4 @@ class SpecificCreateView(CreateView):
             initial[self.kwargs.get('specific_key')] = self.kwargs.get('specific_value')
         else:
             print "BUH"
+            print self.initial_keys
