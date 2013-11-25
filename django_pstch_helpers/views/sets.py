@@ -21,6 +21,7 @@ SPECIFIC_CREATE_VIEW = { 'create' : ('create/%s$' % SPECIFIC_ARGS,
 
 UPDATE_VIEW =  { 'update' : ('update/%s' % PK_ARG,
                              UpdateView,
+
                              {}),}
 DELETE_VIEW = { 'delete' : ('delete/%s' % PK_ARG,
                            DeleteView,
@@ -56,6 +57,9 @@ SEARCH_VIEWS = { 'search' : ('search',
                              SearchView,
                              {})
 }
+
+FORM_VIEWS = mix_views(CREATE_VIEW,
+                       UPDATE_VIEW)
 
 EDIT_VIEWS = mix_views(CREATE_VIEW,
                        UPDATE_VIEW,
