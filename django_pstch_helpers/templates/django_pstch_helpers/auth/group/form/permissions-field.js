@@ -1,5 +1,5 @@
 (function($){
   $(function(){
-     $('select#id_permissions').multiSelect({});
+     $('select#id_permissions').select();
   });
 })(jQuery);
