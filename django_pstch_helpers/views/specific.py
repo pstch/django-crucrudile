@@ -20,3 +20,5 @@ class SpecificCreateView(CreateView):
         else:
             print "BUH"
             print self.initial_keys
+
+        return initial
