@@ -74,6 +74,8 @@ class FilteredListView(ListView):
         value = self.kwargs['filter_value']
         
         field, labels = get_field(self.model, key.split("__")) 
+
+        context['filter_key_original'] = key
         context['filter_key_labels'] =  labels
 
         if type(field) in [ForeignKey,ManyToManyField]:
