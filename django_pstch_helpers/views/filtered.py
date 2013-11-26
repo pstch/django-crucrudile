@@ -90,8 +90,9 @@ class FilteredListView(ListView):
 
 
         context['filter_list'] = {}
+
         for key in self.filter_keys:
-            labels, field = get_field(self.model, key.split("__"))
+            field, labels = get_field(self.model, key.split("__"))
             if type(field) in (ForeignKey, ManyToManyField):
                 if not field.rel.to is self.model:
                     context['filter_list'][str(key)] = { 'labels' : labels,
