@@ -64,7 +64,7 @@ class FilteredListView(ListView):
                 return sub_field, labels
 
             labels.append(sub_model._meta.verbose_name)
-            _labels, field = get_field(sub_model, keys[1:])
+            field, _labels = get_field(sub_model, keys[1:])
             labels += _labels
             return field, labels
 
