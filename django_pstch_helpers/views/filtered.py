@@ -82,7 +82,7 @@ class FilteredListView(ListView):
             context['filter_key'] = field_target
 
             context['filter_value'] = get_object_or_404(field_target,
-                                                        value)
+                                                        pk = value)
         else:
 
             context['filter_key'] = key
