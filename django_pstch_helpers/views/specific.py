@@ -39,7 +39,7 @@ class SpecificCreateView(CreateView):
 
             context['specific_key_model'] = model
 
-            context['specific_value'] = get_object_or_404(key,
+            context['specific_value'] = get_object_or_404(model,
                                                           pk = value)
         else:
             context['specific_value'] = value
