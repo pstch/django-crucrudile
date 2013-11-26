@@ -26,19 +26,23 @@ class SpecificCreateView(CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super(SpecificCreateView, self).get_context_data(*args, **kwargs)
 
-        field = getattr(self.model, self.kwargs['specific_key']).field
+        key = key
+        value = self.kwargs['specific_value']
 
-        context['specific_key_str'] = context['specific_key']
+        field = getattr(self.model, key).field
+
+        context['specific_key'] = key
 
         if type(field) in [ForeignKey, ManyToManyField]:
 
-            context['specific_key'] = field.rel.to
+            model = field.rel.to
 
-            context['specific_value'] = get_object_or_404(context['specific_key'],
-                                                        pk = self.kwargs['specific_value'])
+            context['specific_key_model'] = model
+
+            context['specific_value'] = get_object_or_404(key,
+                                                          pk = value)
         else:
-            context['specific_key'] = self.kwargs['specific_key']
-            context['specific_value'] = self.kwargs['specific_value']
+            context['specific_value'] = value
 
         return context
 
