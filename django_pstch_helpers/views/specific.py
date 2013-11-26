@@ -26,7 +26,7 @@ class SpecificCreateView(CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super(SpecificCreateView, self).get_context_data(*args, **kwargs)
 
-        key = key
+        key = self.kwargs['specific_key']
         value = self.kwargs['specific_value']
 
         field = getattr(self.model, key).field
