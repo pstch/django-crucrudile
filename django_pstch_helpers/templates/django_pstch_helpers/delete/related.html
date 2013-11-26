@@ -14,7 +14,7 @@
     {% for model, instance in related %}
       <tr>
 	<td>
-	  <a class="label label-info pull-right" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
+	  <a class="label label-{{ model.LABEL_CLASS|default:"info" }} pull-right" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
 	    {{ model.get_label|capfirst }}
 	  </a>
 	</td>
