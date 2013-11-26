@@ -21,7 +21,7 @@ class FilteredListView(ListView):
 
         filter_dict = {}
 
-        if not value in self.filter_keys:
+        if not key in self.filter_keys:
             raise ImproperlyConfigured(
                 "%s is not present in filter_keys (%s)" % (key, self.filter_keys)
             )
