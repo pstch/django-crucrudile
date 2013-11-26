@@ -73,7 +73,7 @@ class FilteredListView(ListView):
         key = self.kwargs['filter_key']
         value = self.kwargs['filter_value']
         
-        field, labels = get_field(self.model, key.split(".")) 
+        field, labels = get_field(self.model, key.split("__")) 
         context['filter_key_labels'] =  labels
 
         if type(field) in [ForeignKey,ManyToManyField]:
@@ -91,7 +91,7 @@ class FilteredListView(ListView):
 
         context['filter_list'] = {}
         for key in self.filter_keys:
-            labels, field = get_field(self.model, key.split("."))
+            labels, field = get_field(self.model, key.split("__"))
             if type(field) in (ForeignKey, ManyToManyField):
                 if not field.rel.to is self.model:
                     context['filter_list'][str(key)] = { 'labels' : labels,
