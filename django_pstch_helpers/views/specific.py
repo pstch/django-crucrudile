@@ -10,16 +10,10 @@ from .edit import CreateView
 class SpecificCreateView(CreateView):
     initial_keys = []
     def get_initial(self):
-        
         initial = super(SpecificCreateView, self).get_initial()
-        print self.kwargs
+
         if self.kwargs.get('specific_key') in self.initial_keys:
-            print "HAHAHAHA"
             initial[self.kwargs.get('specific_key')] = self.kwargs.get('specific_value')
-            print initial
-        else:
-            print "BUH"
-            print self.initial_keys
 
         return initial
 
@@ -31,18 +25,18 @@ class SpecificCreateView(CreateView):
 
         field = getattr(self.model, key).field
 
-        context['specific_key'] = key
+        context['initial_field'] = key
 
         if type(field) in [ForeignKey, ManyToManyField]:
 
             model = field.rel.to
 
-            context['specific_key_model'] = model
+            context['initial_field_model'] = model
 
-            context['specific_value'] = get_object_or_404(model,
+            context['initial_value'] = get_object_or_404(model,
                                                           pk = value)
         else:
-            context['specific_value'] = value
+            context['initial_value'] = value
 
         return context
 

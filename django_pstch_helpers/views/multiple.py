@@ -108,7 +108,7 @@ class MultipleModelMultipleObjectTemplateResponseMixin(TemplateResponseMixin):
 
         return names
 
-class MultipleListView(MultipleModelMultipleObjectTemplateResponseMixin, BaseMultipleListView):
+class MultipleListView(AuthMixin, MultipleModelMultipleObjectTemplateResponseMixin, ModelInfoMixin, BaseMultipleListView):
     """
     Render some lists of objects, set by `self.models` or `self.querysets`.
     `self.queryset` can actually be any list of iterables of items, not just a list of querysets.

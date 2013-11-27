@@ -103,3 +103,4 @@ class RedirectMixin(ModelFormMixin):
             pass
 
         raise ImproperlyConfigured("No redirect tokens were matched against the form data, no fallback token was found, success_url was not defined, could not get object list url : can't find where to redirect to")
+

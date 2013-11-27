@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.models import Permission
 from django.db.models.deletion import Collector
 
-from django.views.generic.edit import UpdateView as DjangoUpdateView, CreateView as DjangoCreateView, DeleteView as DjangoDeleteView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
-class CreateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoCreateView):
+class CreateView(AuthMixin, ModelInfoMixin, RedirectMixin, CreateView):
     def get_template_names(self):
         names = super(CreateView, self).get_template_names()
         names.append("%s/object_create.html" % self.model._meta.app_label)
@@ -19,7 +19,7 @@ class CreateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoCreateView):
         messages.success(self.request, "Created object %s (of type %s, of id %s) in the database." % (self.object, self.object.__class__.__name__, self.object.id))
         return response
 
-class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoUpdateView):
+class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, UpdateView):
     def get_template_names(self):
         names = super(UpdateView, self).get_template_names()
         names.append("%s/object_update.html" % self.model._meta.app_label)
@@ -31,7 +31,7 @@ class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoUpdateView):
         messages.info(self.request, "Updated object %s (of type %s, of id %s)." % (self.object, self.object.__class__.__name__, self.object.id))
         return response
 
-class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoDeleteView):
+class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DeleteView):
     def get_template_names(self):
         names = super(DeleteView, self).get_template_names()
         names.append("%s/object_delete.html" % self.model._meta.app_label)
@@ -49,5 +49,5 @@ class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DjangoDeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         copy = self.object
-        messages.success(request, "Deleted object %s (of type %s, of id %s) from the database." % (copy, copy.__class__.__name__, copy.id))
+        messages.warning(request, "Deleted object %s (of type %s, of id %s) from the database." % (copy, copy.__class__.__name__, copy.id))
         return super(DeleteView, self).delete(request, *args, **kwargs)
