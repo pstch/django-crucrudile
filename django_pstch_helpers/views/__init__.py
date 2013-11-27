@@ -6,8 +6,6 @@ from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
-class AuthMixin():
-    pass
 
 class TemplateView(AuthMixin, TemplateView):
     pass
@@ -27,7 +25,7 @@ class DetailView(AuthMixin, ModelInfoMixin, DetailView):
 #        names.append("%s/object_detail.html" % self.model._meta.app_label)
 #        return names
 
-class HomeView(AuthMixin, TemplateView):
+class HomeView(TemplateView):
     pass
 
 class SearchView(AuthMixin, HaystackSearchView):
