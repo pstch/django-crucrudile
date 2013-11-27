@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib import messages
 
-from django.views.generic import View as View, TemplateView, ListView, DetailView
+from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin
 
-class TemplateView(AuthMixin, TemplateView):
+class TemplateView(View, AuthMixin, TemplateView):
     pass
 
 class ListView(AuthMixin, ModelInfoMixin, ListView):
