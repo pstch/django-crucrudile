@@ -12,7 +12,7 @@ from .mixins import AuthMixin, ModelInfoMixin
 
 def get_filter_class(filter_model, base_filter_class=FilterSet):
     class FilterSet(base_filter_class):
-        class Meta:
+        class Meta(base_filter_class.Meta):
             model = filter_model
     return FilterSet
 
