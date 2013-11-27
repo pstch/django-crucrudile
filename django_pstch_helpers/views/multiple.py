@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 
 from . import View
-from .mixins import AuthMixin
+from .mixins import AuthMixin, ModelInfoMixin
 
 class MultipleModelMultipleObjectMixin(ContextMixin):
     """
