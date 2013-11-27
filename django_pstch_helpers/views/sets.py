@@ -8,7 +8,6 @@ from .specific import SpecificCreateView
 
 
 PK_ARG = "(?P<pk>\d+)"
-FILTER_ARGS = "of-(?P<filter_key>\w+)/(?P<filter_value>\d+)"
 SPECIFIC_ARGS = "of-(?P<specific_key>\w+)/(?P<specific_value>\d+)"
 
 
@@ -37,7 +36,7 @@ MULTIPLE_LIST_VIEW = { 'list' : ('list$',
                                   MultipleListView,
                                   {})
                     }
-FILTERED_LIST_VIEW = { 'list-filtered' : ('list/%s$' % FILTER_ARGS,
+FILTERED_LIST_VIEW = { 'list-filtered' : ('list-filtered$' % FILTER_ARGS,
                                           FilteredListView,
                                   {}),
                     }
