@@ -10,10 +10,11 @@ from django_filters.views import FilterView
 
 from .mixins import AuthMixin, ModelInfoMixin
 
-def get_filter_class(self, filter_class=FilterSet):
-    f = filter_class
-    f.Meta.model = self
-    return f
+def get_filter_class(model, filter_class=FilterSet):
+    class FilterSet(filter_class):
+        class Meta:
+            model = model
+    return FilterSet
 
 class FilteredListView(AuthMixin, ModelInfoMixin, FilterView):
     template_name_suffix = '_list_filtered'
