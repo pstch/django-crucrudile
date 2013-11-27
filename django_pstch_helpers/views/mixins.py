@@ -7,7 +7,7 @@ from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import ModelFormMixin
 
-class AuthMixin(View):
+class AuthMixin():
     """
     Use this mixin to enforce 'required login' and 'required permissions' attributes.
     
