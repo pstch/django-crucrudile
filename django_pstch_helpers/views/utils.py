@@ -27,4 +27,16 @@ def mix_views(*args):
         return dict(current,
                     **remaining)
 
+def get_model_args(action, view, model):
+    args = {}
+    if not hasattr(model, '__iter__'):
+        model = [model, ]
+    for item in model:
+        if hasattr(item,'URL_VIEW_ARGS'):
+            _args = item.URL_VIEW_ARGS.get(action)
+            if callable(_args):
+                _args = _args(action, view, model)
+            args = dict(args, _args)
+
+    return args
 
