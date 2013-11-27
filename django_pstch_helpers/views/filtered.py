@@ -5,9 +5,15 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 
+from django_filters import FilterSet
 from django_filters.views import FilterView
 
 from .mixins import AuthMixin, ModelInfoMixin
+
+def get_filter_class(self, filter_class=FilterSet):
+    f = filter_class
+    f.model = self
+    return f
 
 class FilteredListView(AuthMixin, ModelInfoMixin, FilterView):
     template_name_suffix = '_list_filtered'
