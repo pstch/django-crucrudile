@@ -12,7 +12,7 @@ from .mixins import AuthMixin, ModelInfoMixin
 
 def get_filter_class(self, filter_class=FilterSet):
     f = filter_class
-    f.model = self
+    f.Meta.model = self
     return f
 
 class FilteredListView(AuthMixin, ModelInfoMixin, FilterView):
