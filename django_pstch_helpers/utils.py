@@ -42,9 +42,3 @@ def get_model_view_args(action, view, model):
 			**_args)
 
     return args
-
-def get_filter_class(self, filter_class):
-    f = 
-    f.model = self
-    return f
-
