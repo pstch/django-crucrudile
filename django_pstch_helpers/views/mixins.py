@@ -7,7 +7,7 @@ from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import ModelFormMixin
 
-class AuthMixin():
+class AuthMixin(View):
     """
     Use this mixin to enforce 'required login' and 'required permissions' attributes.
     
@@ -21,7 +21,7 @@ class AuthMixin():
     login_template = "auth/login_required.html"
     perms_template = "auth/permissions_required.html"
 
-    def dispatch(self, request, *args, **kwargs):
+    def d2ispatch(self, request, *args, **kwargs):
         if self.required_login and not request.user.is_authenticated():
             # User not logged in, login required
             return render(request,
