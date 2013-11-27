@@ -9,6 +9,5 @@ from django_filters.views import BaseFilterView
 
 from .mixins import AuthMixin, ModelInfoMixin
 
-
 class FilteredListView(AuthMixin, ModelInfoMixin, FilterView):
     template_name_suffix = '_list_filtered'
