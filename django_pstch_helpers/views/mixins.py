@@ -38,7 +38,21 @@ class AuthMixin(View):
         # Everything okay, process View
         return super(AuthMixin, self).dispatch(request, *args, **kwargs)
 
-class ModelInfoMixin(ContextMixin):
+class ExtraContextMixin(ContextMixin):
+    extra_context = {}
+    def get_context_data(self, **kwargs):
+        context = super(ExtraContextMixin, self).get_context_data(**kwargs)
+        if callable(self.extra_context):
+            try:
+                context.update(self.extra_context(self))
+            except TypeError:
+                context.update(self.extra_context())
+        else:
+            context.update(self.extra_context)
+        return context
+
+        
+class ModelInfoMixin(ExtraContextMixin, ContextMixin):
     """Adds the current model to the template context"""
     def get_context_data(self, **kwargs):
         context = super(ModelInfoMixin, self).get_context_data(**kwargs)
