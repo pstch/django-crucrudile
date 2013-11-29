@@ -11,6 +11,7 @@ from .mixins import AuthMixin, ModelInfoMixin
 
 def get_filter_class(filter_model, filter_class):
     class FilterSet(filter_class):
+        lookup_type = None
         class Meta(filter_class.Meta):
             model = filter_model
     return FilterSet
