@@ -5,14 +5,13 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 
-from django_filters import FilterSet
 from django_filters.views import FilterView
 
 from .mixins import AuthMixin, ModelInfoMixin
 
-def get_filter_class(filter_model, base_filter_class=FilterSet):
-    class FilterSet(base_filter_class):
-        class Meta(base_filter_class.Meta):
+def get_filter_class(filter_model, filter_class=FilterSet):
+    class FilterSet(filter_class):
+        class Meta(filter_class.Meta):
             model = filter_model
     return FilterSet
 
