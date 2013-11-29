@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 
 from .mixins import AuthMixin, ModelInfoMixin
 
-def get_filter_class(filter_model, filter_class=FilterSet):
+def get_filter_class(filter_model, filter_class):
     class FilterSet(filter_class):
         class Meta(filter_class.Meta):
             model = filter_model
