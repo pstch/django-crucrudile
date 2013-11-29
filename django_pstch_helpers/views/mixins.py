@@ -44,7 +44,10 @@ class ExtraContextMixin(ContextMixin):
         context = super(ExtraContextMixin, self).get_context_data(**kwargs)
         if callable(self.extra_context):
             try:
-                context.update(self.extra_context(self))
+                try:
+                    context.update(self.extra_context(self, context))
+                except TypeError:
+                    context.update(self.extra_context(self))
             except TypeError:
                 context.update(self.extra_context())
         else:
