@@ -46,9 +46,13 @@ class ExtraContextMixin(ContextMixin):
         if callable(self.extra_context):
             try:
                 context.update(self.extra_context(self))
+                print "SUC1"
             except TypeError:
+                print "FAIL1"
                 context.update(self.extra_context())
+                print "SUC2"
         else:
+            print "NOCALL"
             context.update(self.extra_context)
         return context
 
