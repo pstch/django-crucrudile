@@ -59,7 +59,10 @@ class ModelInfoMixin(ExtraContextMixin, ContextMixin):
     """Adds the current model to the template context"""
     def get_context_data(self, **kwargs):
         context = super(ModelInfoMixin, self).get_context_data(**kwargs)
-        context['model'] = self.model
+        if hasattr(self, 'model'):
+            context['model'] = self.model
+        if hasattr(self, 'models'):
+            context['models'] = self.models
         return context
 
 class RedirectMixin(ModelFormMixin):
