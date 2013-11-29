@@ -4,4 +4,4 @@ register = template.Library()
 
 @register.filter
 def keyvalue(dict, key):
-        return dict[key]])
+        return dict[key]
