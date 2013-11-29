@@ -1,11 +1,12 @@
 <div class="col-md-3">
   <div class="well">
     <h2>
-      {{ model.get_count }} 
+      {% with count=model.get_count %}
+      {{ count }} 
       <small>
-      {% if model.get_count == 0 or model.get_count > 1  %}
+      {% if count == 0 or count > 1  %}
 	{{ model.get_plural_label|capfirst }}
-      {% elif model.get_count == 1 %}
+      {% elif count == 1 %}
 	{{ model.get_label|capfirst }}
       {% endif %}
       </small>
