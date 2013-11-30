@@ -43,13 +43,7 @@ class ExtraContextMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super(ExtraContextMixin, self).get_context_data(**kwargs)
         if callable(self.extra_context):
-            try:
-                try:
-                    context.update(self.extra_context(self, context))
-                except TypeError:
-                    context.update(self.extra_context(self))
-            except TypeError:
-                context.update(self.extra_context())
+            context.update(self.extra_context(self, context))
         else:
             context.update(self.extra_context)
         return context
