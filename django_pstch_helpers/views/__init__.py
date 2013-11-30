@@ -41,7 +41,7 @@ class ListView(AuthMixin, ModelInfoMixin, ListView):
             queryset = manager.all()
             
         return queryset
-                                                                                                                                                                )
+        
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
         names.append("%s/object_list.html" % self.model._meta.app_label)
