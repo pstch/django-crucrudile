@@ -1,4 +1,4 @@
-from .utils import mix_views
+from ..utils import mix_views
 
 from . import ListView, DetailView, SearchView
 from .multiple import MultipleListView
