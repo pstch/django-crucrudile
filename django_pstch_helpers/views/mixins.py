@@ -65,8 +65,10 @@ class SelectRelatedMixin(MultipleObjectMixin):
             )
 
         if self.select_related is not None:
+            print "NOT NONE %s " % self.select_related
             queryset = manager.select_related(*self.select_related).all()
         else:
+            print "NONE"
             queryset = manager.all()
             
         return queryset
