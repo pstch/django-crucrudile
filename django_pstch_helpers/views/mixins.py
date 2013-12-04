@@ -48,6 +48,7 @@ class SelectRelatedMixin(MultipleObjectMixin):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
+        print "SELECT RELATED YADADA"
         if self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
