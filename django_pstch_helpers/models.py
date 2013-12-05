@@ -66,6 +66,11 @@ class AutoPatterns(ModelInfo):
     def get_delete_url(self):
         return self.get_url("delete", args = [self.id,])
 
+    def get_detail_url(self):
+        return self.get_absolute_url()
+    def get_update_url(self):
+        return self.get_edit_url()
+
     @classmethod
     def get_list_url(self):
         return self.get_url("list")
