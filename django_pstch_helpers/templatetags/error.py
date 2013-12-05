@@ -8,4 +8,4 @@ def raise_exception(parser, token):
 
 class RaiseExNode(template.Node): 
     def render(self, context): 
-        raise Exception
+        raise Exception("Test Exception")
