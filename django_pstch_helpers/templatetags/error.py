@@ -3,7 +3,7 @@ from django.conf import settings
 register = template.Library()
 
 @register.tag
-def raise(parser, token): 
+def raise_exception(parser, token): 
     return RaiseExNode()
 
 class RaiseExNode(template.Node): 
