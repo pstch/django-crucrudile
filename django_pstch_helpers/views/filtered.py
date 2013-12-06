@@ -19,7 +19,7 @@ def get_filter_class(filter_model, filter_class):
     return FilterSet
 
     
-class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, FilterView, SortableListView):
+class FilteredListView(AuthMixin, ModelInfoMixin, FilterView, SortableListView, SelectRelatedMixin):
     template_name_suffix = '_list_filtered'
    def get_queryset(self):
        qs = super(FilteredListView, self).get_queryset()
