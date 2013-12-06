@@ -23,7 +23,9 @@ class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, FilterView
     template_name_suffix = '_list_filtered'
    def get_queryset(self):
        qs = super(FilteredListView, self).get_queryset()
+       raise Exception
        qs = qs.order_by(self.sort)
+       
        return qs
     def get_template_names(self):
         names = super(FilteredListView, self).get_template_names()
