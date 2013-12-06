@@ -18,6 +18,7 @@ def get_filter_class(filter_model, filter_class):
             model = filter_model
     return FilterSet
 
+    
 class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, SortableListView, FilterView):
     template_name_suffix = '_list_filtered'
     def get_template_names(self):
