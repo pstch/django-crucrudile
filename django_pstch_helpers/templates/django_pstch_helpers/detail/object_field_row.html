@@ -11,6 +11,10 @@
 	    {% endif %}
 	  </p></td>
 	  <td><p>
+{% if to_render %}
+{% render value %}
+{% else %}
 	    {{ value }}
+{% endif %}
 	  </p></td>
 	</tr>
