@@ -6,13 +6,12 @@ from django.views.generic import TemplateView as HaystackSearchView
 
 from .mixins import AuthMixin, ModelInfoMixin, RedirectMixin, SelectRelatedMixin
 
+from sortable_listview import SortableListView
 
 class TemplateView(AuthMixin, TemplateView):
     pass
 
-class ListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, ListView):
-    prefetch_related = None
-        
+class ListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, SortableListView):
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
         names.append("%s/object_list.html" % self.model._meta.app_label)
