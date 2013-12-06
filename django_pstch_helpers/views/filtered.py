@@ -9,6 +9,8 @@ from django_filters.views import FilterView
 
 from .mixins import AuthMixin, ModelInfoMixin, SelectRelatedMixin
 
+from sortable_listview import SortableListView
+
 def get_filter_class(filter_model, filter_class):
     class FilterSet(filter_class):
         lookup_type = None
@@ -16,7 +18,7 @@ def get_filter_class(filter_model, filter_class):
             model = filter_model
     return FilterSet
 
-class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, FilterView):
+class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, SortableListView, FilterView):
     template_name_suffix = '_list_filtered'
     def get_template_names(self):
         names = super(FilteredListView, self).get_template_names()
