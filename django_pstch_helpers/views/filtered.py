@@ -22,9 +22,9 @@ def get_filter_class(filter_model, filter_class):
 class FilteredListView(AuthMixin, ModelInfoMixin, SelectRelatedMixin, FilterView, SortableListView):
     template_name_suffix = '_list_filtered'
    def get_queryset(self):
-               qs = super(FilteredListView, self).get_queryset()
-               qs = qs.order_by(self.sort)
-               return qs
+       qs = super(FilteredListView, self).get_queryset()
+       qs = qs.order_by(self.sort)
+       return qs
     def get_template_names(self):
         names = super(FilteredListView, self).get_template_names()
         names.append("%s/%s_list.html" % (self.model._meta.app_label,
