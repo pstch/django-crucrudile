@@ -18,7 +18,7 @@ from haystack.query import EmptySearchQuerySet
 RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
 
 
-class SearchView(AuthMixin, TemplateView, FormMixin):
+class SearchView(AuthMixin, FormMixin, TemplateView):
     template_name = 'search/search.html'
 
     queryset = EmptySearchQuerySet()
