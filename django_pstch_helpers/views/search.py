@@ -54,7 +54,8 @@ class SearchView(FormView):
 
     def form_valid(self, form):
         self.query = form.cleaned_data['q']
+        self.queryset = form.search()
         return super(SearchView, self).form_valid(form)
         
     def get_queryset(self):
-        return self.form.search()
+        return self.queryset
