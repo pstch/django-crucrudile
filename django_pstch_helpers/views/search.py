@@ -49,10 +49,12 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
         return context
 
         
-    def get2_form_kwargs(self):
-        return {'searchqueryset' : self.searchqueryset,
-                'load_all' : self.load_all }
-
+    def get_form_kwargs(self):
+        kwargs = self.get_form_kwargs()
+        kwargs.update({'searchqueryset' : self.searchqueryset,
+                       'load_all' : self.load_all })
+        return kwargs
+        
     def form_invalid(self, form):
         raise Exception("")
         
