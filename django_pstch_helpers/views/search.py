@@ -22,6 +22,7 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
     template_name = 'search/search.html'
 
     queryset = EmptySearchQuerySet()
+    object_list = queryset
     query = ''
     
     load_all = True
