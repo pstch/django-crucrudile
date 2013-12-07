@@ -48,6 +48,8 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
 
         return context
 
+    def form_invalid(self):
+        raise Exception
         
     def get_form_kwargs(self):
         kwargs = super(SearchView, self).get_form_kwargs()
