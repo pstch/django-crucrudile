@@ -53,9 +53,9 @@ PAGINATED_LIST_VIEW = { 'list' : ('list$',
                                                                                          50) })
 }
 
-SEARCH_VIEWS = { 'search' : ('search',
-                             SearchView,
-                             {})
+SEARCH_VIEW = { 'search' : ('search',
+                            SearchView,
+                            {})
 }
 
 FORM_VIEWS = mix_views(CREATE_VIEW,
