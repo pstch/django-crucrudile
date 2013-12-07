@@ -61,7 +61,6 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
         self.query = form.cleaned_data['q']
         self.queryset = form.search()
         self.object_list = self.queryset
-        raise Exception
         return super(SearchView, self).form_valid(form)
         
     def get_queryset(self):
