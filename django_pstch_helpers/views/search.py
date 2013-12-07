@@ -49,7 +49,7 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
         return context
 
         
-    def get_form_kwargs(self):
+    def get2_form_kwargs(self):
         return {'searchqueryset' : self.searchqueryset,
                 'load_all' : self.load_all }
 
