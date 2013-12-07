@@ -40,7 +40,8 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
             data = self.request.GET
 
         context['query'] = self.query
-
+        context['form'] = self.get_form()
+        
         results = self.queryset
         results_query = getattr(results, 'query', None)
         if results and results_query and results_query.backend.include_spelling:
