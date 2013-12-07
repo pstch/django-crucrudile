@@ -40,7 +40,7 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
             data = self.request.GET
 
         context['query'] = self.query
-        context['form'] = self.get_form()
+        context['form'] = self.get_form(self.form_class)
         
         results = self.queryset
         results_query = getattr(results, 'query', None)
