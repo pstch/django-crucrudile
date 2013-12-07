@@ -62,7 +62,10 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
         self.queryset = form.search()
         self.object_list = self.queryset
         print "QS: %s" % self.queryset
-        return super(SearchView, self).form_valid(form)
+
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
         
     def get_queryset(self):
         return self.queryset
