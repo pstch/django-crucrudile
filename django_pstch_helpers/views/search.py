@@ -21,7 +21,8 @@ class SearchView(AuthMixin, ListView, FormMixin):
     template_name = 'search/search.html'
 
     results = EmptySearchQuerySet()
-
+    query = ''
+    
     load_all = True
     searchqueryset = None
     form_class = ModelSearchForm
@@ -32,11 +33,9 @@ class SearchView(AuthMixin, ListView, FormMixin):
         if len(self.request.GET):
             data = self.request.GET
 
-        results = self.get_results()
-            
-        context['query'] = self.get_query()
-        context['results'] = results
+        context['query'] = self.query
 
+        results = self.queryset
         results_query = getattr(results, 'query', None)
         if results and results_query and results_query.backend.include_spelling:
             context['suggestion'] = self.form.get_suggestion()
@@ -47,23 +46,10 @@ class SearchView(AuthMixin, ListView, FormMixin):
     def get_form_kwargs(self):
         return {'searchqueryset' : self.searchqueryset,
                 'load_all' : self.load_all }
+
+    def form_valid(self, form):
+        self.query = form.cleaned_data['q']
+        self.queryset = form.search()
+        return super(SearchView, self).form_valid(form)
         
-    def get_query(self):
-        """
-        Returns the query provided by the user.
-
-        Returns an empty string if the query is invalid.
-        """
-        if self.form.is_valid():
-            return self.form.cleaned_data['q']
-        return ''
-
-    def get_queryset(self):
-        """
-        Fetches the results via the form.
-
-        Returns an empty list if there's no query to search with.
-        """
-        return self.form.search()
-
 
