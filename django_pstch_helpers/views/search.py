@@ -20,7 +20,7 @@ RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
 class SearchView(AuthMixin, ListView, FormMixin):
     template_name = 'search/search.html'
 
-    results = EmptySearchQuerySet()
+    queryset = EmptySearchQuerySet()
     query = ''
     
     load_all = True
