@@ -68,3 +68,4 @@ class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
         
     def get_queryset(self):
         return self.queryset
+
