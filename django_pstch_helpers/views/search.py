@@ -28,6 +28,10 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormMixin, TemplateView):
     searchqueryset = None
     form_class = ModelSearchForm
 
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return super(SearchView, self).get(request, *args, **kwargs)
+    
     def get_context_data(self, *args, **kwargs):
         context = super(SearchView, self).get_context_data(*args, **kwargs)
 
