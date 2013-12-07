@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
+from django.views.generic.list import MultipleObjectMixin
 from .mixins import AuthMixin
 
 from haystack.forms import ModelSearchForm, FacetedSearchForm
@@ -17,7 +18,7 @@ from haystack.query import EmptySearchQuerySet
 RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
 
 
-class SearchView(AuthMixin, ListView, FormMixin):
+class SearchView(AuthMixin, MultipleObjectMixin, FormMixin, TemplateView):
     template_name = 'search/search.html'
 
     queryset = EmptySearchQuerySet()
