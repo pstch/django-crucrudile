@@ -50,7 +50,7 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
 
         
     def get_form_kwargs(self):
-        kwargs = self.get_form_kwargs()
+        kwargs = super(SearchView, self).get_form_kwargs()
         kwargs.update({'searchqueryset' : self.searchqueryset,
                        'load_all' : self.load_all })
         return kwargs
