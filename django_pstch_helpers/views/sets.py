@@ -1,6 +1,7 @@
 from ..utils import mix_views
 
-from .base import ListView, DetailView, SearchView
+from .base import ListView, DetailView
+from .search import SearchView
 from .multiple import MultipleListView
 from .edit import CreateView, DeleteView, UpdateView 
 from .filtered import FilteredListView
