@@ -53,9 +53,12 @@ class SearchView(AuthMixin, MultipleObjectMixin, FormView):
         return {'searchqueryset' : self.searchqueryset,
                 'load_all' : self.load_all }
 
+    def form_invalid(self, form):
+        raise Exception("")
+        
     def form_valid(self, form):
         self.query = form.cleaned_data['q']
-        raise
+        raise Exception("")
         self.queryset = form.search()
         self.object_list = self.queryset
         return super(SearchView, self).form_valid(form)
