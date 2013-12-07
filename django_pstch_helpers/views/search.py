@@ -6,7 +6,7 @@ from django.http import Http404
 
 from django.shortcuts import render_to_response
 
-from django.views.generic import ListView
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from django.views.generic.list import MultipleObjectMixin
 from .mixins import AuthMixin
