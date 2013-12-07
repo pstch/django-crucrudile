@@ -9,11 +9,11 @@ from django.shortcuts import render_to_response
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.views.generic.list import MultipleObjectMixin
-from .mixins import AuthMixin
 
 from haystack.forms import ModelSearchForm, FacetedSearchForm
 from haystack.query import EmptySearchQuerySet
 
+from .mixins import AuthMixin, ModelInfoMixin
 
 RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
 
