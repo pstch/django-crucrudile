@@ -21,9 +21,8 @@
 	  </a>
 	</td>
 	<td>
-	  <a class="label label-default pull-left" {% if instance.get_absolute_url %}href="{{ instance.get_absolute_url }}"{% endif %}> {% render instance %}
-	    {% if instance == object %}(current object){% endif %}
-	  </a>
+	  {% render instance %}
+	  {% if instance == object %}(current object){% endif %}
 	</td>
       </tr>
     {% endfor %}
