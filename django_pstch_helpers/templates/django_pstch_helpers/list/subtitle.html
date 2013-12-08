@@ -1,0 +1,6 @@
+  <small>{{ object_list|length }} object{{ object_list|pluralize }}</small>
+  {% if not no_buttons %}
+    <div class="pull-right btn-group">
+      <a class="btn btn-success" href="{{ model.get_create_url }}">Create</a>
+    </div>
+  {% endif %}
