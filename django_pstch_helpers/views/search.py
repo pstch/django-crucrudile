@@ -11,61 +11,61 @@ from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.views.generic.list import MultipleObjectMixin
 
 from haystack.forms import ModelSearchForm, FacetedSearchForm
-from haystack.query import EmptySearchQuerySet
+from haystack.query import EmptySearchQuerySet, RelatedSearchQuerySet
 
-from .mixins import AuthMixin, ModelInfoMixin
+ from .mixins import AuthMixin, ModelInfoMixin
 
-RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
+ RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
 
 
-class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
-    template_name = 'search/search.html'
+ class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
+     template_name = 'search/search.html'
 
-    queryset = EmptySearchQuerySet()
-    object_list = queryset
-    query = ''
-    
-    load_all = True
-    searchqueryset = None
-    form_class = ModelSearchForm
+     queryset = EmptySearchQuerySet()
+     object_list = queryset
+     query = ''
 
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        return super(SearchView, self).get(request, *args, **kwargs)
-    
-    def get_context_data(self, *args, **kwargs):
-        context = super(SearchView, self).get_context_data(*args, **kwargs)
+     load_all = True
+     searchqueryset = None
+     form_class = ModelSearchForm
 
-        if len(self.request.GET):
-            data = self.request.GET
+     def get(self, request, *args, **kwargs):
+         self.object_list = self.get_queryset()
+         return super(SearchView, self).get(request, *args, **kwargs)
 
-        context['query'] = self.query
-        context['form'] = kwargs['form']
-        
-        results = self.queryset
-        results_query = getattr(results, 'query', None)
-        if results and results_query and results_query.backend.include_spelling:
-            context['suggestion'] = self.form.get_suggestion()
+     def get_context_data(self, *args, **kwargs):
+         context = super(SearchView, self).get_context_data(*args, **kwargs)
 
-        return context
+         if len(self.request.GET):
+             data = self.request.GET
 
-    def form_invalid(self):
-        raise Exception
-        
-    def get_form_kwargs(self):
-        kwargs = super(SearchView, self).get_form_kwargs()
-        kwargs.update({'searchqueryset' : self.searchqueryset,
-                       'load_all' : self.load_all })
-        return kwargs
-        
-    def form_valid(self, form):
-        self.query = form.cleaned_data['q']
-        self.queryset = form.search()
-        self.object_list = self.queryset
+         context['query'] = self.query
+         context['form'] = kwargs['form']
 
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
-        
-    def get_queryset(self):
-        return self.queryset
+         results = self.queryset
+         results_query = getattr(results, 'query', None)
+         if results and results_query and results_query.backend.include_spelling:
+             context['suggestion'] = self.form.get_suggestion()
+
+         return context
+
+     def form_invalid(self):
+         raise Exception
+
+     def get_form_kwargs(self):
+         kwargs = super(SearchView, self).get_form_kwargs()
+         kwargs.update({'searchqueryset' : self.searchqueryset,
+                        'load_all' : self.load_all })
+         return kwargs
+
+     def form_valid(self, form):
+         self.query = form.cleaned_data['q']
+         self.queryset = form.search()
+         self.object_list = self.queryset
+
+         context = self.get_context_data(form=form)
+         return self.render_to_response(context)
+
+     def get_queryset(self):
+         return self.queryset
 
