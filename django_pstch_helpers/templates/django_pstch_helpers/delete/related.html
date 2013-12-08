@@ -12,7 +12,6 @@
   </thead>
   <tbody>
     {% for model, instance in related %}
-    {% if instance != object %}
       <tr>
 	<td>
 	  <a class="label label-{{ model.LABEL_CLASS|default:"info" }} pull-right" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
@@ -20,11 +19,11 @@
 	  </a>
 	</td>
 	<td>
-	  <a class="label label-default pull-left" {% if instance.get_absolute_url %}href="{{ instance.get_absolute_url }}"{% endif %}>
+	  <a class="label label-default pull-left" {% if instance.get_absolute_url %}href="{{ instance.get_absolute_url }}"{% endif %}> {% render model %}
+	    {% if instance == object %}(current object){% endif %}
 	  </a>
 	</td>
       </tr>
-      {% endif %}
     {% endfor %}
   </tbody>
 </table>
