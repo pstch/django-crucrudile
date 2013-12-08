@@ -1,0 +1,24 @@
+{% if query %}
+<small class="text-info">
+<span class="header-info-small">Query :</span>
+“<strong>{{ query }}</strong>”,
+</small>
+{% endif %}
+
+{% if page_obj %}
+
+{% with count=object_list|length total_count=paginator.count %}
+<small class="text-info">
+<span class="header-info-small">Showing </span>
+<span title="{% widthratio count  total_count 100 %}%">{{ count }}</span>
+<span class="header-info-small"> of </span>
+{{ total_count }}
+<span class="header-info-small">({% widthratio count  total_count 100 %}%)</span>
+</small>
+{% endwith %}
+{% else %}
+<small>
+<strong>{{ object_list|length }}</strong>
+<span class="header-info-small"> object{{ object_list|pluralize }}</span>
+</small>
+{% endif %}
