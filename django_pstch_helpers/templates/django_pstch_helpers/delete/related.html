@@ -1,7 +1,7 @@
 {% load render %}
 
 <p>These objects are related and <strong>will be deleted or altered</strong> if you proceed.</p>
-<table class="table table-details table-condensed table-hover">
+<table class="table table-details table-condensed table-hover deletion-related-table">
   <thead>
     <tr>
       <th>
@@ -16,7 +16,7 @@
     {% for model, instance in related %}
       <tr>
 	<td>
-	  <a class="label label-{{ model.LABEL_CLASS|default:"info" }} pull-right" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
+	  <a class="label label-{{ model.LABEL_CLASS|default:"info" }}" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
 	    {{ model.get_label|capfirst }}
 	  </a>
 	</td>
