@@ -22,7 +22,7 @@
 	</td>
 	<td>
 	  {% render instance %}
-	  {% if instance == object %}(current object){% endif %}
+	  {% if instance == object %}<span class="label label-warning">(current object)</span>{% endif %}
 	</td>
       </tr>
     {% endfor %}
