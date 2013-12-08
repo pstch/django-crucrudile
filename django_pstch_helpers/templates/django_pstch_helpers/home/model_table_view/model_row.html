@@ -2,17 +2,19 @@
   <td>
     <h4 type="pull-left">
       {{ label }}
-      <small class="pull-right">{{ count }} objects</small>
+      {% with count=model.get_count %}
+      <small class="pull-right">{{ count }} object{{ count|pluralize }}</small>
+      {% endwith %}
     </h4>
-    {% if info %}<span class="text-info">{{ info|safe }}</span>{% endif %}
+    {% if model.get_help_text %}<span class="text-info">{{ model.get_help_text }}</span>{% endif %}
   </td>
   <td>
     <div class="btn-group-vertical pull-right">
-      {% if list_url %}
-      <a class="btn btn-primary" href="{{ list_url }}">List</a>
+      {% if model.get_list_url %}
+      <a class="btn btn-primary" href="{{ model.get_list_url }}">List</a>
       {% endif %}
-      {% if create_url %}
-      <a class="btn btn-success" href="{{ create_url }}">Create</a>
+      {% if model.get_create_url %}
+      <a class="btn btn-success" href="{{ model.get_create_url }}">Create</a>
       {% endif %}
     </div>
   </td>

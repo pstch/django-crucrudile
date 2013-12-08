@@ -2,18 +2,4 @@
   Permission detail - {{ object.name }}
 {% else %}
   Permission detail <small>{{ object.name }}</small>
-
-  <div class="pull-right btn-permission">
-    <a class="btn btn-primary"
-       href="{% url edit_url object.id %}">
-      <i class="glyphicon glyphicon-edit"></i> Edit
-    </a>
-    <a class="btn btn-danger" href="{% url delete_url object.id %}">
-      <i class="glyphicon glyphicon-remove"></i> Remove
-    </a>
-    <a class="btn btn-info"
-       href="{% url list_url %}">
-      <i class="glyphicon glyphicon-list"></i> List
-    </a>
-  </div>
 {% endif %}

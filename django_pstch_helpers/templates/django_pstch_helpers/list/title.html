@@ -1,5 +1,2 @@
-{% if head %}
-  {{ model.get_model_verbose_name|capfirst  }} list
-{% else %}
-  {{ model.get_model_verbose_name|capfirst }} list
-{% endif %}
+{{ model.get_model_verbose_name|capfirst  }} list
+

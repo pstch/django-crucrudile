@@ -1,3 +1,5 @@
+{% load render %}
+
 <table class="table table-striped table-condensed">
   <thead>
     <th>
@@ -14,9 +16,7 @@
     {% for object in object_list %}
     <tr>
       <td>
-	<a class="{% if object_label %}label label-{{ object_label }}{% endif %}" {% if object.get_absolute_url %} href="{{ object.get_absolute_url }}" {% endif %} class="text-danger">
-	  <strong>{{ object.name }}</strong>
-	</a>
+	{% render object %}
       </td>
       <td>
 	<p>

@@ -1,22 +1,24 @@
 {% load render %}
 
-	<tr>
-	  <td><p class="text-danger">
-	    {% if strong %}
-	      <strong>
-	    {% endif %}
-
-	      {{ field }}
-
-	    {% if strong %}
-	      <strong>
-	    {% endif %}
-	  </p></td>
-	  <td><p>
-{% if to_render %}
-{% render value %}
-{% else %}
-	    {{ value }}
-{% endif %}
-	  </p></td>
-	</tr>
+<tr>
+  <td>
+    <p class="text-danger">
+      {% if strong %}
+      <strong>
+	{{ field }}
+      </strong>
+      {% else %}
+      {{ field }}
+      {% endif %}
+    </p>
+  </td>
+  <td>
+    <p>
+      {% if to_render %}
+      {% render value %}
+      {% else %}
+      {{ value }}
+      {% endif %}
+    </p>
+  </td>
+</tr>

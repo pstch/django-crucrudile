@@ -1,6 +1,6 @@
 <p class="navbar-text navbar-right">
   {% if user.is_authenticated %}
-  Logged in as <a href="#" class="label label-warning">{{ user.username }}</a>
+  <a href="#" class="label label-warning">{{ user.username }}</a>
   <a class="btn btn-danger"
      data-toggle="modal"
      data-target="#logout-modal">

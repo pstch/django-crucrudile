@@ -1,0 +1,7 @@
+<table class="table table-details table-condensed">
+  {% if object.description %}{% include "django_pstch_helpers/detail/object_field_row.html" with field="Description" value=object.description %}{% endif %}
+  {% if object.name %}{% include "django_pstch_helpers/detail/object_field_row.html" with field="Name" value=object.name %}{% endif %}
+</table>
+{% if related and related|length > 1 %}
+{% include "django_pstch_helpers/delete/related.html" with related %}
+{% endif %}

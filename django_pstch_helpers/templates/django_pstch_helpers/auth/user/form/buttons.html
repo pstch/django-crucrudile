@@ -1,0 +1,9 @@
+<div class="pull-right btn-group">
+  {% if object %}
+  <a class="btn btn-danger" href="{% url delete_url object.id %}">
+    <i class="glyphicon glyphicon-remove"></i> Remove
+  </a>
+  {% endif %}
+  <a class="btn btn-info"
+     href="{% url list_url %}">User list</a>
+</div>
