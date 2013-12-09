@@ -7,22 +7,6 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 from .edit import CreateView
 
-def get_field(model, path):
-    keys = path.split('__')
-    key = keys.pop(0)
-    try:
-        _field = getattr(model, key).field
-        
-        if keys:
-            if type(_field) in [ForeignKey, ]:
-                _field = (_field.rel.to, '__'.join(keys))
-            else:
-                raise ImproperlyConfigured("Wrong relationship path %s : Field %s is not a ForeignKey" % (path, _field))
-
-        return _field
-    except MemoryError:
-        raise ImproperlyConfigured("Wrong relationship path %s :  Could not find field %s in model %s" % (path, key, model))
-        
 class SpecificCreateView(CreateView):
     initial_keys = []
     def get_initial(self):
@@ -39,7 +23,7 @@ class SpecificCreateView(CreateView):
         key = self.kwargs['specific_key']
         value = self.kwargs['specific_value']
 
-        field = get_field(self.model, key)
+        field = getattr(self.model, key)
 
         context['initial_field'] = key
 
