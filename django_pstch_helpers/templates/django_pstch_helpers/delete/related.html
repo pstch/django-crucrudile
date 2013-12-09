@@ -1,5 +1,5 @@
 {% load render %}
-{% with count=related.count %}
+{% with count=related|length %}
 <p>The {{ count }} following object{{ count|pluralize}} {% if related_not_shown %}(+ {{ related_not_shown }} not shown)) {% endif %} are related and <strong>will be deleted or altered</strong> if you proceed.</p>
 <table class="table table-details table-condensed table-hover deletion-related-table">
   <thead>
