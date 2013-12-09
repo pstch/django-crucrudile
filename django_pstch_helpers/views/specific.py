@@ -24,7 +24,7 @@ class SpecificCreateView(CreateView):
         
         if key in self.initial_keys:
             value = self.kwargs['specific_value']
-            field = getattr(self.model, key)
+            field = getattr(self.model, key).field
             context['initial_field'] = key
 
             if type(field) in [ForeignKey, ]:
