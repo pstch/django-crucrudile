@@ -42,8 +42,16 @@ class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DeleteView):
         collector = Collector(using='default')
         collector.collect([self.object,])
         
-        context['related'] = collector.instances_with_model()
+        related = collector.instances_with_model()
+        count = related.count()
 
+        if count > 50:
+            context['related'] = related[:50]
+            context['related_not_shown'] = count - 50
+        else:
+            context['related'] = related
+            
+        
         return context
 
     def delete(self, request, *args, **kwargs):
