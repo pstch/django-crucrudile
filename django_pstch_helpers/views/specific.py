@@ -19,7 +19,7 @@ def get_field(model, path):
                 return get_field(_field.rel.to, '__'.join(keys))
             else:
                 raise ImproperlyConfigured("Wrong relationship path %s : Field %s is not a ForeignKey" % (path, _field))
-    except AttributeError:
+    except ImproperlyConfigured:
         raise ImproperlyConfigured("Wrong relationship path %s :  Could not find field %s in model %s" % (path, key, model))
         
 class SpecificCreateView(CreateView):
