@@ -11,14 +11,15 @@ def get_field(model, path):
     keys = path.split('__')
     key = keys.pop(0)
     try:
-        if not keys:
-            return getattr(model, key)
-        else:
-            _field = getattr(model, key)
+        _field = getattr(model, key)
+        
+        if keys:
             if type(_field) in [ForeignKey, ]:
-                return get_field(_field.rel.to, '__'.join(keys))
+                _field = (_field.rel.to, '__'.join(keys))
             else:
                 raise ImproperlyConfigured("Wrong relationship path %s : Field %s is not a ForeignKey" % (path, _field))
+
+        return _field
     except MemoryError:
         raise ImproperlyConfigured("Wrong relationship path %s :  Could not find field %s in model %s" % (path, key, model))
         
