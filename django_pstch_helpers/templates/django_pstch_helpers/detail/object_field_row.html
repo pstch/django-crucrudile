@@ -2,7 +2,7 @@
 
 <tr>
   <td>
-    <p class="{{ key_class|default:'text-info' }}">
+    <p class="{{ key_class }}">
       {% if strong %}
       <strong>
 	{{ field }}
@@ -13,7 +13,7 @@
     </p>
   </td>
   <td>
-    <p class="{{ key_class }}">
+    <p class="{{ value_class }}">
       {% if to_render %}
       {% render value %}
       {% else %}
