@@ -21,22 +21,19 @@ class SpecificCreateView(CreateView):
         context = super(SpecificCreateView, self).get_context_data(*args, **kwargs)
 
         key = self.kwargs['specific_key']
-        value = self.kwargs['specific_value']
+        
+        if key in self.initial_keys:
+            value = self.kwargs['specific_value']
+            field = getattr(self.model, key)
+            context['initial_field'] = key
 
-        field = getattr(self.model, key)
-
-        context['initial_field'] = key
-
-        if type(field) in [ForeignKey, ]:
-
-            model = field.rel.to
-
-            context['initial_field_model'] = model
-
-            context['initial_value'] = get_object_or_404(model,
-                                                          pk = value)
-        else:
-            context['initial_value'] = value
+            if type(field) in [ForeignKey, ]:
+                model = field.rel.to
+                context['initial_field_model'] = model
+                context['initial_value'] = get_object_or_404(model,
+                                                             pk = value)
+            else:
+                context['initial_value'] = value
 
         return context
 
