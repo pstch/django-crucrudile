@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load render %}
 
 <tr>
@@ -13,7 +14,7 @@
     </p>
   </td>
   <td>
-    <p class="{{ value_class }}">
+    <p class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}>
       {% if to_render %}
       {% render value %}
       {% else %}
