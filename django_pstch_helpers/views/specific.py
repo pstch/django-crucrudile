@@ -14,7 +14,7 @@ def get_field(model, path):
         if not keys:
             return getattr(model, key)
         else:
-            _field = getattr(model, keys.pop(0))
+            _field = getattr(model, key)
             if type(_field) in [ForeignKey, ]:
                 return get_field(_field.rel.to, '__'.join(keys))
             else:
