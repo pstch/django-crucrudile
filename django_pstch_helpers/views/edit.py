@@ -32,6 +32,7 @@ class UpdateView(AuthMixin, ModelInfoMixin, RedirectMixin, UpdateView):
         return response
 
 class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DeleteView):
+    collector_limit = 50
     def get_template_names(self):
         names = super(DeleteView, self).get_template_names()
         names.append("%s/object_delete.html" % self.model._meta.app_label)
@@ -43,14 +44,16 @@ class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DeleteView):
         collector.collect([self.object,])
         
         related = collector.instances_with_model()
-        count = related.count()
+        context['related'] = []
+        context['related_not_shown'] = 0
 
-        if count > 50:
-            context['related'] = related[:50]
-            context['related_not_shown'] = count - 50
-        else:
-            context['related'] = related
-            
+        i = 0
+        for model, instance in related:
+            if i < self.collector_limit:
+                context['related'].append((model, instance))
+            else:
+                context['related_not_shown'] += 1
+            i += 1
         
         return context
 
