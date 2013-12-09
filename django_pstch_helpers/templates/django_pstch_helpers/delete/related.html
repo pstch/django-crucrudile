@@ -1,6 +1,6 @@
 {% load render %}
 {% with count=related|length %}
-<p>The {{ count }} following object{{ count|pluralize}} {% if related_not_shown %}(+ {{ related_not_shown }} not shown)) {% endif %} are related and <strong>will be deleted or altered</strong> if you proceed.</p>
+<p>The {{ count }} following object{{ count|pluralize}} {% if related_not_shown %}<strong>(+ {{ related_not_shown }} not shown)</strong> {% endif %} are related and <strong>will be deleted or altered</strong> if you proceed.</p>
 <table class="table table-details table-condensed table-hover deletion-related-table">
   <thead>
     <tr>
@@ -14,18 +14,24 @@
   </thead>
   <tbody>
     {% for model, instance in related %}
-      <tr>
-	<td>
-	  <a class="label label-{{ model.LABEL_CLASS|default:"info" }}" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
-	    {{ model.get_label|capfirst }}
-	  </a>
-	</td>
-	<td>
-	  {% render instance %}
-	  {% if instance == object %}<span class="pull-left label label-warning">(current object)</span>{% endif %}
-	</td>
-      </tr>
+    <tr>
+      <td>
+	<a class="label label-{{ model.LABEL_CLASS|default:"info" }}" {% if model.get_list_url %}href="{{ model.get_list_url }}"{% endif %}>
+	  {{ model.get_label|capfirst }}
+	</a>
+      </td>
+      <td>
+	{% render instance %}
+	{% if instance == object %}<span class="pull-left label label-warning">(current object)</span>{% endif %}
+      </td>
+    </tr>
     {% endfor %}
+    {% if related_not_shown %}
+    <tr>
+      <td colspan="2">
+	<center><strong>...</strong></center>
+      </td>
+    </tr>
   </tbody>
 </table>
 {% endwith %}
