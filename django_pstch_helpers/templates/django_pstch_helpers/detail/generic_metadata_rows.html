@@ -1,4 +1,4 @@
 {% load humanize %}
 
-{% include "django_pstch_helpers/detail/object_field_row.html" with field="Created" value=object.created|naturalday title=object.created strong=1 %}
-{% include "django_pstch_helpers/detail/object_field_row.html" with field="Last modification" value=object.modified|naturalday title=object.modified strong=1 %}
+{% include "django_pstch_helpers/detail/object_field_row.html" with field="Created" value=object.created|naturalday title=object.created %}
+{% include "django_pstch_helpers/detail/object_field_row.html" with field="Last modification" value=object.modified|naturalday title=object.modified %}
