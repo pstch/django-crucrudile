@@ -1,6 +1,6 @@
 {% load render %}
 
-<p>These objects are related and <strong>will be deleted or altered</strong> if you proceed.</p>
+<p>The {{ related|length }} following object{{ related|pluralize}} are related and <strong>will be deleted or altered</strong> if you proceed.</p>
 <table class="table table-details table-condensed table-hover deletion-related-table">
   <thead>
     <tr>
