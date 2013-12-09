@@ -11,7 +11,7 @@ def get_field(model, path):
     keys = path.split('__')
     key = keys.pop(0)
     try:
-        _field = getattr(model, key)
+        _field = getattr(model, key).field
         
         if keys:
             if type(_field) in [ForeignKey, ]:
