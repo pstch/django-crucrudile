@@ -147,7 +147,7 @@ class RedirectMixin(ModelFormMixin):
         # Hard-coded fallback: try to get object detail view, or model list view
         try:
             try:
-                return self.get_detail_url()
+                return self.object.get_detail_url()
             except:
                 return self.object.__class__.get_list_url()
         except AttributeError:
