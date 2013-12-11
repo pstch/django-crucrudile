@@ -1,8 +1,7 @@
 {% load render %}
 
 <tr>
-  <td>
-    <p class="{{ key_class }}">
+  <td class="{{ key_class }}">
       {% if strong %}
       <strong>
 	{{ field }}
@@ -10,15 +9,12 @@
       {% else %}
       {{ field }}
       {% endif %}
-    </p>
   </td>
-  <td>
-    <p class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}>
+  <td class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}>
       {% if to_render %}
       {% render value %}
       {% else %}
       {{ value }}
       {% endif %}
-    </p>
   </td>
 </tr>
