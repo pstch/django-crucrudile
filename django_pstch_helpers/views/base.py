@@ -13,13 +13,13 @@ class TemplateView(AuthMixin, TemplateView):
 class ListView(AuthMixin, ModelInfoMixin, SortableListView, SelectRelatedMixin):
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
-        names.append("%s/object_%s.html" % (self.model._meta.app_label, self.template_name_suffix)
+        names.append("%s/object_%s.html" % (self.model._meta.app_label, self.template_name_suffix))
         return names
 
 class DetailView(AuthMixin, ModelInfoMixin, DetailView):
     def get_template_names(self):
         names = super(DetailView, self).get_template_names()
-        names.append("%s/object_%s.html" % (self.model._meta.app_label, self.template_name_suffix)
+        names.append("%s/object_%s.html" % (self.model._meta.app_label, self.template_name_suffix))
         return names
 
 class HomeView(TemplateView):
