@@ -10,7 +10,8 @@
       {{ field }}
       {% endif %}
   </td>
-  <td class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}>
+  <td class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}
+      {% if data_value %}data-value="{{ value}}"{% endif %}>
       {% if to_render %}
       {% render value %}
       {% else %}
