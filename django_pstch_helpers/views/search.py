@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
+from django.core.exceptions import ImproperlyConfigured
 
 from django.shortcuts import render_to_response
 
@@ -10,13 +11,20 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.views.generic.list import MultipleObjectMixin
 
-from haystack.forms import ModelSearchForm, FacetedSearchForm
-from haystack.query import EmptySearchQuerySet, RelatedSearchQuerySet
+haystack_exception = None
+
+try:
+    from haystack.forms import ModelSearchForm
+    from haystack.query import EmptySearchQuerySet
+except Exception as e:
+    EmptySearchQuerySet = lambda : None
+    ModelSearchForm = None
+    haystack_exception = e
+
 
 from .mixins import AuthMixin, ModelInfoMixin
 
 RESULTS_PER_PAGE = getattr(settings, 'HAYSTACK_SEARCH_RESULTS_PER_PAGE', 20)
-
 
 class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
     template_name = 'search/search.html'
@@ -28,6 +36,12 @@ class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
     load_all = True
     searchqueryset = None
     form_class = ModelSearchForm
+
+    def __init__(self, **kwargs):
+        if haystack_exception:
+            return super(SearchView, self).__init__(**kwargs)
+        else:
+            raise haystack_exception
     
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
