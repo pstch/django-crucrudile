@@ -11,7 +11,7 @@ class TemplateView(AuthMixin, TemplateView):
     pass
 
 class ListView(AuthMixin, ModelInfoMixin, SortableListView, SelectRelatedMixin):
-    template_name_suffix = ""
+    template_name_suffix = 'list'
     def get_template_names(self):
         names = super(ListView, self).get_template_names()
         suffix = ('_%s' % self.template_name_suffix) \
@@ -21,6 +21,7 @@ class ListView(AuthMixin, ModelInfoMixin, SortableListView, SelectRelatedMixin):
         return names
 
 class DetailView(AuthMixin, ModelInfoMixin, DetailView):
+    template_name_suffix = 'detail'
     def get_template_names(self):
         names = super(DetailView, self).get_template_names()
         suffix = ('_%s' % self.template_name_suffix) \
