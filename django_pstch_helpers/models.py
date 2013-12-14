@@ -35,10 +35,12 @@ class ModelInfo(models.Model):
                        None)
 
 class AutoPatterns(ModelInfo):
-    URL_NAME = None
-    URL_VIEWS = BASE_VIEWS
-    URL_VIEW_ARGS = {}
-    URL_NAMESPACES = []
+    URL_NAME = None # url name (and default prefix, unless URL_PREFIX is set)
+    URL_PREFIX = None # in django-generic-patterns, if None, URL_NAME will be used
+    URL_VIEWS = BASE_VIEWS # url views
+    URL_VIEW_ARGS = {} # url args
+    URL_NAMESPACES = [] # used to set url namespaces
+    URL_ROOT_NAMESPACE = [] # root NS
     @classmethod
     def get_url(self, action, args = None):
         _namespaces = list(getattr(self, 'URL_ROOT_NAMESPACE', []))
