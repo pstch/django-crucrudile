@@ -148,10 +148,10 @@ class RedirectMixin(ModelFormMixin):
         try:
             try:
                 url = self.object.get_detail_url()
-                assert url not None
+                assert url
             except:
                 url = self.object.__class__.get_list_url()
-                assert url not None
+                assert url
             return url
         except:
             pass
