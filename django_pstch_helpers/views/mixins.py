@@ -148,12 +148,14 @@ class RedirectMixin(ModelFormMixin):
         try:
             try:
                 url = self.object.get_detail_url()
+                assert url not None
             except:
                 url = self.object.__class__.get_list_url()
-            assert url not None
+                assert url not None
             return url
         except:
             pass
 
         raise ImproperlyConfigured("No redirect tokens were matched against the form data, no fallback token was found, success_url was not defined, could not get object list url : can't find where to redirect to")
+
 
