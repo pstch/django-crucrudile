@@ -14,6 +14,8 @@
       {% if data_value %}data-value="{{ value}}"{% endif %}>
       {% if to_render %}
       {% render value %}
+      {% elif to_code %}
+      <code>{{ value }}</code>
       {% else %}
       {{ value }}
       {% endif %}
