@@ -15,9 +15,17 @@
       {% if to_render %}
       {% render value %}
       {% elif to_code %}
+      {% if safe %}
+      <code>{{ value|safe }}</code>
+      {% else %}
       <code>{{ value }}</code>
+      {% endif %}
+      {% else %}
+      {% if safe %}
+      {{ value|safe }}
       {% else %}
       {{ value }}
+      {% endif %}
       {% endif %}
   </td>
 </tr>
