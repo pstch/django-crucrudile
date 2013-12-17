@@ -37,6 +37,10 @@ class DeleteView(AuthMixin, ModelInfoMixin, RedirectMixin, DeleteView):
         names = super(DeleteView, self).get_template_names()
         names.append("%s/object_delete.html" % self.model._meta.app_label)
         return names
+    def redirect_fallback(self):
+        url = self.object.__class__.get_list_url()
+        assert url
+        return url
     def get_context_data(self, *args, **kwargs):
         context = super(DeleteView, self).get_context_data(*args, **kwargs)
 

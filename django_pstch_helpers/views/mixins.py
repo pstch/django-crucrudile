@@ -104,6 +104,16 @@ class RedirectMixin(ModelFormMixin):
         # Give form data to get_success_url
         return HttpResponseRedirect(self.get_success_url(form.data))
 
+    def redirect_fallback(self):
+        try:
+            url = self.object.get_detail_url()
+            assert url
+        except:
+            url = self.object.__class__.get_list_url()
+            assert url
+        return url
+
+        
     def get_success_url(self, data = None, debug = True):
         def parse_redirect(destination):
             if isinstance(destination, str):
@@ -143,18 +153,12 @@ class RedirectMixin(ModelFormMixin):
             return parse_redirect(self.success_url)
 
             
-        # Hard-coded fallback: try to get object detail view, or model list view
+        # Fallback
         try:
-            try:
-                url = self.object.get_detail_url()
-                assert url
-            except:
-                url = self.object.__class__.get_list_url()
-                assert url
-            return url
+            self.redirect_fallback()
         except:
             pass
-
+            
         raise ImproperlyConfigured("No redirect tokens were matched against the form data, no fallback token was found, success_url was not defined, could not get object list url : can't find where to redirect to")
 
 
