@@ -39,9 +39,9 @@ class SearchView(AuthMixin, MultipleObjectMixin, ModelInfoMixin, FormView):
 
     def __init__(self, **kwargs):
         if haystack_exception:
-            return super(SearchView, self).__init__(**kwargs)
-        else:
             raise haystack_exception
+        else:
+            return super(SearchView, self).__init__(**kwargs)
     
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
