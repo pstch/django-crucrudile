@@ -11,6 +11,7 @@
       {% endif %}
   </td>
   <td class="{{ value_class }}" {% if title %}title="{{ title|escape }}"{% endif %}
+      id="{{ value_id }}"
       {% if data_value %}data-value="{{ value}}"{% endif %}>
       {% if to_render %}
       {% render value %}
