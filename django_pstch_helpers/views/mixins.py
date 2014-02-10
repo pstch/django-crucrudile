@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import resolve
 from django.shortcuts import render
 from django.conf import settings
 
