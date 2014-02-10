@@ -32,25 +32,24 @@ class AuthMixin(View):
     required_login = True
     required_permissions = (None,)
 
-    with getattr(settings,
-                 'AUTH_EXPAND_PATHS_WITH_APP',
-                 False) as expand_paths:
-        if not expand_paths:
-            login_template = getattr(settings,
-                                     'AUTH_LOGIN_REQUIRED_TEMPLATE',
-                                     'auth/login_required.html')
-            perms_template = getattr(settings,
-                                     'AUTH_MISSING_PERM_TEMPLATE',
-                                     'auth/permissions_required.html')
-        else:
-            with getattr(settings,
-                         'AUTH_LOG_REQ_EXPAND_STRING',
-                         '%s/auth/login_required.html') as string:
-                login_template = lambda v, r: string % resolve(r.path).app_name
-            with getattr(settings,
-                         'AUTH_PERM_REQ_EXPAND_STRING',
-                         '%s/auth/permissions_required.html') as string:
-                perms_template = lambda v, r: string % resolve(r.path).app_name
+    if not getattr(settings,
+                   'AUTH_EXPAND_PATHS_WITH_APP',
+                   False):
+        login_template = getattr(settings,
+                                 'AUTH_LOGIN_REQUIRED_TEMPLATE',
+                                 'auth/login_required.html')
+        perms_template = getattr(settings,
+                                 'AUTH_MISSING_PERM_TEMPLATE',
+                                 'auth/permissions_required.html')
+    else:
+        login_template = lambda v, r: getattr(
+            settings,
+            'AUTH_LOG_REQ_EXPAND_STRING',
+            '%s/auth/login_required.html') % resolve(r.path).app_name
+        perms_template = lambda v, r: getattr(
+            settings,
+            'AUTH_PERM_REQ_EXPAND_STRING',
+            '%s/auth/permissions_required.html') % resolve(r.path).app_name
 
     def dispatch(self, request, *args, **kwargs):
         with login_template as c:
