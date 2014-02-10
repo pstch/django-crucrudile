@@ -13,7 +13,14 @@ class AuthMixin(View):
     """
     Use this mixin to enforce 'required login' and 'required permissions' attributes.
 
-    'login_template' and 'perms_template' may also be callables that will be evaluated at the first request.
+    'login_template', 'perms_template' and their equivalent in settings.py (AUTH_LOGIN_REQUIRED_TEMPLATE and AUTH_MISSING_PERM_TEMPLATE) may also be callables that will be evaluated at the first request, with the view and the request as arguments.
+    settings.py:
+    AUTH_LOGIN_REQUIRED_TEMPLATE -- Template used to render the 'login required' page
+    AUTH_MISSING_PERM_TEMPLATE -- Template used to render the 'missing permissions' page
+
+    AUTH_EXPAND_PATHS_WITH_APP -- Boolean value, use true to make AuthMixin expand the default paths to include the application name.
+    AUTH_LOG_REQ_EXPAND_STRING -- String used to expand the 'login_required' template. Defaults to : '%s/auth/login_required.html'
+    AUTH_PERM_REQ_EXPAND_STRING -- String used to expand the 'permissions_required' template. Defaults to : '%s/auth/permissions_required.html'
 
     Arguments:
     required_login -- Boolean, if True, for anonymous users, login form will be rendered instead of page
@@ -25,23 +32,37 @@ class AuthMixin(View):
     required_login = True
     required_permissions = (None,)
 
-    login_template = getattr(settings,
-                             'AUTH_LOGIN_REQUIRED_TEMPLATE',
-                             'auth/login_required.html')
-    perms_template = getattr(settings,
-                             'AUTH_MISSING_PERM_TEMPLATE',
-                             'auth/permissions_required.html')
+    with getattr(settings,
+                 'AUTH_EXPAND_PATHS_WITH_APP',
+                 False) as expand_paths:
+        if not expand_paths:
+            login_template = getattr(settings,
+                                     'AUTH_LOGIN_REQUIRED_TEMPLATE',
+                                     'auth/login_required.html')
+            perms_template = getattr(settings,
+                                     'AUTH_MISSING_PERM_TEMPLATE',
+                                     'auth/permissions_required.html')
+        else:
+            with getattr(settings,
+                         'AUTH_LOG_REQ_EXPAND_STRING',
+                         '%s/auth/login_required.html') as string:
+                login_template = lambda v, r: string % resolve(r.path).app_name
+                with getattr(settings,
+                         'AUTH_PERM_REQ_EXPAND_STRING',
+                         '%s/auth/permissions_required.html') as string:
+
+                perms_template = lambda v, r: string % resolve(r.path).app_name
 
     def dispatch(self, request, *args, **kwargs):
         with login_template as c:
             if callable(c):
-                c = c()
+                c = c(self, request)
                 if callable(c):
                     raise ImproperlyConfigured(
                         "Calling AUTH_LOGIN_REQUIRED_TEMPLATE returned a callable.")
         with perms_template as c:
             if callable(c):
-                c = c()
+                c = c(self, request)
                 if callable(c):
                     raise ImproperlyConfigured(
                         "Calling AUTH_MISSING_PERM_TEMPLATE returned a callable.")
