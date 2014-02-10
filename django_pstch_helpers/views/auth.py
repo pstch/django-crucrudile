@@ -1,4 +1,5 @@
 import datetime, time
+from django.shortcuts import render
 
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -18,7 +19,9 @@ class LoginView(View):
             return HttpResponseRedirect(reverse(self.fallback_redirect_to))
 
     def get(self, request):
-        return HttpResponseRedirect(reverse(self.fallback_redirect_to))
+        return render(request,
+                      self.template_name,
+                      {'login_form_present' : True})
 
     def post(self, request):
         time.sleep(1)
@@ -53,4 +56,3 @@ class LogoutView(View):
             return HttpResponseRedirect(reverse(self.redirect_to))
         else:
             return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))
-
