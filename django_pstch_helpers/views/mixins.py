@@ -47,10 +47,9 @@ class AuthMixin(View):
                          'AUTH_LOG_REQ_EXPAND_STRING',
                          '%s/auth/login_required.html') as string:
                 login_template = lambda v, r: string % resolve(r.path).app_name
-                with getattr(settings,
+            with getattr(settings,
                          'AUTH_PERM_REQ_EXPAND_STRING',
                          '%s/auth/permissions_required.html') as string:
-
                 perms_template = lambda v, r: string % resolve(r.path).app_name
 
     def dispatch(self, request, *args, **kwargs):
