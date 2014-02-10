@@ -52,18 +52,16 @@ class AuthMixin(View):
             '%s/auth/permissions_required.html') % resolve(r.path).app_name
 
     def dispatch(self, request, *args, **kwargs):
-        with login_template as c:
-            if callable(c):
-                c = c(self, request)
-                if callable(c):
-                    raise ImproperlyConfigured(
-                        "Calling AUTH_LOGIN_REQUIRED_TEMPLATE returned a callable.")
-        with perms_template as c:
-            if callable(c):
-                c = c(self, request)
-                if callable(c):
-                    raise ImproperlyConfigured(
-                        "Calling AUTH_MISSING_PERM_TEMPLATE returned a callable.")
+        if callable(self.login_template):
+            self.login_template = self.login_template(self, request)
+            if callable(self.login_template):
+                raise ImproperlyConfigured(
+                    "Calling AUTH_LOGIN_REQUIRED_TEMPLATE returned a callable.")
+        if callable(self.perms_template):
+            self.perms_template = self.perms_template(self, request)
+            if callable(self.perms_template):
+                raise ImproperlyConfigured(
+                    "Calling AUTH_MISSING_PERM_TEMPLATE returned a callable.")
 
         if self.required_login and not request.user.is_authenticated():
             # User not logged in, login required
