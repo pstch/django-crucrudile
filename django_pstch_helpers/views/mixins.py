@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
+from django.conf import settings
 
 from django.views.generic import View
 
@@ -11,22 +12,44 @@ from django.views.generic.edit import ModelFormMixin
 class AuthMixin(View):
     """
     Use this mixin to enforce 'required login' and 'required permissions' attributes.
-    
+
+    'login_template' and 'perms_template' may also be callables that will be evaluated at the first request.
+
     Arguments:
     required_login -- Boolean, if True, for anonymous users, login form will be rendered instead of page
     required_permissions -- List if permissions, if missing permission, display error message instead of page
+
+    login_template -- Template used to render the 'login required' page
+    perms_template -- Template used to render the 'missing permissions' page
     """
     required_login = True
     required_permissions = (None,)
 
-    login_template = "auth/login_required.html"
-    perms_template = "auth/permissions_required.html"
+    login_template = getattr(settings,
+                             'AUTH_LOGIN_REQUIRED_TEMPLATE',
+                             'auth/login_required.html')
+    perms_template = getattr(settings,
+                             'AUTH_MISSING_PERM_TEMPLATE',
+                             'auth/permissions_required.html')
 
     def dispatch(self, request, *args, **kwargs):
+        with login_template as c:
+            if callable(c):
+                c = c()
+                if callable(c):
+                    raise ImproperlyConfigured(
+                        "Calling AUTH_LOGIN_REQUIRED_TEMPLATE returned a callable.")
+        with perms_template as c:
+            if callable(c):
+                c = c()
+                if callable(c):
+                    raise ImproperlyConfigured(
+                        "Calling AUTH_MISSING_PERM_TEMPLATE returned a callable.")
+
         if self.required_login and not request.user.is_authenticated():
             # User not logged in, login required
             return render(request,
-                          self.login_template, 
+                          self.login_template,
                           {'next' : request.get_full_path(),
                            'login_form_present' : True})
 
@@ -35,7 +58,7 @@ class AuthMixin(View):
             return render(request,
                           self.perms_template,
                           {'required_permissions' : self.required_permissions })
-            
+
         # Everything okay, process View
         return super(AuthMixin, self).dispatch(request, *args, **kwargs)
 
@@ -67,7 +90,7 @@ class SelectRelatedMixin(MultipleObjectMixin):
             queryset = manager.select_related(*self.select_related).all()
         else:
             queryset = manager.all()
-            
+
         return queryset
 
 
@@ -81,7 +104,7 @@ class ExtraContextMixin(ContextMixin):
             context.update(self.extra_context)
         return context
 
-        
+
 class ModelInfoMixin(ExtraContextMixin, ContextMixin):
     """Adds the current model to the template context"""
     def get_context_data(self, **kwargs):
@@ -113,7 +136,7 @@ class RedirectMixin(ModelFormMixin):
             assert url
         return url
 
-        
+
     def get_success_url(self, data = None, debug = True):
         def parse_redirect(destination):
             if isinstance(destination, str):
@@ -137,7 +160,7 @@ class RedirectMixin(ModelFormMixin):
 
             # We try to use the fallback token
             if None in self.redirects:
-                return parse_redirect(self.redirects[None]) 
+                return parse_redirect(self.redirects[None])
 
         # if at this point we have not returned, it means that :
         #  - no redirects were defined
@@ -152,13 +175,11 @@ class RedirectMixin(ModelFormMixin):
         if self.success_url:
             return parse_redirect(self.success_url)
 
-            
+
         # Fallback
         try:
             return self.redirect_fallback()
         except:
             pass
-            
+
         raise ImproperlyConfigured("No redirect tokens were matched against the form data, no fallback token was found, success_url was not defined, could not get object list url : can't find where to redirect to")
-
-
