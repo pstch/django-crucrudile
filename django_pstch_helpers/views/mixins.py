@@ -53,12 +53,12 @@ class AuthMixin(View):
 
     def dispatch(self, request, *args, **kwargs):
         if callable(self.login_template):
-            self.login_template = self.login_template(self, request)
+            self.login_template = self.login_template(request)
             if callable(self.login_template):
                 raise ImproperlyConfigured(
                     "Calling AUTH_LOGIN_REQUIRED_TEMPLATE returned a callable.")
         if callable(self.perms_template):
-            self.perms_template = self.perms_template(self, request)
+            self.perms_template = self.perms_template(request)
             if callable(self.perms_template):
                 raise ImproperlyConfigured(
                     "Calling AUTH_MISSING_PERM_TEMPLATE returned a callable.")
