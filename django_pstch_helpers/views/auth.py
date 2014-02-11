@@ -13,10 +13,10 @@ class LoginView(View):
     template_name = "auth/login_required.html"
 
     def redirect(self, request):
+        raise Exception("test")
         if hasattr(request.POST,'next'):
             return HttpResponseRedirect(request.POST['next'])
         else:
-            raise Exception("test")
             return HttpResponseRedirect(reverse(self.fallback_redirect_to))
 
     def get(self, request):
