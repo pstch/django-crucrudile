@@ -28,6 +28,8 @@ class DetailView(AuthMixin, ModelInfoMixin, DetailView):
         names.append("%s/object%s.html" % (self.model._meta.app_label, suffix))
         return names
 
-class HomeView(TemplateView):
+class FormView(AuthMixin, FormView):
     pass
 
+class HomeView(TemplateView):
+    pass
