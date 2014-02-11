@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 
 from django.views.generic import View, TemplateView, ListView, DetailView
+from django.views.generic.edit import FormView
 
 from sortable_listview import SortableListView
 
