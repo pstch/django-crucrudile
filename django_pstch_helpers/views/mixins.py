@@ -89,12 +89,8 @@ class SelectRelatedMixin(MultipleObjectMixin):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        if self.queryset is not None:
-            queryset = self.queryset
-            if isinstance(queryset, QuerySet):
-                manager = queryset
-        elif self.model is not None:
-            manager = self.model._default_manager
+        try:
+            manager = self.queryset or self.model._default_manager
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -146,13 +142,7 @@ class RedirectMixin(ModelFormMixin):
         return HttpResponseRedirect(self.get_success_url(form.data))
 
     def redirect_fallback(self):
-        try:
-            url = self.object.get_detail_url()
-            assert url
-        except:
-            url = self.object.__class__.get_list_url()
-            assert url
-        return url
+        return self.object.get_detail_url() or self.object.__class__.get_list_url()
 
 
     def get_success_url(self, data = None, debug = True):
