@@ -91,7 +91,7 @@ class SelectRelatedMixin(MultipleObjectMixin):
         """
         try:
             manager = self.queryset or self.model._default_manager
-        else:
+        except AttributeError:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
                 "%(cls)s.model, %(cls)s.queryset, or override "
