@@ -1,10 +1,8 @@
 from .base import *
 from .edit import *
-from .filtered import *
-from .multiple import *
+from .delete import *
 
 __all__ = [
-    'TemplateView', 'ListView', 'DetailView', 'FormView', 'HomeView',
-    'FilteredListView', 'MultipleListView',
+    'View', 'TemplateView', 'ListView', 'DetailView', 'FormView', 'HomeView',
     'CreateView','UpdateView','DeleteView',
 ]

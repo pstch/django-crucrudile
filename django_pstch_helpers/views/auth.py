@@ -8,9 +8,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.core.urlresolvers import reverse
 
 
-class LoginView(View):
+class LoginView(TemplateAppPrefixMixin, View):
     fallback_redirect_to = "home"
-    template_name = "auth/login_required.html"
+    template_name_no_prefix = "auth/login_required.html"
 
     def redirect(self, request):
         if hasattr(request.POST,'next'):
@@ -20,11 +20,10 @@ class LoginView(View):
 
     def get(self, request):
         return render(request,
-                      self.template_name,
+                      self.get_template_names(),
                       {'login_form_present' : True})
 
     def post(self, request):
-        time.sleep(1)
         user = authenticate(username = request.POST['username'], password = request.POST['password'])
         if user is not None:
             if user.is_active:
@@ -38,7 +37,6 @@ class LoginView(View):
                 return self.redirect(request)
         else:
             # invalid login
-            time.sleep(1)
             messages.error(request, "Invalid credentials. Please try again.")
             return self.redirect(request)
 
@@ -50,9 +48,7 @@ class LogoutView(View):
         logout(request)
         messages.success(request, "You have been logged out.")
 
-        time.sleep(1)
-
         if self.redirect_to:
             return HttpResponseRedirect(reverse(self.redirect_to))
         else:
-            return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))
+            return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))nn
