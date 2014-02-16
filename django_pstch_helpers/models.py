@@ -35,6 +35,16 @@ class ModelInfo(models.Model):
                        None)
 
 class AutoPatterns(ModelInfo):
+    def get_url_name(self):
+        return self.get_model_name()
+    def get_url_prefix(self):
+        return None
+    def get_views(self):
+        return {}
+    def get_view_args(self):
+        return {}
+
+class AutoPatterns(ModelInfo):
     URL_NAME = None # url name (and default prefix, unless URL_PREFIX is set)
     URL_PREFIX = None # in django-generic-patterns, if None, URL_NAME will be used
     URL_VIEWS = BASE_VIEWS # url views
@@ -60,7 +70,7 @@ class AutoPatterns(ModelInfo):
             return reverse(_name, args = args)
         except:
             return None
-                                        
+
     def get_absolute_url(self):
         return self.get_url("detail", args = [self.id,])
     def get_edit_url(self):
