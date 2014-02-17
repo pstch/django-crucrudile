@@ -19,24 +19,31 @@ class AuthMixin(View):
     login_template -- Template used to render the 'login required' page
     perms_template -- Template used to render the 'missing permissions' page
 
-    login_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin
-    perms_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin
+    login_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin. Is only used if login_template is None.
+    perms_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin. Is only used if perms_template is None.
     """
     required_login = True
     required_permissions = (None,)
+
+    login_template = None
+    perms_template = None
 
     login_template_no_prefix = 'auth/login_required.html')
     perms_template_no_prefix = 'auth/permissions_required.html')
 
     def expand_template_name(self, no_prefix_name):
         prefix_mixin = TemplateAppPrefixMixin()
+        # we use this to have TemplateAppPrefixMixin use get_template_names() for us, which will be given the unprefixed template path as argument, and will return the prefixed template path.
+        # get_template_names() will get the prefix from the settings, in PER_APP_TEMPLATE_PREFIX["<application name>"]. If this is not set, or if the application name is not present in the keys, the application name will be used as prefix.
+        # the application name is urlresolvers.resolve(path).app_name
         prefix_mixin.request = self.request
+        prefix_mixin.template_name =
         prefix_mixin.template_name_no_prefix = no_prefix_name
         return prefix_mixin.get_template_names()[0]
 
     def dispatch(self, request, *args, **kwargs):
-        login_template = self.expand_template_name(self.login_template_no_prefix)
-        perms_template = self.expand_template_name(self.perms_template_no_prefix)
+        login_template = self.login_template or self.expand_template_name(self.login_template_no_prefix)
+        perms_template = self.perms_template or self.expand_template_name(self.perms_template_no_prefix)
 
         if self.required_login and not request.user.is_authenticated():
             # User not logged in, login required
