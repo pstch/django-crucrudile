@@ -1,5 +1,5 @@
 from .base import ViewSet
-from .views import DetailView, ListView, CreateView, UpdateView
+from ..views import DetailView, ListView, CreateView, UpdateView
 
 class DetailViewSet(ViewSet):
     action = "detail"
