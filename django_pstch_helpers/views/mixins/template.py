@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from django.views.generic.base import TemplateResponseMixin
 
-class SingleObjectTemplateResponseMixin(SingleObjectTemplateResponseMixin):
+class TemplateMixin(SingleObjectTemplateResponseMixin):
     def get_template_names(self):
         """
         Return a list of template names to be used for the request. May not be
@@ -54,3 +54,5 @@ class SingleObjectTemplateResponseMixin(SingleObjectTemplateResponseMixin):
             if not names:
                 raise
         return names
+
+class TemplateMixin(SingleObj)
