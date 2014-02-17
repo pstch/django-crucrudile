@@ -15,7 +15,7 @@ setup(
     url='https://github.com/pstch/django-pstch-helpers',
     author='Hugo Geoffroy',
     author_email='hugo@pstch.net',
-    packages = find_packages(),
+    packages=find_packages(exclude=['tests']),
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',
