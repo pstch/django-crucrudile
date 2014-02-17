@@ -1,6 +1,6 @@
 from django.views.generic import View, TemplateView, ListView, DetailView, FormView
 
-from .mixins.base import BaseModelMixins
+from .mixins.base import BaseMixins
 from .mixins.related import SelectRelatedMixin
 
 
