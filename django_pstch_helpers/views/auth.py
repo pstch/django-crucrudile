@@ -51,4 +51,4 @@ class LogoutView(View):
         if self.redirect_to:
             return HttpResponseRedirect(reverse(self.redirect_to))
         else:
-            return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))nn
+            return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))
