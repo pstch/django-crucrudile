@@ -23,11 +23,6 @@ if not settings.configured:
             'tests',
         )
     })
-    # Django version lower than 1.6 need TEST_RUNNER to be set
-    if VERSION[1] < 6:
-        args.update({
-            'TEST_RUNNER': 'discover_runner.DiscoverRunner',
-        })
 
     # django-markitup args
     args.update({
