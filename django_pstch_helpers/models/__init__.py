@@ -3,6 +3,8 @@ from django.db import models
 from django_extensions.db.models import AutoSlugField # Used in UserNamed
 from markitup.fields import MarkupField # Used in UserDescribed
 
+from .mixins import ModelInfoMixin
+
 class UserNamed(ModelInfoMixin, models.Model):
     #TODO: Write tests for this class (test at least that __unicode__ is working well) using a sample model
     name = models.CharField(max_length = 128, verbose_name = "name")
