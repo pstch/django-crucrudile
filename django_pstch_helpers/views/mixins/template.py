@@ -55,4 +55,27 @@ class TemplateMixin(SingleObjectTemplateResponseMixin):
                 raise
         return names
 
-class TemplateMixin(SingleObj)
+class TemplateAppPrefixMixin():
+    """
+    This works in the same way as TemplateMixin, but is not specific to a single object. get_template_names() will prefix the template name in template_name_no_prefix if and only if template_name is not None.
+
+    get_template_names() will get the prefix from the settings, in PER_APP_TEMPLATE_PREFIX["<application name>"]. If this is not set, or if the application name is not present in the keys, the application name will be used as prefix.
+    """
+    template_name = None
+    template_name_no_prefix = None
+    join_by = '/'
+
+    def get_template_names(self):
+        if not self.template_name_no_prefix or self.template_name:
+            return self.template_name
+
+        app_name = resolve(self.request.path).app_name
+
+        app_path_part = getattr(getattr(settings,
+                                        "PER_APP_TEMPLATE_PREFIX",
+                                        {}),
+                                app_name,
+                                app_name)
+
+        return [[app_path_part, self.template_name_no_prefix].join(self.join_by)]
+
