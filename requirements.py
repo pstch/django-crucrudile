@@ -1,0 +1,1 @@
+-e git+https://github.com/pstch/django-sortable-list.git#egg=django-sortable-list
