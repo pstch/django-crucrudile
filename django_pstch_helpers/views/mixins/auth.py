@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.views.generic import View
 from django.shortcuts import render
 
-from .prefix import TemplateAppPrefixMixin
+from .template import TemplateAppPrefixMixin
 
 class AuthMixin(View):
     """
@@ -37,7 +37,7 @@ class AuthMixin(View):
         # get_template_names() will get the prefix from the settings, in PER_APP_TEMPLATE_PREFIX["<application name>"]. If this is not set, or if the application name is not present in the keys, the application name will be used as prefix.
         # the application name is urlresolvers.resolve(path).app_name
         prefix_mixin.request = self.request
-        prefix_mixin.template_name =
+        prefix_mixin.template_name = None
         prefix_mixin.template_name_no_prefix = no_prefix_name
         return prefix_mixin.get_template_names()[0]
 
