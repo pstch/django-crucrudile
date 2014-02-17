@@ -73,9 +73,9 @@ def get_model_view_args(action, view, model):
             _args = item.URL_VIEW_ARGS.get(action)
             if callable(_args):
                 _args = _args(action, view, item)
-	    if _args is None:
-		_args = {}
-            args = dict(args, 
+            if _args is None:
+                _args = {}
+            args = dict(args,
 			**_args)
 
     return args
