@@ -28,8 +28,8 @@ class AuthMixin(View):
     login_template = None
     perms_template = None
 
-    login_template_no_prefix = 'auth/login_required.html')
-    perms_template_no_prefix = 'auth/permissions_required.html')
+    login_template_no_prefix = 'auth/login_required.html'
+    perms_template_no_prefix = 'auth/permissions_required.html'
 
     def expand_template_name(self, no_prefix_name):
         prefix_mixin = TemplateAppPrefixMixin()
