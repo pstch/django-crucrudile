@@ -1,3 +1,10 @@
+def get_filter_class(filter_model, filter_class):
+    class FilterSet(filter_class):
+        lookup_type = None
+        class Meta(filter_class.Meta):
+            model = filter_model
+    return FilterSet
+
 def make_url_name(namespaces, object_url_name, action):
     """
     Joins namespaces with an action and optionally an URL name
