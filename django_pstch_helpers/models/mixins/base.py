@@ -1,48 +1,62 @@
-from ...utils import contribute_viewset_to_views
+from django.core.urlresolvers import reverse
 
-from .. import AutoPatterns
-from ...sets import DetailViewSet, ListViewSet
-
-class DetailableModelMixin(AutoPatterns):
-    def get_detail_url(self):
-        return self.get_url(DetailViewSet.action,
-                            args = [self.id,])
-    def get_absolute_url(self):
-        return self.get_detail_url()
-    def get_views(self):
-        views = super(DetailableModelMixin, self).get_views()
-        contribute_viewset_to_views(views, DetailViewSet)
-        return views
-
-class ListableModelMixin(AutoPatterns):
+class ModelInfoMixin():
+    #TODO: Write tests for this class, with a sample Model where we test each function
     @classmethod
-    def get_list_url(self):
-        return self.get_url(ListViewSet.action)
-    def get_views(self):
-        views = super(ListableModelMixin, self).get_views()
-        contribute_viewset_to_views(views, ListViewSet)
-        return views
-    def get_views_args(self):
-        args = super(ListableModelMixin, self).get_views_args()
-        args[ListViewSet.action] = args.get(ListViewSet.action) or {}
-        args[ListViewSet.action].update({
-            'select_related' : self.get_list_select_related_fields(),
-            'paginate_by' : self.get_paginate_by(),
-            'allowed_sort_fields' : self.get_sort_fields(),
-        })
-        return args
-    def get_sort_fields():
-        """
-        Override this if you want to allow sorting. Should return a dict used as argument to django-sortable-listview (see relevant specification)
-        """
-        return []
-    def get_paginate_by():
-        """
-        Override this if you want to use pagination. Should return an integer, that will be used as the value for the 'paginate_by' view keyword argument.
-        """
+    def _get_objects(self):
+        try:
+            objects = self.objects
+            return objects
+        except AttributeError:
+            raise ImproperlyConfigured("Could not find manager : \"objects\" not present on the current object. Check that ModelInfoMixin is used on a Model.")
+
+    @classmethod
+    def _get_meta(self):
+        try:
+            _meta = self._meta
+            return _meta
+        except AttributeError:
+            raise ImproperlyConfigured("Could not find Meta class : \"_meta\" not present on the current object. Check that ModelInfoMixin is used on a Model.")
+
+    @classmethod
+    def get_verbose_name(self):
+        _meta = self._get_meta()
+        return _meta.verbose_name
+    @classmethod
+    def get_count(self):
+        objects = self._get_objects()
+        return self.objects.count()
+    @classmethod
+    def get_model_name(self):
+        _meta = self._get_meta()
+        return _meta.model_name
+
+class AutoPatternsMixin(ModelInfoMixin):
+    #TODO: Write tests for this class, with a sample Model where we test each function
+    def get_url_name(self):
+        return self.get_model_name()
+    def get_url_prefix(self):
         return None
-    def get_list_select_related_fields():
+    def get_views(self):
         """
-        Override this to tell Django on which fields it should use select_related (resulting and SQL JOINS). Should return a list of fields (ex: ['category', 'category__phase'])
+        Base get_views() function, must be here for the MRO. Returns a dictionary containing the views defined by each ModelMixin. Each ModelMixin should override this function and use contribute_viewset_to_views to add the data from its ViewSet.
+
+        Usually called with super(..., self).get_views()
         """
+        return {} # hey, BASE_VIEWS
+    def get_view_args(self):
+        """
+        Similar to get_views(), but here we don't use a function like contribute_viewset_to_views. Returns a dictionary containing the view arguments defined by each ModelMixin and by the Model classes. Each value should also be a dictionary
+        """
+        return {}
+    def get_url_namespaces(self):
         return []
+    @classmethod
+    def _make_url_name(action):
+        return make_url_name(self.get_url_namespaces(),
+                             self.get_url_name(),
+                             action)
+    def get_url(self, action, args = None):
+        return reverse(self._make_url_name(action),
+                           args = args)
+

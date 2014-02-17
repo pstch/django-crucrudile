@@ -1,29 +1,15 @@
 from .base import ViewSet
-from ..views import DetailView, ListView, CreateView, UpdateView
 
-class DetailViewSet(ViewSet):
-    action = "detail"
-    url = "%s/%s$" % (action, _PK_ARG)
-    view = DetailView
+from .detail import DetailViewSet
+from .list import ListViewSet, FilteredListViewSet
 
-class ListViewSet(ViewSet):
-    action = "list"
-    url = "%s$" % (action)
-    view = ListView
+from .edit.create import CreateViewSet, SpecificCreateViewSet
+from .edit.update import UpdateViewSet
+from .edit.delete import DeleteViewSet
 
-class CreateViewSet(ViewSet):
-    action = "create"
-    url = "%s$" % (action)
-    view = CreateView
-
-class UpdateViewSet(ViewSet):
-    action = "update"
-    url = "%s/%s$" % (action, _PK_ARG)
-    view = UpdateView
-
-class DeleteViewSet(ViewSet):
-    action = "delete"
-    url = "%s/%s$" % (action, _PK_ARG)
-    view = DeleteView
-
-
+__all__ = ['ViewSet',
+           'DetailViewSet',
+           'ListViewSet', 'FilteredListViewSet',
+           'CreateViewSet', 'SpecificCreateViewSet',
+           'UpdateViewSet',
+           'DeleteViewSet']

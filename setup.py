@@ -5,23 +5,22 @@
     :contact: hugo@pstch.net
 """
 
-
-from setuptools import setup
-
+from setuptools import setup, find_packages
 
 setup(
     name='django-pstch-helpers',
-    version='0.1.0',
+    version='0.2',
     description='Various Django helpers that I use frequently in my projets',
     long_description="views, models, auto URL patterns, ...",
+    url='https://github.com/pstch/django-pstch-helpers',
     author='Hugo Geoffroy',
     author_email='hugo@pstch.net',
-    packages = ['django_pstch_helpers',
-		'django_pstch_helpers.views'],
+    packages = find_packages(),
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     platforms=['any'],
+    test_suite='tests.runtests.runtests',
 )

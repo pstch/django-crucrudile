@@ -1,7 +1,18 @@
-from django.core.exceptions import ImproperlyConfigured
+from ...utils import contribute_viewset_to_views
 
-from .edit import CreatableModelMixin
-from ...sets.specific import SpecificCreateViewSet
+from .. import AutoPatterns
+
+from ...sets import CreateViewSet
+from ...sets.edit.create import SpecificCreateViewSet
+
+class CreatableModelMixin(AutoPatterns):
+    def get_create_url(self):
+        return self.get_url(CreateViewSet.action,
+                            args = [self.id,])
+    def get_views(self):
+        views = super(CreatableModelMixin, self).get_views()
+        contribute_viewset_to_views(views, CreateViewSet)
+        return views
 
 class SpecificCreatableModelMixin(CreatableModelMixin):
     def get_views(self):

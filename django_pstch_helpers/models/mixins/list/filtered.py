@@ -3,12 +3,12 @@ from django.core.exceptions import ImproperlyConfigured
 from .base import ListableModelMixin
 from ...sets.filtered import FilteredListViewSet
 
-class FilterableListableModelMixin(ListableModelMixin):
+class FilteredListableModelMixin(ListableModelMixin):
     @classmethod
     def get_filtered_list_url(self):
         return self.get_url(FilteredListViewSet.action)
     def get_views(self):
-        views = super(ListableModelMixin, self).get_views()
+        views = super(FilteredListableModelMixin, self).get_views()
         contribute_viewset_to_views(views, FilteredListViewSet)
         return views
     def get_views_args(self):
