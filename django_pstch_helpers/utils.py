@@ -13,6 +13,8 @@ def contribute_viewset_to_views(views, viewset):
 
     Note: this function does not return any value, as it works directly on the dict given as first argument.
     """
+    # TODO: Write test for this class, testing the three behaviours (no current item, current item is list, current is singleton)
+
     # get action name
     action = viewset.action
 
@@ -35,7 +37,9 @@ def contribute_viewset_to_views(views, viewset):
         views[action] = new
 
 def mix_intersection(first, second):
+    # NOTE: should not be needed anymore now that we switched to ViewSets and contribute_viewset_to_views
     # puke before reading for best experience
+    # TODO: Write test for this function (by comparing dicts)
     if first and second and set(first) & set(second):
         for intersection in list(set(first) & set(second)):
             if isinstance(first[intersection],(list)) and isinstance(second[intersection], (list)):
@@ -52,6 +56,7 @@ def mix_intersection(first, second):
     return first, second
 
 def mix_views(*args):
+    # NOTE: should not be needed anymore now that we switched to ViewSets and contribute_viewset_to_views
     args = list(args)
     if not args:
         return {}
@@ -65,17 +70,36 @@ def mix_views(*args):
                     **remaining)
 
 def get_model_view_args(action, view, model):
+    # TODO: Write test
+    """
+    compiles the list of view arguments using model.get_view_args() for the given model (or for each model if it is a list). if get_view_args() returns a callable, or a dict with callables as values, they will be evaluated with 3 arguments : action ; view ; item
+    WARNING: if the same keys are present in get_view_args() for multiple models, the last evaluated value will be used
+    """
     args = {}
     if not hasattr(model, '__iter__'):
-        model = [model, ]
-    for item in model:
-        if hasattr(item,'URL_VIEW_ARGS'):
-            _args = item.URL_VIEW_ARGS.get(action)
-            if callable(_args):
-                _args = _args(action, view, item)
-            if _args is None:
-                _args = {}
-            args = dict(args,
-			**_args)
+        # singleton, make a list
+        models = [model, ]
+    else:
+        models = model
+
+    for model_view_args in [model.get_view_args() for model in models]:
+        # for each view arguments dictionary
+        _args = model_view_args.get(action)
+        if callable(_args):
+            # call the callable
+            _args = _args(action, view, item)
+        if _args is None:
+            # we want {} instead of None
+            _args = {}
+        else:
+            # wasn't None, just check for callables in the values
+            for key in _args:
+                if callable(_args[key]):
+                    # call the callable
+                    _args[key] = _args[key](action, view, item)
+
+        # merge _args into args
+        args = dict(args,
+                    **_args)
 
     return args
