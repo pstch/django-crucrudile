@@ -36,6 +36,7 @@ class ModelInfoMixin():
         return _meta.model_name
 
 class AutoPatternsMixin(ModelInfoMixin):
+    #TODO: Write tests for this class, with a sample Model where we test each function
     def get_url_name(self):
         return self.get_model_name()
     def get_url_prefix(self):
