@@ -1,3 +1,5 @@
+from .base import ModelInfoMixin, AutoPatternsMixin
+
 from .detail import DetailableModelMixin
 from .list import ListableModelMixin
 
@@ -16,7 +18,8 @@ class EditModelActionsMixin(CreatableModelMixin, UpdatableModelMixin, DeletableM
 class FullModelActionsMixin(BaseModelActionsMixin, EditModelActionsMixin):
     pass
 
-__all__ = ['BaseModelActionsMixin', 'EditModelActionsMixin', 'FullModelActionsMixin',
+__all__ = ['ModelInfoMixin', 'AutoPatternsMixin',
+           'BaseModelActionsMixin', 'EditModelActionsMixin', 'FullModelActionsMixin',
            'ListableModelMixin', 'DetailableModelMixin', 'FilteredListableModelMixin',
            'CreatableModelMixin', 'SpecificCreatableModelMixin',
            'UpdatableModelMixin', 'DeletableModelMixin']
