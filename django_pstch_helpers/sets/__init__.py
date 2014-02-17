@@ -27,4 +27,3 @@ class DeleteViewSet(ViewSet):
     view = DeleteView
 
 
-
