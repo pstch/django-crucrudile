@@ -22,5 +22,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     platforms=['any'],
-    test_suite='tests.runtests.runtests',
+    test_suite='runtests.runtests',
 )
