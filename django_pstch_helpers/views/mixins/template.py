@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from django.views.generic.base import TemplateResponseMixin
 
-class TemplateAppPrefixMixin():
+class TemplateAppPrefixMixin(object):
     """
     This works in the same way as TemplateMixin, but is not specific to a single object. get_template_names() will prefix the template name in template_name_no_prefix if and only if template_name is not None.
 
@@ -40,7 +40,7 @@ class TemplateAppPrefixMixin():
 
         return [[app_path_part, self.template_name_no_prefix].join(self.template_join_by)]
 
-class TemplateMixin():
+class TemplateMixin(object):
     template_name = None
     template_name_add_prefix = False
     template_join_by = '/'

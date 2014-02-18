@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from .template import TemplateAppPrefixMixin
 
-class AuthMixin(View):
+class AuthMixin(object):
     """
     Use this mixin to enforce 'required login' and 'required permissions' attributes.
 

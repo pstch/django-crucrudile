@@ -1,6 +1,6 @@
 from django.views.generic.base import ContextMixin
 
-class ExtraContextMixin(ContextMixin):
+class ExtraContextMixin(object):
     """
     This mixin will read extra_context when get_context_data is called, and update the context with its contents.
 
@@ -22,7 +22,7 @@ class ExtraContextMixin(ContextMixin):
 
         return context
 
-class ModelInfoMixin(ContextMixin):
+class ModelInfoMixin(object):
     """
     Adds the current model(s) to the template context
 
