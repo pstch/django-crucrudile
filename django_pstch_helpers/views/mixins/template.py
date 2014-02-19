@@ -1,38 +1,21 @@
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.db import models
 from django.conf import settings
+from django.template.response import TemplateResponse
 from django.core.exceptions import ImproperlyConfigured
+
+
 
 from django.views.generic.base import TemplateResponseMixin
 
-class TemplateResponseMixin(object):
+class TemplateResponseMixin(TemplateResponseMixin):
     #TODO: Fix comments & doc
     """
     A mixin that can be used to render a template.
     """
-    template_name = None
     app_name = None
     app_prefix = None
     template_add_app_prefix = False
-    response_class = TemnnplateResponse
-    content_type = None
-
-    def render_to_response(self, context, **response_kwargs):
-        #TODO: Fix comments & doc
-        """
-        Returns a response, using the `response_class` for this
-        view, with a template rendered with the given context.
-
-        If any keyword arguments are provided, they will be
-        passed to the constructor of the response class.
-        """
-        response_kwargs.setdefault('content_type', self.content_type)
-        return self.response_class(
-            request = self.request,
-            template = self.get_template_names(),
-            context = context,
-            **response_kwargs
-        )
 
     def get_app_name(self):
         #TODO: Fix comments & doc

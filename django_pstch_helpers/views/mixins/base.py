@@ -6,7 +6,7 @@ from .template import TemplateResponseMixin, SingleObjectTemplateResponseMixin
 class BaseMixins(AuthMixin, ExtraContextMixin, TemplateResponseMixin):
     pass
 
-class BaseModelMixins(SingleObjectTemplateResponseMixin, BaseMixins, ModelInfoMixin):
+class BaseModelMixins(BaseMixins, ModelInfoMixin, SingleObjectTemplateResponseMixin):
     pass
 
 class BaseModelFormMixins(BaseModelMixins, ModelFormRedirectMixin):
