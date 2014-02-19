@@ -59,6 +59,7 @@ class TemplateResponseMixin(TemplateResponseMixin):
             return [name]
 
 class SingleObjectTemplateResponseMixin(TemplateResponseMixin):
+    #TODO: Maybe we could remove those attributes and subclass this from Django's SingleObjectTemplateResponseMixin ? (to see when current structure is working)
     #TODO: Fix comments & doc
     template_name_field = None
     template_name_suffix = '_detail'
