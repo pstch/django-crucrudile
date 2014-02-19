@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.views.generic import View
 from django.shortcuts import render
 
-from .template import TemplateAppPrefixMixin
+from .template import TemplateResponseMixin
 
 class AuthMixin(object):
     """
@@ -19,8 +19,8 @@ class AuthMixin(object):
     login_template -- Template used to render the 'login required' page
     perms_template -- Template used to render the 'missing permissions' page
 
-    login_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin. Is only used if login_template is None.
-    perms_template_no_prefix -- Same as above, but will be prefixed using TemplateAppPrefixMixin. Is only used if perms_template is None.
+    login_template_no_prefix -- If True, login_template will be prefixed using TemplateAppPrefixMixin. Is only used if login_template is None.
+    perms_template_no_prefix -- If True, perms_template will be prefixed using TemplateAppPrefixMixin. Is only used if perms_template is None.
     """
     required_login = True
     required_permissions = (None,)
@@ -28,22 +28,27 @@ class AuthMixin(object):
     login_template = None
     perms_template = None
 
-    login_template_no_prefix = 'auth/login_required.html'
-    perms_template_no_prefix = 'auth/permissions_required.html'
-
-    def expand_template_name(self, no_prefix_name):
-        prefix_mixin = TemplateAppPrefixMixin()
-        # we use this to have TemplateAppPrefixMixin use get_template_names() for us, which will be given the unprefixed template path as argument, and will return the prefixed template path.
-        # get_template_names() will get the prefix from the settings, in PER_APP_TEMPLATE_PREFIX["<application name>"]. If this is not set, or if the application name is not present in the keys, the application name will be used as prefix.
-        # the application name is urlresolvers.resolve(path).app_name
-        prefix_mixin.request = self.request
-        prefix_mixin.template_name = None
-        prefix_mixin.template_name_no_prefix = no_prefix_name
-        return prefix_mixin.get_template_names()[0]
+    login_template_add_prefix = True
+    perms_template_add_prefix = True
 
     def dispatch(self, request, *args, **kwargs):
-        login_template = self.login_template or self.expand_template_name(self.login_template_no_prefix)
-        perms_template = self.perms_template or self.expand_template_name(self.perms_template_no_prefix)
+        def expand_template_name(name):
+            template_mixin = TemplateResponseMixin()
+            # we use this to have TemplateResponseMixin use get_template_names() for us, which will be given the unprefixed template path as argument, and will return the prefixed template path.
+            # get_template_names() will get the prefix from the settings, in PER_APP_TEMPLATE_PREFIX["<application name>"]. If this is not set, or if the application name is not present in the keys, the application name will be used as prefix.
+            # the application name is urlresolvers.resolve(path).app_name
+            template_mixin.request = request
+            template_mixin.template_name = name
+            template_mixin.template_name_add_prefix = True
+
+            return template_mixin.get_template_names()[0]
+
+        login_template = self.login_template if not \
+                         self.login_template_add_prefix else \
+                         expand_template_name(self.login_template)
+        perms_template = self.perms_template if not \
+                         self.perms_template_add_prefix else \
+                         expand_template_name(self.perms_template)
 
         if self.required_login and not request.user.is_authenticated():
             # User not logged in, login required
