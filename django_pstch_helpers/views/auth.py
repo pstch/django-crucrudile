@@ -1,19 +1,20 @@
-import datetime, time
-from django.shortcuts import render
+import datetime
 
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.views.generic import View
 from django.contrib.auth import login, authenticate, logout
 from django.core.urlresolvers import reverse
 
+from .mixins.template import TemplateResponseMixin
 
-class LoginView(TemplateAppPrefixMixin, View):
+class LoginView(TemplateResponseMixin, View):
     fallback_redirect_to = "home"
     template_name_no_prefix = "auth/login_required.html"
 
     def redirect(self, request):
-        if hasattr(request.POST,'next'):
+        if hasattr(request.POST, 'next'):
             return HttpResponseRedirect(request.POST['next'])
         else:
             return HttpResponseRedirect(reverse(self.fallback_redirect_to))
@@ -24,16 +25,21 @@ class LoginView(TemplateAppPrefixMixin, View):
                       {'login_form_present' : True})
 
     def post(self, request):
-        user = authenticate(username = request.POST['username'], password = request.POST['password'])
+        user = authenticate(username = request.POST['username'],
+                            password = request.POST['password'])
         if user is not None:
             if user.is_active:
                 login(request, user)
                 # success
-                messages.success(request, "Login successful ! User %s connected at %s" % (user.username, datetime.datetime.now()))
+                messages.success(request,
+                                 "Login successful ! User %s connected at %s" \
+                                 % (user.username, datetime.datetime.now()))
                 return self.redirect(request)
             else:
                 # disabled account
-                messages.error(request, "This account (%s) is disabled." % user.username)
+                messages.error(request,
+                               "This account (%s) is disabled." \
+                               % user.username)
                 return self.redirect(request)
         else:
             # invalid login
@@ -51,4 +57,7 @@ class LogoutView(View):
         if self.redirect_to:
             return HttpResponseRedirect(reverse(self.redirect_to))
         else:
-            return HttpResponseRedirect(getattr(request.META,'HTTP_REFERER', reverse(self.fallback_redirect_to)))
+            return HttpResponseRedirect(
+                getattr(request.META,
+                        'HTTP_REFERER',
+                        reverse(self.fallback_redirect_to)))
