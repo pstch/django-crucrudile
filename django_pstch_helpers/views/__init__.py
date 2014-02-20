@@ -3,11 +3,10 @@ from .base import View, TemplateView, HomeView
 from .list import ListView, FilteredListView
 from .detail import DetailView
 
-from .edit.create import CreateView, SpecificCreateView
-from .edit.update import UpdateView
-from .edit.delete import DeleteView
+from .edit import CreateView, SpecificCreateView, UpdateView
+from .delete import DeleteView
 
-from .delete import *
+from .delete import DeleteView
 
 __all__ = [
     'View', 'TemplateView', 'HomeView',
