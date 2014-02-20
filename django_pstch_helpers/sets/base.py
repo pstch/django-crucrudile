@@ -1,4 +1,4 @@
-_PK_ARG = "(?P<pk>\d+)"
+_PK_ARG = r"(?P<pk>\d+)"
 
 class ViewSet():
     action = ""
