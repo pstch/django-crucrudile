@@ -1,26 +1,23 @@
-
-from django.core.exceptions import ImproperlyConfigured
-
 from django.shortcuts import get_object_or_404
-from django.contrib.contenttypes.models import ContentType
-from django.views.generic.edit import FormMixin
 
-from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.db.models.fields.related import ForeignKey
 
-class SpecificCreateMixin(FormMixin):
+class SpecificCreateMixin(object):
     template_name_suffix = "create_specific"
     initial_keys = []
 
     def get_initial(self):
-        initial = super(SpecificCreateView, self).get_initial()
+        initial = super(SpecificCreateMixin, self).get_initial()
 
-        if self.kwargs.get('specific_key') in self.initial_keys:
-            initial[self.kwargs.get('specific_key')] = self.kwargs.get('specific_value')
+        key = self.kwargs.get('specific_key')
+        if key in self.initial_keys:
+            initial[key] = self.kwargs.get('specific_value')
 
         return initial
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SpecificCreateView, self).get_context_data(*args, **kwargs)
+        context = super(SpecificCreateMixin,
+                        self).get_context_data(*args, **kwargs)
 
         key = self.kwargs['specific_key']
 
@@ -33,7 +30,7 @@ class SpecificCreateMixin(FormMixin):
                 model = field.rel.to
                 context['initial_field_model'] = model
                 context['initial_value'] = get_object_or_404(model,
-                                                             pk = value)
+                                                             pk=value)
             else:
                 context['initial_value'] = value
 
