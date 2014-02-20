@@ -8,7 +8,7 @@ from .mixins.edit.specific import SpecificCreateMixin
 
 class CreateView(BaseModelFormMixins,
                  CreateMessageMixin,
-                 CreateView):
+                 DjangoCreateView):
     pass
 
 class UpdateView(BaseModelFormMixins,
