@@ -1,6 +1,5 @@
-from .base import ViewSet
-from ..views import CreateView
-from ..views import SpecificCreateView
+from .base import ViewSet, _PK_ARG
+from ..views import CreateView, SpecificCreateView, UpdateView
 
 class CreateViewSet(ViewSet):
     action = "create"
@@ -14,3 +13,8 @@ class SpecificCreateViewSet(ViewSet):
     url = "%s/%s$" % (action,
                       _SPECIFIC_ARG)
     view = SpecificCreateView
+
+class UpdateViewSet(ViewSet):
+    action = "update"
+    url = "%s/%s$" % (action, _PK_ARG)
+    view = UpdateView
