@@ -1,10 +1,8 @@
-from django.views.generic.detail import SingleObjectTemplateResponseMixin
+#from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.db import models
 from django.conf import settings
-from django.template.response import TemplateResponse
+
 from django.core.exceptions import ImproperlyConfigured
-
-
 
 from django.views.generic.base import TemplateResponseMixin
 
@@ -52,8 +50,9 @@ class TemplateResponseMixin(TemplateResponseMixin):
         """
         if self.template_name is None:
             raise ImproperlyConfigured(
-                "TemplateResponseMixin requires either a definition of "
-                "'template_name' or an implementation of 'get_template_names()'")
+                """TemplateResponseMixin requires either a definition of
+                'template_name' or an implementation of 'get_template_names()'
+                """)
         else:
             name = self.prefix_name_if_needed(self.template_name)
             return [name]
@@ -76,7 +75,8 @@ class SingleObjectTemplateResponseMixin(TemplateResponseMixin):
         """
         #TODO: Fix comments & doc
         try:
-            names = super(SingleObjectTemplateResponseMixin, self).get_template_names()
+            names = super(SingleObjectTemplateResponseMixin,
+                          self).get_template_names()
         except ImproperlyConfigured:
             # If template_name isn't specified, it's not a problem --
             # we just start with an empty list.
@@ -96,7 +96,9 @@ class SingleObjectTemplateResponseMixin(TemplateResponseMixin):
         model_name = None
         if isinstance(self.object, models.Model):
             model_name = self.object._meta.object_name
-        elif hasattr(self, 'model') and self.model is not None and issubclass(self.model, models.Model):
+        elif hasattr(self, 'model') and \
+             self.model is not None and \
+             issubclass(self.model, models.Model):
             model_name = self.model._meta.object_name
         if model_name:
             name = "%s/%s%s.html" % (
