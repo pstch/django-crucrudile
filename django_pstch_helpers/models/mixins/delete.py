@@ -1,7 +1,7 @@
-from ...utils import contribute_viewset_to_views
+from ..utils import contribute_viewset_to_views
 
-from .. import AutoPatterns
-from ...sets import DeleteViewSet
+from . import AutoPatterns
+from ..sets import DeleteViewSet
 
 class DeletableModelMixin(AutoPatterns):
     def get_delete_url(self):

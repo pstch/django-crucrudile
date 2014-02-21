@@ -1,9 +1,9 @@
-from ...utils import contribute_viewset_to_views
+from ..utils import contribute_viewset_to_views
 
-from .. import AutoPatterns
+from django_pstch_helpers.models import AutoPatterns
 
-from ...sets import CreateViewSet
-from ...sets.edit.create import SpecificCreateViewSet
+from django_pstch_helpers.sets import CreateViewSet, UpdateViewSet
+from django_pstch_helpers.sets.edit.create import SpecificCreateViewSet
 
 class CreatableModelMixin(AutoPatterns):
     def get_create_url(self):
@@ -29,4 +29,13 @@ class SpecificCreatableModelMixin(CreatableModelMixin):
     def get_specific_create_initial_keys(self):
         raise ImproperlyConfigured("get_specific_create_initial_keys should be overriden to return a proper list of fields")
 
-
+class UpdatableModelMixin(AutoPatterns):
+    def get_update_url(self):
+        return self.get_url(UpdateViewSet.action,
+                            args = [self.id,])
+    def get_edit_url(self):
+        return self.get_update_url()
+        def get_views(self):
+        views = super(UpdatableModelMixin, self).get_views()
+        contribute_viewset_to_views(views, UpdateViewSet)
+        return views
