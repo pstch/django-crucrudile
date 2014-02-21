@@ -5,7 +5,7 @@ from markitup.fields import MarkupField # Used in UserDescribed
 
 from .mixins import ModelInfoMixin
 
-class UserNamed(ModelInfoMixin, models.Model):
+class UserNamed(models.Model):
     #TODO: Write tests for this class (test at least that __unicode__ is working well) using a sample model
     name = models.CharField(max_length=128, verbose_name="name")
     slug = AutoSlugField(populate_from='name')
