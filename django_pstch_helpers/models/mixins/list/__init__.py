@@ -1,9 +1,10 @@
-from ...utils import contribute_viewset_to_views
+from django_pstch_helpers.utils import contribute_viewset_to_views
 
-from .. import AutoPatterns
-from ...sets import DetailViewSet, ListViewSet
+from django_pstch_helpers.sets import DetailViewSet, ListViewSet
 
-class ListableModelMixin(AutoPatterns):
+from .base import AutoPatternsMixin
+
+class ListableModelMixin(AutoPatternsMixin):
     @classmethod
     def get_list_url(self):
         return self.get_url(ListViewSet.action)
