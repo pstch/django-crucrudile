@@ -1,3 +1,5 @@
+from django.core.exceptions import ImproperlyConfigured
+
 from django.core.urlresolvers import reverse
 
 class ModelInfoMixin(object):
