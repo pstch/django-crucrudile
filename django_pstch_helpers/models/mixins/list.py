@@ -1,9 +1,9 @@
 from ...utils import contribute_viewset_to_views
 
-from .. import AutoPatterns
+from .. import AutoPatternsMixin
 from ...sets import DetailViewSet, ListViewSet
 
-class ListableModelMixin(AutoPatterns):
+class ListableModelMixin(AutoPatternsMixin):
     @classmethod
     def get_list_url(self):
         return self.get_url(ListViewSet.action)

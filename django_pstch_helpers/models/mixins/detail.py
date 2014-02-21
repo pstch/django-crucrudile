@@ -3,7 +3,7 @@ from ...utils import contribute_viewset_to_views
 from ...sets import DetailViewSet
 from .base import AutoPatternsMixin
 
-class DetailableModelMixin(AutoPatterns):
+class DetailableModelMixin(AutoPatternsMixin):
     def get_detail_url(self):
         return self.get_url(DetailViewSet.action,
                             args = [self.id,])
