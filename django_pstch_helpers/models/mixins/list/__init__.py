@@ -2,7 +2,7 @@ from django_pstch_helpers.utils import contribute_viewset_to_views
 
 from django_pstch_helpers.sets import DetailViewSet, ListViewSet
 
-from .base import AutoPatternsMixin
+from ..base import AutoPatternsMixin
 
 class ListableModelMixin(AutoPatternsMixin):
     @classmethod
