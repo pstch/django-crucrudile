@@ -1,25 +1,30 @@
 from .base import ModelInfoMixin, AutoPatternsMixin
 
 from .detail import DetailableModelMixin
+
 from .list import ListableModelMixin
+from .list.filtered import FilteredListableModelMixin
 
-from .edit.create import CreatableModelMixin, SpecificCreatableModelMixin
-from .edit.update import UpdatableModelMixin
-from .edit.delete import DeletableModelMixin
+from .edit import CreatableModelMixin, SpecificCreatableModelMixin, UpdatableModelMixin
+from .delete import DeletableModelMixin
 
-from .list.filtered import FiltedListableModelMixin
-
-class BaseModelActionsMixin(DetailableModelMixin, ListableModelMixin):
+class BaseModelActionsMixin(DetailableModelMixin,
+                            ListableModelMixin):
     pass
 
-class EditModelActionsMixin(CreatableModelMixin, UpdatableModelMixin, DeletableModelMixin):
+class EditModelActionsMixin(CreatableModelMixin,
+                            UpdatableModelMixin,
+                            DeletableModelMixin):
     pass
 
-class FullModelActionsMixin(BaseModelActionsMixin, EditModelActionsMixin):
+class FullModelActionsMixin(BaseModelActionsMixin,
+                            EditModelActionsMixin):
     pass
 
 __all__ = ['ModelInfoMixin', 'AutoPatternsMixin',
-           'BaseModelActionsMixin', 'EditModelActionsMixin', 'FullModelActionsMixin',
-           'ListableModelMixin', 'DetailableModelMixin', 'FilteredListableModelMixin',
+           'BaseModelActionsMixin', 'EditModelActionsMixin',
+           'FullModelActionsMixin',
+           'ListableModelMixin', 'DetailableModelMixin',
+           'FilteredListableModelMixin',
            'CreatableModelMixin', 'SpecificCreatableModelMixin',
            'UpdatableModelMixin', 'DeletableModelMixin']
