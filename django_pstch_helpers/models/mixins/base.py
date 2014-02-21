@@ -39,24 +39,31 @@ class AutoPatternsMixin(ModelInfoMixin):
         return None
     def get_views(self):
         """
-        Base get_views() function, must be here for the MRO. Returns a dictionary containing the views defined by each ModelMixin. Each ModelMixin should override this function and use contribute_viewset_to_views to add the data from its ViewSet.
+        Base get_views() function, must be here for the MRO. Returns a
+        dictionary containing the views defined by each ModelMixin.
+
+        Each ModelMixin should override this function and
+        use contribute_viewset_to_views to add the data
+        from its ViewSet.
 
         Usually called with super(..., self).get_views()
         """
         return {} # hey, BASE_VIEWS
     def get_view_args(self):
         """
-        Similar to get_views(), but here we don't use a function like contribute_viewset_to_views. Returns a dictionary containing the view arguments defined by each ModelMixin and by the Model classes. Each value should also be a dictionary
+        Similar to get_views(), but here we don't use a function like
+        contribute_viewset_to_views. Returns a dictionary containing
+        the view arguments defined by each ModelMixin and by the Model
+        classes. Each value should also be a dictionary
         """
         return {}
     def get_url_namespaces(self):
         return []
-    @classmethod
-    def _make_url_name(action):
+    def _make_url_name(self, action):
         return make_url_name(self.get_url_namespaces(),
                              self.get_url_name(),
                              action)
-    def get_url(self, action, args = None):
+    def get_url(self, action, args=None):
         return reverse(self._make_url_name(action),
-                           args = args)
+                           args=args)
 
