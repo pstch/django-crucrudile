@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 
-class ModelInfoMixin():
+class ModelInfoMixin(object):
     #TODO: Write tests for this class, with a sample Model where we test each function
     @classmethod
     def _get_objects(self):
