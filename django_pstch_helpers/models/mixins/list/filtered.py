@@ -1,7 +1,8 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from .base import ListableModelMixin
-from ...sets.filtered import FilteredListViewSet
+from django_pstch_helpers.sets.list import FilteredListViewSet
+
+from . import ListableModelMixin
 
 class FilteredListableModelMixin(ListableModelMixin):
     @classmethod
@@ -12,13 +13,16 @@ class FilteredListableModelMixin(ListableModelMixin):
         contribute_viewset_to_views(views, FilteredListViewSet)
         return views
     def get_views_args(self):
+        action = FilteredListViewSet.action
         args = super(FilteredListableModelMixin, self).get_views_args()
-        args[FilteredListViewSet.action] = args.get(FilteredListViewSet.action) or {}
-        args[FilteredListViewSet.action] = {
+        args[action] = args.get(action) or {}
+        args[action] = {
             'filterset_class' : lambda a,v,m : get_filter_class(m, self.get_filter())
         }
         return args
     def get_filter(self):
-        raise ImproperlyConfigured("get_filter should be overriden to return a proper django-filter Filter")
+        raise ImproperlyConfigured(
+            "get_filter should be overriden to"
+            " return a proper django-filter Filter")
 
 

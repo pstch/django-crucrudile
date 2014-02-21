@@ -1,6 +1,6 @@
-from ...utils import contribute_viewset_to_views
+from django_pstch_helpers.utils import contribute_viewset_to_views
 
-from ...sets import DetailViewSet
+from django_pstch_helpers.sets import DetailViewSet
 from .base import AutoPatternsMixin
 
 class DetailableModelMixin(AutoPatternsMixin):
