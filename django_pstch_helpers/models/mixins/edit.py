@@ -1,4 +1,4 @@
-from ..utils import contribute_viewset_to_views
+from django_pstch_helpers.utils import contribute_viewset_to_views
 
 from django_pstch_helpers.models import AutoPatternsMixin
 
