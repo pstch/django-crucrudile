@@ -76,50 +76,6 @@ def contribute_viewset_to_views(views, viewset):
         # current is None, set new value
         views[action] = new
 
-def mix_intersection(first, second):
-    """
-    #TODO: Add method docstring
-    """
-    # NOTE: should not be needed anymore now that we switched
-    # to ViewSets and contribute_viewset_to_views
-    # puke before reading for best experience
-    # TODO: Write test for this function (by comparing dicts)
-    if first and second and set(first) & set(second):
-        for intersection in list(set(first) & set(second)):
-            if isinstance(first[intersection], (list)) and \
-               isinstance(second[intersection], (list)):
-                first[intersection] += second[intersection]
-            elif isinstance(first[intersection], (list)):
-                first[intersection].append(second[intersection])
-            elif isinstance(second[intersection], (list)):
-                second[intersection].append(first[intersection])
-                first[intersection] = second[intersection]
-            else:
-                first[intersection] = [first[intersection],
-                                       second[intersection]]
-            second.pop(intersection)
-    return first, second
-
-def mix_views(*args):
-    """
-    #TODO: Add method docstring
-    """
-    # NOTE: should not be needed anymore now that we switched
-    # to ViewSets and contribute_viewset_to_views
-    args = list(args)
-    if not args:
-        return {}
-    if len(args) is 1:
-        return args[0].copy()
-    elif len(args) > 1:
-        current, remaining = mix_intersection(
-            args[0].copy(),
-            mix_views(*args[1:])
-        )
-
-        return dict(current,
-                    **remaining)
-
 def get_model_view_args(action, view, model):
     # TODO: Write test
     """

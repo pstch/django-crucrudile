@@ -6,8 +6,6 @@ from django.test import TestCase
 from django_pstch_helpers.utils import (get_filter_class,
                                         make_url_name,
                                         contribute_viewset_to_views,
-                                        mix_intersection,
-                                        mix_views,
                                         get_model_view_args)
 
 from django_pstch_helpers.sets.base import ViewSet
@@ -85,4 +83,38 @@ class ViewSetsUtilsTestCase(TestCase):
                                        second_tuple,
                                        third_tuple],
                            'action2' : fourth_tuple})
+
+class ModelAndViewUtilsTestCase(TestCase):
+    def test_get_model_view_args(self):
+        action = 'action'
+        def make_test_callable_for_model_view_args_lambda(model):
+            def test_callable_for_model_view_args_lambda(_action, _view, _model):
+                self.assertEqual(action, _action)
+                self.assertEqual(View, _view)
+                self.assertEqual(model, _model)
+                return 'callable_value'
+            return test_model_view_args_lambda
+        class Model1():
+            def get_view_args(self):
+                return {'action' : {'keyword' : 'value'}}
+        class Model2():
+            def get_view_args(self):
+                return {
+                    'action' : {
+                        'keyword2' : 'value2'
+                    },
+                    'action2' : {
+                        'keyword' : 'value',
+                        'keyword' : \
+                        make_test_callable_for_model_view_args_lambda(self)
+                    }
+                }
+        class Model3():
+            def get_view_args(self):
+                return {'action' : make_test_for_model_view_args_lambda(self)}
+
+        model = Model1
+        self.assertEqual(get_model_view_args('action', View, model),
+                         {'keyword' : value})
+        models = [Model2, Model2]
 
