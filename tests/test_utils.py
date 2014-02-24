@@ -89,14 +89,17 @@ class ViewSetsUtilsTestCase(TestCase):
 
 class ModelAndViewUtilsTestCase(TestCase):
     def test_get_model_view_args(self):
-        action = 'action'
-        def make_test_callable_for_model_view_args_lambda(model):
-            def test_callable_for_model_view_args_lambda(_action, _view, _model):
+        def _make_test_callable_for_model_view_args_lambda(model, action = 'action',
+                                                          return_dict = True):
+            def _test_callable_for_model_view_args_lambda(_action, _view, _model):
                 self.assertEqual(action, _action)
                 self.assertEqual(View, _view)
                 self.assertEqual(model, _model)
-                return 'callable_value'
-            return test_model_view_args_lambda
+                if return_dict:
+                    return { 'callable_key' : 'callable_value' }
+                else:
+                    return 'callable_value'
+            return _test_callable_for_model_view_args_lambda
         class Model1(AutoPatternsMixin, Model):
             @classmethod
             def get_view_args(cls):
@@ -110,17 +113,27 @@ class ModelAndViewUtilsTestCase(TestCase):
                     },
                     'action2' : {
                         'keyword' : 'value',
-                        'keyword' : \
-                        make_test_callable_for_model_view_args_lambda(cls)
+                        'keyword2' : \
+                        _make_test_callable_for_model_view_args_lambda(cls, return_dict = False,
+                                                                      action = 'action2')
                     }
                 }
         class Model3(AutoPatternsMixin, Model):
             @classmethod
             def get_view_args(cls):
-                return {'action' : make_test_for_model_view_args_lambda(cls)}
+                return {'action' : _make_test_callable_for_model_view_args_lambda(cls,
+                                                                         action = 'action')}
 
         model = Model1
         self.assertEqual(get_model_view_args('action', View, model),
-                         {'keyword' : value})
-        models = [Model2, Model2]
-
+                         {'keyword' : 'value'})
+        models = [Model1, Model2]
+        self.assertEqual(get_model_view_args('action', View, models),
+                         {'keyword' : 'value',
+                          'keyword2' : 'value2'})
+        self.assertEqual(get_model_view_args('action2', View, models),
+                         {'keyword' : 'value',
+                          'keyword2' : 'callable_value'})
+        model = Model3
+        self.assertEqual(get_model_view_args('action', View, model),
+                         {'callable_key' : 'callable_value'})

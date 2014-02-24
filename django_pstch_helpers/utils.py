@@ -89,9 +89,9 @@ def get_model_view_args(action, view, model):
     multiple models, the last evaluated value will be used
     """
     args = {}
-    if not hasattr(model, '__iter__'):
+    if model and not hasattr(model, '__iter__'):
         # singleton, make a list
-        models = [model, ]
+            models = [model, ]
     else:
         models = model
 

@@ -98,7 +98,7 @@ class AutoPatternsMixin(ModelInfoMixin):
         #pylint: disable=R0201
         return {}
     @classmethod
-    def get_view_args(cls):
+    def get_view2_args(cls):
         """
         Similar to get_views(), but here we don't use a function like
         contribute_viewset_to_views. Returns a dictionary containing
