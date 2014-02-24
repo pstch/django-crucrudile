@@ -27,12 +27,10 @@ def make_url_name(namespaces, object_url_name, action):
     object_url_name is not None, otherwise "<namespaces>:<action>"
     (without the '<>').
     """
-    import pdb
-    pdb.set_trace()
-    return  ":".join(
+    return  ":".join([
         ":".join(namespaces),
         "-".join([object_url_name, action] if object_url_name else action)
-    )
+    ])
 
 def contribute_viewset_to_views(views, viewset):
     """
