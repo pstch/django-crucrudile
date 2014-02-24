@@ -1,10 +1,11 @@
+"""
 #TODO: Add module docstring
+"""
 from django.shortcuts import render
 
 from .template import TemplateResponseMixin
 
 class AuthMixin(object):
-    #TODO: Investigate warning R0903 on this class
     """
     Use this mixin to enforce 'required login' and 'required permissions'
     attributes.
@@ -32,6 +33,7 @@ class AuthMixin(object):
       perms_template will be prefixed using TemplateAppPrefixMixin.
       Is only used if perms_template is None.
     """
+    #pylint: disable=R0903
     required_login = True
     required_permissions = (None,)
 
@@ -41,7 +43,9 @@ class AuthMixin(object):
     perms_template_add_prefix = True
 
     def dispatch(self, request, *args, **kwargs):
+        """
         #TODO: Add method docstring
+        """
         def expand_template_name(name):
             """
             We use this to have TemplateResponseMixin use

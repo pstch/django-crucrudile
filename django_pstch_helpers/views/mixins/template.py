@@ -1,12 +1,18 @@
+"""
+#TODO: Fix module docstring
+"""
 #from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.db import models
 from django.conf import settings
-
+from django.core.urlresolvers import resolve
 from django.core.exceptions import ImproperlyConfigured
 
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.base \
+    import TemplateResponseMixin as DjangoTemplateResponseMixin
 
-class TemplateResponseMixin(TemplateResponseMixin):
+
+
+class TemplateResponseMixin(DjangoTemplateResponseMixin):
     #TODO: Fix comments & doc
     """
     A mixin that can be used to render a template.
@@ -16,7 +22,9 @@ class TemplateResponseMixin(TemplateResponseMixin):
     template_add_app_prefix = False
 
     def get_app_name(self):
+        """
         #TODO: Fix comments & doc
+        """
         if not self.app_name:
             self.app_name = resolve(self.request.path()).app_name
             if not self.app_name:
@@ -24,7 +32,9 @@ class TemplateResponseMixin(TemplateResponseMixin):
         return self.app_name
 
     def get_app_prefix(self):
+        """
         #TODO: Fix comments & doc
+        """
         if not self.app_prefix:
             self.app_prefix = getattr(getattr(settings,
                                               "PER_APP_TEMPLATE_PREFIX",
@@ -34,16 +44,15 @@ class TemplateResponseMixin(TemplateResponseMixin):
         return self.app_prefix
 
     def prefix_name_if_needed(self, name):
+        """
         #TODO: Fix comments & doc
-        def prefix_name():
-            return "%s/%s" % (self.get_app_prefix(), name)
+        """
         if self.template_add_app_prefix:
-            return prefix_name()
+            return "%s/%s" % (self.get_app_prefix(), name)
         else:
             return name
 
     def get_template_names(self):
-        #TODO: Fix comments & doc
         """
         Returns a list of template names to be used for the request. Must return
         a list. May not be called if render_to_response is overridden.
@@ -58,8 +67,12 @@ class TemplateResponseMixin(TemplateResponseMixin):
             return [name]
 
 class SingleObjectTemplateResponseMixin(TemplateResponseMixin):
-    #TODO: Maybe we could remove those attributes and subclass this from Django's SingleObjectTemplateResponseMixin ? (to see when current structure is working)
+    """
     #TODO: Fix comments & doc
+    """
+    #TODO: Maybe we could remove those attributes and subclass this
+    #with Django's SingleObjectTemplateResponseMixin ?
+    #(to see when current structure is working)
     template_name_field = None
     template_name_suffix = '_detail'
 
@@ -95,15 +108,15 @@ class SingleObjectTemplateResponseMixin(TemplateResponseMixin):
         # only use this if the object in question is a model.
         model_name = None
         if isinstance(self.object, models.Model):
-            model_name = self.object._meta.object_name
+            model_name = self.object.get_model_name()
         elif hasattr(self, 'model') and \
              self.model is not None and \
              issubclass(self.model, models.Model):
-            model_name = self.model._meta.object_name
+            model_name = self.model.get_model_name()
         if model_name:
             name = "%s/%s%s.html" % (
-                self.object._meta.app_label(),
-                model_name.lower(),
+                self.get_app_name(),
+                model_name,
                 self.template_name_suffix)
             name = self.prefix_name_if_needed(name)
             names.append(name)

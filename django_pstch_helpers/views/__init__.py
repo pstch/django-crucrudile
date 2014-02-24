@@ -1,3 +1,8 @@
+"""
+#TODO: Write module docstring
+"""
+#pylint: disable=F0401
+#pylint does not seem to like explicit relative imports
 from .base import View, TemplateView, HomeView
 
 from .list import ListView, FilteredListView
@@ -6,7 +11,7 @@ from .detail import DetailView
 from .edit import CreateView, SpecificCreateView, UpdateView
 from .delete import DeleteView
 
-from .delete import DeleteView
+#pylint: enable=F0401
 
 __all__ = [
     'View', 'TemplateView', 'HomeView',

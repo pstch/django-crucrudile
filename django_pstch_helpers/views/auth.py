@@ -1,3 +1,7 @@
+"""
+#TODO: Add module docstring
+"""
+#pylint: disable=R0901, R0904
 import datetime
 
 from django.shortcuts import render
@@ -10,23 +14,35 @@ from django.core.urlresolvers import reverse
 from .mixins.template import TemplateResponseMixin
 
 class LoginView(TemplateResponseMixin, View):
+    """
+    #TODO: Add class docstring
+    """
     fallback_redirect_to = "home"
     template_name_no_prefix = "auth/login_required.html"
 
     def redirect(self, request):
+        """
+        #TODO: Add method docstring
+        """
         if hasattr(request.POST, 'next'):
             return HttpResponseRedirect(request.POST['next'])
         else:
             return HttpResponseRedirect(reverse(self.fallback_redirect_to))
 
     def get(self, request):
+        """
+        #TODO: Add method docstring
+        """
         return render(request,
                       self.get_template_names(),
                       {'login_form_present' : True})
 
     def post(self, request):
-        user = authenticate(username = request.POST['username'],
-                            password = request.POST['password'])
+        """
+        #TODO: Add method docstring
+        """
+        user = authenticate(username=request.POST['username'],
+                            password=request.POST['password'])
         if user is not None:
             if user.is_active:
                 login(request, user)
@@ -48,9 +64,15 @@ class LoginView(TemplateResponseMixin, View):
 
 
 class LogoutView(View):
+    """
+    #TODO: Add class docstring
+    """
     redirect_to = None
     fallback_redirect_to = "home"
     def get(self, request):
+        """
+        #TODO: Add method docstring
+        """
         logout(request)
         messages.success(request, "You have been logged out.")
 

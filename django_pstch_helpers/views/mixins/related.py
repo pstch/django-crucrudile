@@ -1,7 +1,13 @@
+"""
+#TODO: Add module docstring
+"""
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.list import MultipleObjectMixin
 
 class SelectRelatedMixin(MultipleObjectMixin):
+    """
+    #TODO: Add class docstring
+    """
     select_related = None
     def get_queryset(self):
         """
@@ -11,7 +17,7 @@ class SelectRelatedMixin(MultipleObjectMixin):
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
         try:
-            manager = self.queryset or self.model._default_manager
+            manager = self.queryset or self.model._default_manager #pylint: disable=W0212
         except AttributeError:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "

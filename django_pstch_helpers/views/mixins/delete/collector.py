@@ -1,11 +1,22 @@
+"""
+#TODO: Add module docstring
+"""
+#pylint: disable=R0903
 from django.views.generic.base import ContextMixin
 
 from django.db.models.deletion import Collector
 
 class DeletionCollectorContextMixin(ContextMixin):
+    """
+    #TODO: Add class docstring
+    """
     collector_limit = 50
     def get_context_data(self, *args, **kwargs):
-        context = super(DeleteView, self).get_context_data(*args, **kwargs)
+        """
+        #TODO: Add method docstring
+        """
+        context = super(DeletionCollectorContextMixin, self).\
+                  get_context_data(*args, **kwargs)
 
         collector = Collector(using='default')
         collector.collect([self.object,])

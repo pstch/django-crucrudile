@@ -1,15 +1,17 @@
 #!/usr/bin/env python
+#pylint: disable=W0142,C0111
+"""
+#TODO: Missing module docstring
+"""
 import sys
-
-from django import VERSION
 
 from django.conf import settings
 from django.core.management import execute_from_command_line
 
 if not settings.configured:
-    args = {}
+    SETTINGS_DICT = {}
     # Database settings
-    args.update({
+    SETTINGS_DICT.update({
         'DATABASES' : {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -17,7 +19,7 @@ if not settings.configured:
             }}
     })
     # INSTALLED_APPS
-    args.update({
+    SETTINGS_DICT.update({
         'INSTALLED_APPS' : (
             'django_pstch_helpers',
             'tests',
@@ -25,18 +27,18 @@ if not settings.configured:
     })
 
     # django-markitup args
-    args.update({
+    SETTINGS_DICT.update({
         'MARKITUP_FILTER' : ('markdown.markdown', {'safe_mode': True})
     })
 
-    # Misc args
-    args.update({
+    # Misc
+    SETTINGS_DICT.update({
         'ROOT_URLCONF' : None,
         'USE_TZ' : True,
         'SECRET_KEY' : 'so long and thanks for all the fish'
     })
 
-    settings.configure(**args)
+    settings.configure(**SETTINGS_DICT)
 
 
 def runtests():

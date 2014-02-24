@@ -1,12 +1,21 @@
+"""
+#TODO: Add module docstring
+"""
 from django.shortcuts import get_object_or_404
 
 from django.db.models.fields.related import ForeignKey
 
 class SpecificCreateMixin(object):
+    """
+    #TODO: Add class docstring
+    """
     template_name_suffix = "create_specific"
     initial_keys = []
 
     def get_initial(self):
+        """
+        #TODO: Add method docstring
+        """
         initial = super(SpecificCreateMixin, self).get_initial()
 
         key = self.kwargs.get('specific_key')
@@ -16,6 +25,9 @@ class SpecificCreateMixin(object):
         return initial
 
     def get_context_data(self, *args, **kwargs):
+        """
+        #TODO: Add method docstring
+        """
         context = super(SpecificCreateMixin,
                         self).get_context_data(*args, **kwargs)
 
