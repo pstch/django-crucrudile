@@ -33,7 +33,7 @@ class AuthMixin(object):
       perms_template will be prefixed using TemplateAppPrefixMixin.
       Is only used if perms_template is None.
     """
-    #pylint: disable=R0903
+    #pylint: disable=R0903, W0201
     required_login = True
     required_permissions = (None,)
 
@@ -65,9 +65,8 @@ class AuthMixin(object):
               urlresolvers.resolve(path).app_name
             """
 
-            template_mixin = TemplateResponseMixin()
-            template_mixin.request = request
-            template_mixin.template_name = name
+            template_mixin = TemplateResponseMixin(request=request,
+                                                   template_name=name)
             template_mixin.template_name_add_prefix = True
 
             return template_mixin.get_template_names()[0]
