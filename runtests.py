@@ -42,6 +42,7 @@ if not settings.configured:
 def runtests():
     argv = sys.argv[:1] + ['test'] + sys.argv[1:]
     execute_from_command_line(argv)
+    sys.exit(0)
 
 
 if __name__ == '__main__':
