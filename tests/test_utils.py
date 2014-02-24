@@ -66,10 +66,11 @@ class ViewSetsUtilsTestCase(TestCase):
                          { 'action' : [first_tuple,
                                        second_tuple]})
 
-        viewset.url = 'url2'
+        viewset.url = 'url3'
         third_tuple = viewset.get_tuple()
 
         contribute_viewset_to_views(views, viewset)
+
         self.assertEqual(views,
                          { 'action' : [first_tuple,
                                        second_tuple,
@@ -80,7 +81,8 @@ class ViewSetsUtilsTestCase(TestCase):
 
         contribute_viewset_to_views(views, viewset)
         self.assertEqual(views,
-                         { 'action2' : [first_tuple,
+                         { 'action' : [first_tuple,
                                        second_tuple,
-                                       third_tuple]})
+                                       third_tuple],
+                           'action2' : fourth_tuple})
 
