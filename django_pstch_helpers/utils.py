@@ -62,8 +62,8 @@ def contribute_viewset_to_views(views, viewset):
             views[action].append()
         else:
             # singleton, create list
-            views[action] = list(current,
-                                 new)
+            views[action] = [current,
+                             new]
     else:
         # current is None, set new value
         views[action] = new
