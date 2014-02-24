@@ -3,7 +3,7 @@ python:
   - "2.6"
   - "2.7"
 env:
-  - DJANGO=1.5
+#  - DJANGO=1.5 (django 1.5 tests disabled for new, as they are not running anyway)
   - DJANGO=1.6
 install:
   - pip install Django==$DJANGO
