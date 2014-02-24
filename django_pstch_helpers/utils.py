@@ -57,7 +57,7 @@ def contribute_viewset_to_views(views, viewset):
 
     if current:
         # current not None
-        if isinstance(current, (list)):
+        if isinstance(current, list):
             # list, append
             views[action].append(current)
         else:
