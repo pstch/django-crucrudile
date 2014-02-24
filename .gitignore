@@ -2,7 +2,8 @@
 *.pyc
 build/
 pylint/
+html/
+bare_settings.py
 dist/
 *.egg-info/
 django-pstch-helpers.org
-
