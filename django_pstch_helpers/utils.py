@@ -27,10 +27,19 @@ def make_url_name(namespaces, object_url_name, action):
     object_url_name is not None, otherwise "<namespaces>:<action>"
     (without the '<>').
     """
-    return  ":".join([
-        ":".join(namespaces if namespaces else []),
-        "-".join([object_url_name, action] if object_url_name else [action])
-    ])
+    def _namespaces():
+        return ":".join(namespaces if namespaces else [])
+    def _short_url_name():
+        return "-".join([object_url_name, action] if object_url_name else [action])
+    if namespaces:
+        return  ":".join([
+            _namespaces(),
+            _short_url_name()
+        ])
+    else:
+        return ":".join([
+            _short_url_name()
+        ])
 
 def contribute_viewset_to_views(views, viewset):
     """
