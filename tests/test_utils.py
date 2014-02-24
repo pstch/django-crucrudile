@@ -14,6 +14,18 @@ from django_pstch_helpers.sets.base import ViewSet
 from django_pstch_helpers.models.mixins.base import AutoPatternsMixin
 
 from django_pstch_helpers.views.base import View
+
+class FilterUtilsTestCase(TestCase):
+    def test_get_filter_class(self):
+        class TestModel(Model):
+            pass
+        class BaseFilterClass(object):
+            class Meta:
+                pass
+        filterset = get_filter_class(TestModel,
+                                     BaseFilterClass)
+        self.assertEqual(filterset.Meta.model, TestModel)
+
 class URLUtilsTestCase(TestCase):
     """
     #TODO: Add class docstring
