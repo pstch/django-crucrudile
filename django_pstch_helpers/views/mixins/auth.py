@@ -68,7 +68,7 @@ class AuthMixin(object):
             template_mixin = TemplateResponseMixin(
                 request=request,
                 template_name=name,
-                template_name_add_prefix = True
+                template_name_add_prefix=True
             )
 
             return template_mixin.get_template_names()[0]

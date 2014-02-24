@@ -1,5 +1,5 @@
 """
-#TODO: Add module docstring
+#TODO: Add module docstring for views.edit
 """
 #pylint: disable=R0901, R0904
 from django.views.generic import CreateView as DjangoCreateView
