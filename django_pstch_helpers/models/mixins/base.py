@@ -70,18 +70,21 @@ class AutoPatternsMixin(ModelInfoMixin):
     """
     #TODO: Write tests for this class :
     # with a sample Model where we test each function
-    def get_url_name(self):
+    @classmethod
+    def get_url_name(cls):
         """
         #TODO: Add method docstring
         """
-        return self.get_model_name()
-    def get_url_prefix(self):
+        return cls.get_model_name()
+    @classmethod
+    def get_url_prefix(cls):
         """
         #TODO: Add method docstring
         """
         #pylint: disable=R0201
         return None
-    def get_views(self):
+    @classmethod
+    def get_views(cls):
         """
         Base get_views() function, must be here for the MRO. Returns a
         dictionary containing the views defined by each ModelMixin.
@@ -94,7 +97,8 @@ class AutoPatternsMixin(ModelInfoMixin):
         """
         #pylint: disable=R0201
         return {}
-    def get_view_args(self):
+    @classmethod
+    def get_view_args(cls):
         """
         Similar to get_views(), but here we don't use a function like
         contribute_viewset_to_views. Returns a dictionary containing
@@ -105,23 +109,26 @@ class AutoPatternsMixin(ModelInfoMixin):
         """
         #pylint: disable=R0201
         return {}
-    def get_url_namespaces(self):
+    @classmethod
+    def get_url_namespaces(cls):
         """
         #TODO: Add method docstring
         """
         #pylint: disable=R0201
         return []
-    def _make_url_name(self, action):
+    @classmethod
+    def _make_url_name(cls, action):
         """
         #TODO: Add method docstring
         """
-        return make_url_name(self.get_url_namespaces(),
-                             self.get_url_name(),
+        return make_url_name(cls.get_url_namespaces(),
+                             cls.get_url_name(),
                              action)
-    def get_url(self, action, args=None):
+    @classmethod
+    def get_url(cls, action, args=None):
         """
         #TODO: Add method docstring
         """
-        return reverse(self._make_url_name(action),
+        return reverse(cls._make_url_name(action),
                            args=args)
 
