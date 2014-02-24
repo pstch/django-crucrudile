@@ -1,7 +1,13 @@
-from django import template
-from django.conf import settings
-register = template.Library()
+"""
+#TODO: Add module docstring
+"""
+from django.template import Library
+
+register = Library() #pylint: disable=C0103
 
 @register.filter
-def keyvalue(dict, key):
-        return dict.get(key) if dict else None
+def keyvalue(dictionary, key):
+    """
+    #TODO: Add method docstring
+    """
+    return dictionary.get(key) if dict else None

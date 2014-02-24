@@ -1,18 +1,37 @@
+"""
+#TODO: Add module docstring
+"""
 from django_pstch_helpers.utils import contribute_viewset_to_views
 
 from django_pstch_helpers.sets import DetailViewSet, ListViewSet
 
+#pylint: disable=F0401
 from ..base import AutoPatternsMixin
+#pylint: enable=F0401
 
 class ListableModelMixin(AutoPatternsMixin):
+    """
+    #TODO: Add class docstring
+    """
+    #pylint: disable=W0232, R0201, E1002
     @classmethod
-    def get_list_url(self):
-        return self.get_url(ListViewSet.action)
+    def get_list_url(cls):
+        """
+        #TODO: Add method docstring
+        """
+        return cls.get_url(ListViewSet.action) #pylint: disable=E1120
+
     def get_views(self):
+        """
+        #TODO: Add method docstring
+        """
         views = super(ListableModelMixin, self).get_views()
         contribute_viewset_to_views(views, ListViewSet)
         return views
     def get_views_args(self):
+        """
+        #TODO: Add method docstring
+        """
         args = super(ListableModelMixin, self).get_views_args()
         args[ListViewSet.action] = args.get(ListViewSet.action) or {}
         args[ListViewSet.action].update({
