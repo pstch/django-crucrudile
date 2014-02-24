@@ -2,6 +2,7 @@
 #TODO: Add module docstring
 """
 from django.test import TestCase
+from django.db.models import Model
 
 from django_pstch_helpers.utils import (get_filter_class,
                                         make_url_name,
@@ -96,11 +97,13 @@ class ModelAndViewUtilsTestCase(TestCase):
                 self.assertEqual(model, _model)
                 return 'callable_value'
             return test_model_view_args_lambda
-        class Model1(AutoPatternsMixin):
-            def get_view_args(self):
+        class Model1(AutoPatternsMixin, Model):
+            @classmethod
+            def get_view_args(cls):
                 return {'action' : {'keyword' : 'value'}}
-        class Model2(AutoPatternsMixin):
-            def get_view_args(self):
+        class Model2(AutoPatternsMixin, Model):
+            @classmethod
+            def get_view_args(cls):
                 return {
                     'action' : {
                         'keyword2' : 'value2'
@@ -108,12 +111,13 @@ class ModelAndViewUtilsTestCase(TestCase):
                     'action2' : {
                         'keyword' : 'value',
                         'keyword' : \
-                        make_test_callable_for_model_view_args_lambda(self)
+                        make_test_callable_for_model_view_args_lambda(cls)
                     }
                 }
-        class Model3(AutoPatternsMixin):
-            def get_view_args(self):
-                return {'action' : make_test_for_model_view_args_lambda(self)}
+        class Model3(AutoPatternsMixin, Model):
+            @classmethod
+            def get_view_args(cls):
+                return {'action' : make_test_for_model_view_args_lambda(cls)}
 
         model = Model1
         self.assertEqual(get_model_view_args('action', View, model),
