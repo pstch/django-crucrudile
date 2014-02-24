@@ -10,7 +10,7 @@ from django_pstch_helpers.utils import (get_filter_class,
 
 from django_pstch_helpers.sets.base import ViewSet
 
-from django_pstch_helpers.views.mixins.base import AutoPatternsMixin
+from django_pstch_helpers.models.mixins.base import AutoPatternsMixin
 
 from django_pstch_helpers.views.base import View
 class URLUtilsTestCase(TestCase):
