@@ -10,7 +10,7 @@ class ViewSet(object):
     #pylint: disable=R0903, W0232
     action = ""
     url = ""
-    view = ""
+    view = None
     extra_args = {}
     def get_tuple(self):
         """
