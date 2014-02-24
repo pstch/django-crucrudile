@@ -65,9 +65,11 @@ class AuthMixin(object):
               urlresolvers.resolve(path).app_name
             """
 
-            template_mixin = TemplateResponseMixin(request=request,
-                                                   template_name=name)
-            template_mixin.template_name_add_prefix = True
+            template_mixin = TemplateResponseMixin(
+                request=request,
+                template_name=name,
+                template_mixin.template_name_add_prefix = True
+            )
 
             return template_mixin.get_template_names()[0]
 
