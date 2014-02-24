@@ -29,7 +29,7 @@ def make_url_name(namespaces, object_url_name, action):
     """
     return  ":".join([
         ":".join(namespaces),
-        "-".join([object_url_name, action] if object_url_name else action)
+        "-".join([object_url_name, action] if object_url_name else [action])
     ])
 
 def contribute_viewset_to_views(views, viewset):
