@@ -98,18 +98,6 @@ class AutoPatternsMixin(ModelInfoMixin):
         #pylint: disable=R0201
         return {}
     @classmethod
-    def get_view2_args(cls):
-        """
-        Similar to get_views(), but here we don't use a function like
-        contribute_viewset_to_views. Returns a dictionary containing
-        the view arguments defined by each ModelMixin and by the Model
-        classes. Each value should also be a dictionary, with key the
-        action name and as a value the keyword arguments to pass to
-        the view.
-        """
-        #pylint: disable=R0201
-        return {}
-    @classmethod
     def get_url_namespaces(cls):
         """
         #TODO: Add method docstring
