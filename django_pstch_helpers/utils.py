@@ -28,7 +28,7 @@ def make_url_name(namespaces, object_url_name, action):
     (without the '<>').
     """
     return  ":".join([
-        ":".join(namespaces),
+        ":".join(namespaces if namespaces else []),
         "-".join([object_url_name, action] if object_url_name else [action])
     ])
 
