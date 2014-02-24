@@ -1,6 +1,8 @@
 *~
 *.pyc
 build/
+pylint/
 dist/
 *.egg-info/
 django-pstch-helpers.org
+
