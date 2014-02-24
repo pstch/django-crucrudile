@@ -10,6 +10,8 @@ from django_pstch_helpers.utils import (get_filter_class,
 
 from django_pstch_helpers.sets.base import ViewSet
 
+from django_pstch_helpers.views.mixins.base import AutoPatternsMixin
+
 from django_pstch_helpers.views.base import View
 class URLUtilsTestCase(TestCase):
     """
@@ -94,10 +96,10 @@ class ModelAndViewUtilsTestCase(TestCase):
                 self.assertEqual(model, _model)
                 return 'callable_value'
             return test_model_view_args_lambda
-        class Model1():
+        class Model1(AutoPatternsMixin):
             def get_view_args(self):
                 return {'action' : {'keyword' : 'value'}}
-        class Model2():
+        class Model2(AutoPatternsMixin):
             def get_view_args(self):
                 return {
                     'action' : {
@@ -109,7 +111,7 @@ class ModelAndViewUtilsTestCase(TestCase):
                         make_test_callable_for_model_view_args_lambda(self)
                     }
                 }
-        class Model3():
+        class Model3(AutoPatternsMixin):
             def get_view_args(self):
                 return {'action' : make_test_for_model_view_args_lambda(self)}
 
