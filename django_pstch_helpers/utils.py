@@ -46,7 +46,6 @@ def contribute_viewset_to_views(views, viewset):
     #  - no current item
     #  - current item is list
     #  - current is singleton
-
     # get action name
     action = viewset.action
 
@@ -59,7 +58,7 @@ def contribute_viewset_to_views(views, viewset):
         # current not None
         if isinstance(current, list):
             # list, append
-            views[action].append(current)
+            views[action].append(new)
         else:
             # singleton, create list
             views[action] = [current,
