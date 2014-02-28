@@ -1,24 +1,21 @@
 """
-#TODO: Add module docstring
+Utility functions for django-pstch-helpers
 """
 #pylint: disable=W0142
 def get_filter_class(filter_model, filter_class):
     """
-    #TODO: Add method docstring
+    Utility function to create a django-filter FilterClass with a
+    specific model.
+
+    We need this because we want to create filters dynamically to
+    include them in models.py
     """
     class FilterSet(filter_class):
-        #pylint: disable=W0232, R0903
-        """
-        #TODO: Add class docstring
-        """
+        #pylint: disable=W0232, R0903, C0111
         lookup_type = None
         class Meta(filter_class.Meta):
-            """
-            #TODO: Add class docstring
-            """
             model = filter_model
     return FilterSet
-
 def make_url_name(namespaces, object_url_name, action):
     """
     Joins namespaces with an action and optionally an URL name
@@ -28,9 +25,15 @@ def make_url_name(namespaces, object_url_name, action):
     (without the '<>').
     """
     def _namespaces():
-        return ":".join(namespaces if namespaces else [])
+        "Join namespaces together for the left part of the URL name"
+        return ":".join(
+            namespaces if namespaces else []
+        )
     def _short_url_name():
-        return "-".join([object_url_name, action] if object_url_name else [action])
+        "Join object_url_name and action for the right part of the URL name"
+        return "-".join(
+            [object_url_name, action] if object_url_name else [action]
+        )
     if namespaces:
         return  ":".join([
             _namespaces(),
@@ -51,11 +54,6 @@ def contribute_viewset_to_views(views, viewset):
     Note: this function does not return any value, as it works
     directly on the dict given as first argument.
     """
-    # TODO: Write test for this class, testing the three behaviours :
-    #  - no current item
-    #  - current item is list
-    #  - current is singleton
-    # get action name
     action = viewset.action
 
     # get new view tuple
@@ -77,7 +75,6 @@ def contribute_viewset_to_views(views, viewset):
         views[action] = new
 
 def get_model_view_args(action, view, model):
-    # TODO: Write test
     """
     compiles the list of view arguments using model.get_view_args()
     for the given model (or for each model if it is a list). if
@@ -91,7 +88,7 @@ def get_model_view_args(action, view, model):
     args = {}
     if model and not hasattr(model, '__iter__'):
         # singleton, make a list
-            models = [model, ]
+        models = [model, ]
     else:
         models = model
 
