@@ -2,6 +2,7 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.0"
 env:
 #  - DJANGO=1.5 (django 1.5 tests disabled for new, as they are not running anyway)
   - DJANGO=1.6
