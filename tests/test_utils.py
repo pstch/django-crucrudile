@@ -126,15 +126,20 @@ class ModelAndViewUtilsTestCase(TestCase):
                     'action2' : {
                         'keyword' : 'value',
                         'keyword2' : \
-                        _make_test_callable_for_model_view_args_lambda(cls, return_dict = False,
-                                                                      action = 'action2')
+                        _make_test_callable_for_model_view_args_lambda(
+                            cls,
+                            return_dict = False,
+                            action = 'action2')
                     }
                 }
         class Model3(AutoPatternsMixin, Model):
             @classmethod
             def get_view_args(cls):
-                return {'action' : _make_test_callable_for_model_view_args_lambda(cls,
-                                                                         action = 'action')}
+                return {
+                    'action' : _make_test_callable_for_model_view_args_lambda(
+                        cls,
+                        action = 'action'
+                    )}
 
         model = Model1
         self.assertEqual(get_model_view_args('action', View, model),
