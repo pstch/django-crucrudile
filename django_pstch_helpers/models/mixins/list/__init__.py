@@ -1,15 +1,11 @@
 """
 #TODO: Add module docstring
 """
-from django_pstch_helpers.utils import contribute_viewset_to_views
-
-from django_pstch_helpers.sets import DetailViewSet, ListViewSet
-
 #pylint: disable=F0401
 from ..base import AutoPatternsMixin
 #pylint: enable=F0401
 
-class ListableModelMixin(AutoPatternsMixin):
+class ListableModelMixin(object):
     """
     #TODO: Add class docstring
     """
@@ -19,27 +15,28 @@ class ListableModelMixin(AutoPatternsMixin):
         """
         #TODO: Add method docstring
         """
-        return cls.get_url(ListViewSet.action) #pylint: disable=E1120
+        return cls.get_url('list') #pylint: disable=E1120
 
     def get_views(self):
         """
         #TODO: Add method docstring
         """
         views = super(ListableModelMixin, self).get_views()
-        contribute_viewset_to_views(views, ListViewSet)
+        views.append(ListView)
         return views
-    def get_views_args(self):
+    def get_args_by_view(self, view):
         """
         #TODO: Add method docstring
         """
-        args = super(ListableModelMixin, self).get_views_args()
-        args[ListViewSet.action] = args.get(ListViewSet.action) or {}
-        args[ListViewSet.action].update({
-            'select_related' : self.get_list_select_related_fields(),
-            'paginate_by' : self.get_paginate_by(),
-            'allowed_sort_fields' : self.get_sort_fields(),
-        })
+        args = super(ListableModelMixin, self).get_args_by_view(view)
+        if view is ListView:
+            args.append({
+                'select_related' : self.get_list_select_related_fields(),
+                'paginate_by' : self.get_paginate_by(),
+                'allowed_sort_fields' : self.get_sort_fields(),
+            })
         return args
+
     def get_sort_fields(self):
         """
         Override this if you want to allow sorting. Should return a
