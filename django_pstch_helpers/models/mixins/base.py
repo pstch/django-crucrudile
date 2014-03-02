@@ -71,12 +71,6 @@ class AutoPatternsMixin(ModelInfoMixin):
     #TODO: Write tests for this class :
     # with a sample Model where we test each function
     @classmethod
-    def get_url_name(cls):
-        """
-        #TODO: Add method docstring
-        """
-        return cls.get_model_name()
-    @classmethod
     def get_url_prefix(cls):
         """
         #TODO: Add method docstring
@@ -87,16 +81,13 @@ class AutoPatternsMixin(ModelInfoMixin):
     def get_views(cls):
         """
         Base get_views() function, must be here for the MRO. Returns a
-        dictionary containing the views defined by each ModelMixin.
+        list of the views defined by each ModelMixin.
 
-        Each ModelMixin should override this function and
-        use contribute_viewset_to_views to add the data
-        from its ViewSet.
-
-        Usually called with super(..., self).get_views()
+        Usually overriden with a call to :
+            super(..., self).get_views()
         """
         #pylint: disable=R0201
-        return {}
+        return []
     @classmethod
     def get_url_namespaces(cls):
         """
@@ -117,6 +108,14 @@ class AutoPatternsMixin(ModelInfoMixin):
         """
         #TODO: Add method docstring
         """
-        return reverse(cls._make_url_name(action),
+        if type(action) is str:
+            return reverse(cls._make_url_name(action),
                            args=args)
+        elif issubclass(action, View) and \
+             hasattr(action, 'get_action_name'):
+            return reverse(
+                cls._make_url_name(
+                    action.get_action_name()
+                )
+            )
 
