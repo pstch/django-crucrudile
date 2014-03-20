@@ -35,7 +35,7 @@ if not settings.configured:
 
     # Misc
     SETTINGS_DICT.update({
-        'ROOT_URLCONF' : None,
+        'ROOT_URLCONF' : 'tests.urls',
         'USE_TZ' : True,
         'SECRET_KEY' : 'so long and thanks for all the fish'
     })
