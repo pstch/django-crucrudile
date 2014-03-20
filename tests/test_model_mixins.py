@@ -22,12 +22,14 @@ class ListableModelMixinTestCase(TestCase):
         def get_list_select_related_fields(cls):
             return ['test_related_field',]
 
-    def test_get_views(self):
-        self.assertEqual(self.TestListableModel.get_views(),
-                         [ListView])
+    def setUp(self):
+        self.model = self.TestListableModel
 
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(),
+                         [ListView])
     def test_get_args_by_view(self):
-        self.assertEqual(self.TestListableModel.get_args_by_view(ListView),
+        self.assertEqual(self.model.get_args_by_view(ListView),
                          {'allowed_sort_fields' : ['test_sort_field',],
                           'paginate_by' : 42,
                           'select_related' : ['test_related_field',]})
@@ -44,13 +46,15 @@ class FilteredListableModelMixinTestCase(TestCase):
         def get_filtered_list_select_related_fields(cls):
             return ['test_related_field',]
 
-    def test_get_views(self):
-        self.assertEqual(self.TestFilteredListableModel.get_views(),
-                         [FilteredListView])
+    def setUp(self):
+        self.model = self.TestFilteredListableModel
 
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(),
+                         [FilteredListView])
     def test_get_args_by_view(self):
         self.assertEqual(
-            self.TestFilteredListableModel.get_args_by_view(FilteredListView),
+            self.model.get_args_by_view(FilteredListView),
             {'allowed_sort_fields' : ['test_sort_field',],
              'paginate_by' : 42,
              'select_related' : ['test_related_field',]}
@@ -60,7 +64,63 @@ class DetailableModelMixinTestCase(TestCase):
     class TestDetailableModel(DetailableModelMixin, Model):
         pass
 
+    def setUp(self):
+        self.model = self.TestDetailableModel
+
     def test_get_views(self):
-        self.assertEqual(self.TestDetailableModel.get_views(),
+        self.assertEqual(self.model.get_views(),
                          [DetailView])
+
+class CreatableModelMixinTestCase(TestCase):
+    class TestCreatableModel(CreatableModelMixin, Model):
+        pass
+
+    def setUp(self):
+        self.model = self.TestCreatableModel
+
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(),
+                         [CreateView])
+
+class SpecificCreatableModelMixinTestCase(TestCase):
+    class TestSpecificCreatableModel(SpecificCreatableModelMixin, Model):
+        @staticmethod
+        def get_spec_create_init_keys():
+            return ['specific_create_key',]
+
+    def setUp(self):
+        self.model = self.TestSpecificCreatableModel
+
+    def test_get_views(self):
+        self.assertEqual(
+            self.model.get_views(),
+            [SpecificCreateView]
+        )
+    def test_args_by_view(self):
+        self.assertEqual(
+            self.model.get_args_by_view(SpecificCreateView),
+            {'initial_keys' : ['specific_create_key',]}
+        )
+
+class UpdatableModelMixinTestCase(TestCase):
+    class TestUpdatableModel(UpdatableModelMixin, Model):
+        pass
+
+    def setUp(self):
+        self.model = self.TestUpdatableModel
+
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(),
+                         [UpdateView])
+
+class DeletableModelMixinTestCase(TestCase):
+    class TestDeletableModel(DeletableModelMixin, Model):
+        pass
+
+    def setUp(self):
+        self.model = self.TestDeletableModel
+
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(),
+                         [DeleteView])
 
