@@ -21,6 +21,8 @@ if not settings.configured:
     # INSTALLED_APPS
     SETTINGS_DICT.update({
         'INSTALLED_APPS' : (
+            'django.contrib.contenttypes',
+            'django.contrib.auth',
             'django_pstch_helpers',
             'tests',
         )
