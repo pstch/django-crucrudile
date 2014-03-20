@@ -1,9 +1,7 @@
 """
 #TODO: Add module docstring
 """
-from django_pstch_helpers.utils import contribute_viewset_to_views
-
-from django_pstch_helpers.sets import DeleteViewSet
+from django_pstch_helpers.views import DeleteView
 
 from .base import AutoPatternsMixin
 
@@ -11,17 +9,16 @@ class DeletableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
-    def get_delete_url(self):
+    def get_delete_url(cls):
         """
         #TODO: Add method docstring
         """
-        return self.get_url(DeleteViewSet.action,
-                            args=[self.id,])
-    def get_views(self):
+        return cls.get_url(DeleteView,
+                            args=[cls.id,])
+    def get_views(cls):
         """
         #TODO: Add method docstring
         """
-        views = super(DeletableModelMixin, self).get_views()
-        contribute_viewset_to_views(views, DeleteViewSet)
+        views = super(DeletableModelMixin, cls).get_views()
+        views.append(DeleteView)
         return views
-
