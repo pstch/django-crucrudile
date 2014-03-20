@@ -122,7 +122,7 @@ class AutoPatternsMixin(ModelInfoMixin):
                 raise Exception(
                     "action was a view, but it did not define"
                     "get_action_name. get_url needs a valid definition of"
-                    "the classmethod get_action_name, that should return a"
+                    "the classmethod/staticmethod get_action_name, that should return a"
                     "string for the action, such a 'list'"
                 )
         raise Exception(

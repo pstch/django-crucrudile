@@ -17,7 +17,12 @@ class ListView(BaseModelMixins,
     """
     #TODO: Add class docstring
     """
-    pass
+    @staticmethod
+    def get_action_name():
+        return 'list'
+    @staticmethod
+    def get_url_part():
+        return self.get_action_name()
 
 class FilteredListView(BaseModelMixins,
                        SortableListMixin,
@@ -27,4 +32,9 @@ class FilteredListView(BaseModelMixins,
     #TODO: Add class docstring
     #TODO: Could we make it a mixin ?
     """
-    pass
+    @staticmethod
+    def get_action_name():
+        return 'filtered-list'
+    def get_url_part():
+        return self.get_action_name()
+
