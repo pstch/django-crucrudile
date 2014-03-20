@@ -130,7 +130,7 @@ class UpdatableModelMixinTestCase(TestCase):
         self.assertEqual(self.model.get_views(),
                          [UpdateView])
 
-        class DeletableModelMixinTestCase(TestCase):
+class DeletableModelMixinTestCase(TestCase):
     class TestDeletableModel(DeletableModelMixin, Model):
         pass
 
