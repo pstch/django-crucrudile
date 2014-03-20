@@ -54,3 +54,12 @@ class FilteredListableModelMixinTestCase(TestCase):
              'paginate_by' : 42,
              'select_related' : ['test_related_field',]}
         )
+
+class DetailableModelMixinTestCase(TestCase):
+    class TestDetailableModel(DetailableModelMixin, Model):
+        pass
+
+    def test_get_views(self):
+        self.assertEqual(self.TestDetailableModel.get_views(),
+                         [DetailView])
+
