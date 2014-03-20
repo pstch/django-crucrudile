@@ -1,10 +1,11 @@
-
 """
 #TODO: Add module docstring
 """
 from django.test import TestCase, Client
 from django.test.client import RequestFactory
 from django.views.generic import View
+
+from django.contrib.auth.models import User, AnonymousUser
 
 from django_pstch_helpers.views.mixins.auth import AuthMixin
 
@@ -49,11 +50,40 @@ class AuthMixinTestCase(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
+        self.user = User.objects.create_user(
+            'test',
+            'test@localhost.localdomain',
+            'test'
+        )
+        self.view = self.AuthView(required_login=True,
+                                  login_template="test/login.html",
+                                  template_name="test/home.html")
+
     def test_required_login_with_valid_user(self):
         """
         #TODO: Add test docstring
         """
-        view = setup_view(self.AuthView(required_login=True),
-                          self.factory.get('/'))
-        #TODO: Add test_required_login_with_valid_user
+        request = self.factory.get('/')
+
+        view = setup_view(self.view,
+                          request)
+
+        request.user = self.user
+
+        self.assertTemplateUsed(view.dispatch(request),
+                                "test/home.html")
+
+    def test_required_login_without_user(self):
+        """
+        #TODO: Add test docstring
+        """
+        request = self.factory.get('/')
+
+        view = setup_view(self.view,
+                          request)
+
+        request.user = AnonymousUser()
+
+        self.assertTemplateUsed(view.dispatch(request),
+                                "test/login.html")
 
