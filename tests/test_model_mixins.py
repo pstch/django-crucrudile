@@ -6,6 +6,7 @@ from django.db.models import Model
 
 from django_pstch_helpers.models.mixins.list import ListableModelMixin
 from django_pstch_helpers.models.mixins.list.filtered import FilteredListableModelMixin
+from django_pstch_helpers.models.mixins.detail import DetailableModelMixin
 
 from django_pstch_helpers.views import ListView, FilteredListView
 
