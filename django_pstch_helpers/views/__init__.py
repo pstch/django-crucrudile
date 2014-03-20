@@ -8,8 +8,7 @@ from .base import View, TemplateView, HomeView
 from .list import ListView, FilteredListView
 from .detail import DetailView
 
-from .edit import CreateView, SpecificCreateView, UpdateView
-from .delete import DeleteView
+from .edit import CreateView, SpecificCreateView, UpdateView, DeleteView
 
 #pylint: enable=F0401
 
