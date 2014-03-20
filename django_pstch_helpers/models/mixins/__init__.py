@@ -11,9 +11,9 @@ from .list.filtered import FilteredListableModelMixin
 
 from .edit import (CreatableModelMixin,
                    SpecificCreatableModelMixin,
-                   UpdatableModelMixin)
+                   UpdatableModelMixin,
+                   DeletableModelMixin)
 
-from .delete import DeletableModelMixin
 #pylint: enable=F0401
 
 #pylint: disable=R0901,R0903,W0232
