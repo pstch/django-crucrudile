@@ -52,13 +52,13 @@ class FilteredListableModelMixinTestCase(TestCase):
     class TestFilteredListableModel(FilteredListableModelMixin, Model):
         @classmethod
         def get_filtered_list_sort_fields(cls):
-            return ['test_sort_field',]
+            return ['filtered_test_sort_field',]
         @classmethod
         def get_filtered_list_paginate_by(cls):
-            return 42
+            return 24
         @classmethod
         def get_filtered_list_select_related_fields(cls):
-            return ['test_related_field',]
+            return ['filtered_test_related_field',]
 
     def setUp(self):
         self.model = self.TestFilteredListableModel
@@ -69,9 +69,9 @@ class FilteredListableModelMixinTestCase(TestCase):
     def test_get_args_by_view(self):
         self.assertEqual(
             self.model.get_args_by_view(FilteredListView),
-            {'allowed_sort_fields' : ['test_sort_field',],
-             'paginate_by' : 42,
-             'select_related' : ['test_related_field',]}
+            {'allowed_sort_fields' : ['filtered_test_sort_field',],
+             'paginate_by' : 24,
+             'select_related' : ['filtered_test_related_field',]}
         )
 
 class DetailableModelMixinTestCase(TestCase):
@@ -98,8 +98,8 @@ class CreatableModelMixinTestCase(TestCase):
 
 class SpecificCreatableModelMixinTestCase(TestCase):
     class TestSpecificCreatableModel(SpecificCreatableModelMixin, Model):
-        @staticmethod
-        def get_spec_create_init_keys():
+        @classmethod
+        def get_spec_create_init_keys(cls):
             return ['specific_create_key',]
 
     def setUp(self):
@@ -138,3 +138,70 @@ class DeletableModelMixinTestCase(TestCase):
         self.assertEqual(self.model.get_views(),
                          [DeleteView])
 
+class ModelMixinsTestCase(TestCase):
+    class TestModel(ListableModelMixin,
+                    FilteredListableModelMixin,
+                    DetailableModelMixin,
+                    CreatableModelMixin,
+                    SpecificCreatableModelMixin,
+                    UpdatableModelMixin,
+                    DeletableModelMixin,
+                    Model):
+        @classmethod
+        def get_list_sort_fields(cls):
+            return ['test_sort_field',]
+        @classmethod
+        def get_list_paginate_by(cls):
+            return 42
+        @classmethod
+        def get_list_select_related_fields(cls):
+            return ['test_related_field',]
+        @classmethod
+        def get_filtered_list_sort_fields(cls):
+            return ['filtered_test_sort_field',]
+        @classmethod
+        def get_filtered_list_paginate_by(cls):
+            return 24
+        @classmethod
+        def get_filtered_list_select_related_fields(cls):
+            return ['filtered_test_related_field',]
+        @classmethod
+        def get_spec_create_init_keys(cls):
+            return ['specific_create_key',]
+
+    def setUp(self):
+        self.model = self.TestModel
+
+    def test_get_views(self):
+        self.assertEqual(
+            set(self.model.get_views()),
+            set([ListView,
+                 FilteredListView,
+                 DetailView,
+                 CreateView,
+                 SpecificCreateView,
+                 UpdateView,
+                 DeleteView])
+        )
+    def test_get_args_by_view(self):
+        args = {
+            ListView : {
+                'allowed_sort_fields' : ['test_sort_field',],
+                'paginate_by' : 42,
+                'select_related' : ['test_related_field',]
+            },
+            FilteredListView : {
+                'allowed_sort_fields' : ['filtered_test_sort_field',],
+                'paginate_by' : 24,
+                'select_related' : ['filtered_test_related_field',]
+            },
+            SpecificCreateView : {
+                'initial_keys' : ['specific_create_key',]
+            }
+        }
+
+        for view in args:
+            self.assertEqual(
+                self.model.get_args_by_view(view),
+                args[view]
+            )
