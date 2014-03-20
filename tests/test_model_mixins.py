@@ -123,11 +123,14 @@ class UpdatableModelMixinTestCase(TestCase):
     def setUp(self):
         self.model = self.TestUpdatableModel
 
+        self.assertEqual(self.model.get_views(),
+                         [UpdateView])
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [UpdateView])
 
-class DeletableModelMixinTestCase(TestCase):
+        class DeletableModelMixinTestCase(TestCase):
     class TestDeletableModel(DeletableModelMixin, Model):
         pass
 
