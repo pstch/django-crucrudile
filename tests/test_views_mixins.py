@@ -55,6 +55,5 @@ class AuthMixinTestCase(TestCase):
         """
         view = setup_view(self.AuthView(required_login=True),
                           self.factory.get('/'))
-        client = Client()
         #TODO: Add test_required_login_with_valid_user
 
