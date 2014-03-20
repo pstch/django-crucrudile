@@ -39,13 +39,13 @@ class ListableModelMixin(AutoPatternsMixin):
         if view is ListView:
             args.update({
                 'select_related' : cls.get_list_select_related_fields(),
-                'paginate_by' : cls.get_paginate_by(),
-                'allowed_sort_fields' : cls.get_sort_fields(),
+                'paginate_by' : cls.get_list_paginate_by(),
+                'allowed_sort_fields' : cls.get_list_sort_fields(),
             })
         return args
 
     @classmethod
-    def get_sort_fields(cls):
+    def get_list_sort_fields(cls):
         """
         Override this if you want to allow sorting. Should return a
         dict used as argument to django-sortable-listview (see
@@ -54,7 +54,7 @@ class ListableModelMixin(AutoPatternsMixin):
         return []
 
     @classmethod
-    def get_paginate_by(cls):
+    def get_list_paginate_by(cls):
         """
         Override this if you want to use pagination. Should return an
         integer, that will be used as the value for the 'paginate_by'
