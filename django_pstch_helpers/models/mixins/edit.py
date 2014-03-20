@@ -30,10 +30,18 @@ class CreatableModelMixin(AutoPatternsMixin):
         views.append(CreateView)
         return views
 
-class SpecificCreatableModelMixin(CreatableModelMixin):
+class SpecificCreatableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
+    @classmethod
+    def get_specific_create_url(cls):
+        """
+        #TODO: Add method docstring
+        """
+        #TODO: Missing args, reverse won't work
+        return cls.get_url(SpecificCreateView,
+                            args=[cls.id,])
     @classmethod
     def get_views(cls):
         """
