@@ -7,8 +7,22 @@ from django.db.models import Model
 from django_pstch_helpers.models.mixins.list import ListableModelMixin
 from django_pstch_helpers.models.mixins.list.filtered import FilteredListableModelMixin
 from django_pstch_helpers.models.mixins.detail import DetailableModelMixin
+from django_pstch_helpers.models.mixins.delete import DeletableModelMixin
+from django_pstch_helpers.models.mixins.edit import (
+    CreatableModelMixin,
+    SpecificCreatableModelMixin,
+    UpdatableModelMixin
+)
 
-from django_pstch_helpers.views import ListView, FilteredListView, DetailView
+from django_pstch_helpers.views import (
+    ListView,
+    FilteredListView,
+    DetailView,
+    CreateView,
+    SpecificCreateView,
+    UpdateView,
+    DeleteView
+)
 
 class ListableModelMixinTestCase(TestCase):
     class TestListableModel(ListableModelMixin, Model):
