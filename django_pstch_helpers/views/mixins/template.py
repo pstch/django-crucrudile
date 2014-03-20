@@ -21,6 +21,7 @@ class TemplateResponseMixin(DjangoTemplateResponseMixin):
     app_prefix = None
     template_add_app_prefix = False
 
+
     def get_app_name(self):
         """
         #TODO: Fix comments & doc

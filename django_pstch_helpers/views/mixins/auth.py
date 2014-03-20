@@ -1,6 +1,7 @@
 """
 #TODO: Add module docstring
 """
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
 
 from .template import TemplateResponseMixin
@@ -35,8 +36,11 @@ class AuthMixin(object):
     """
     #pylint: disable=R0903, W0201
     required_login = True
-    required_permissions = (None,)
+    required_permissions = ()
 
+    perms_template = None
+
+    login_template = None
     perms_template = None
 
     login_template_add_prefix = True
@@ -64,25 +68,27 @@ class AuthMixin(object):
             The application name is obtained using :
               urlresolvers.resolve(path).app_name
             """
+            if name is None:
+                return None
 
-            template_mixin = TemplateResponseMixin(
-                request=request,
-                template_name=name,
-                template_name_add_prefix=True
-            )
+            template_mixin = TemplateResponseMixin()
+
+            template_mixin.request = request
+            template_mixin.template_name = name
+            template_mixin.template_name_add_prefix = True
 
             return template_mixin.get_template_names()[0]
 
-        login_template = self.login_template if not \
-                         self.login_template_add_prefix else \
-                         expand_template_name(self.login_template)
-        perms_template = self.perms_template if not \
-                         self.perms_template_add_prefix else \
-                         expand_template_name(self.perms_template)
-
         if self.required_login and \
            not request.user.is_authenticated():
-            # User not logged in, login required
+            if not self.login_template:
+                raise ImproperlyConfigured(
+                    "Login is required, user not authenticated, "
+                    "and login_template has not been defined."
+                )
+            login_template = self.login_template if not \
+                             self.login_template_add_prefix else \
+                             expand_template_name(self.login_template)
             return render(request,
                           login_template,
                           {'next' : request.get_full_path(),
@@ -90,7 +96,14 @@ class AuthMixin(object):
 
         if self.required_permissions and \
            not request.user.has_perms(self.required_permissions):
-            # Missing perm
+            if not self.perms_template:
+                raise ImproperlyConfigured(
+                    "Specific permissions are missing from the user, "
+                    "and perms_template has not been defined."
+                )
+            perms_template = self.perms_template if not \
+                             self.perms_template_add_prefix else \
+                             expand_template_name(self.perms_template)
             return render(request,
                           perms_template,
                           {'required_permissions' : self.required_permissions})
