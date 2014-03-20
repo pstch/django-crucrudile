@@ -10,7 +10,7 @@ from django_pstch_helpers.models.mixins.list.filtered import FilteredListableMod
 from django_pstch_helpers.views import ListView, FilteredListView
 
 class ListableModelMixinTestCase(TestCase):
-    class TestModel(ListableModelMixin, Model):
+    class TestListableModel(ListableModelMixin, Model):
         @classmethod
         def get_list_sort_fields(cls):
             return ['test_sort_field',]
@@ -22,17 +22,17 @@ class ListableModelMixinTestCase(TestCase):
             return ['test_related_field',]
 
     def test_get_views(self):
-        self.assertEqual(self.TestModel.get_views(),
+        self.assertEqual(self.TestListableModel.get_views(),
                          [ListView])
 
     def test_get_args_by_view(self):
-        self.assertEqual(self.TestModel.get_args_by_view(ListView),
+        self.assertEqual(self.TestListableModel.get_args_by_view(ListView),
                          {'allowed_sort_fields' : ['test_sort_field',],
                           'paginate_by' : 42,
                           'select_related' : ['test_related_field',]})
 
 class FilteredListableModelMixinTestCase(TestCase):
-    class TestModel(FilteredListableModelMixin, Model):
+    class TestFilteredListableModel(FilteredListableModelMixin, Model):
         @classmethod
         def get_filtered_list_sort_fields(cls):
             return ['test_sort_field',]
@@ -44,11 +44,13 @@ class FilteredListableModelMixinTestCase(TestCase):
             return ['test_related_field',]
 
     def test_get_views(self):
-        self.assertEqual(self.TestModel.get_views(),
+        self.assertEqual(self.TestFilteredListableModel.get_views(),
                          [FilteredListView])
 
     def test_get_args_by_view(self):
-        self.assertEqual(self.TestModel.get_args_by_view(FilteredListView),
-                         {'allowed_sort_fields' : ['test_sort_field',],
-                          'paginate_by' : 42,
-                          'select_related' : ['test_related_field',]})
+        self.assertEqual(
+            self.TestFilteredListableModel.get_args_by_view(FilteredListView),
+            {'allowed_sort_fields' : ['test_sort_field',],
+             'paginate_by' : 42,
+             'select_related' : ['test_related_field',]}
+        )

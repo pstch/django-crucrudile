@@ -31,7 +31,6 @@ class FilteredListableModelMixin(AutoPatternsMixin):
             "get_filter should be overriden to"
             " return a proper django-filter Filter")
 
-
     @classmethod
     def get_views(cls):
         """
