@@ -4,6 +4,7 @@ from django_pstch_helpers.models import UserNamed, UserDescribed
 from django_pstch_helpers.models.mixins import (
     ModelInfoMixin, AutoPatternsMixin,
     ListableModelMixin,
+    BaseModelActionsMixin,
     FullModelActionsMixin
 )
 
