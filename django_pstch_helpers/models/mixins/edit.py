@@ -14,12 +14,14 @@ class CreatableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
+    @classmethod
     def get_create_url(cls):
         """
         #TODO: Add method docstring
         """
         return cls.get_url(CreateView,
                             args=[cls.id,])
+    @classmethod
     def get_views(cls):
         """
         #TODO: Add method docstring
@@ -32,6 +34,7 @@ class SpecificCreatableModelMixin(CreatableModelMixin):
     """
     #TODO: Add class docstring
     """
+    @classmethod
     def get_views(cls):
         """
         #TODO: Add method docstring
@@ -39,6 +42,7 @@ class SpecificCreatableModelMixin(CreatableModelMixin):
         views = super(SpecificCreatableModelMixin, cls).get_views()
         views.append(SpecificCreateView)
         return views
+    @classmethod
     def get_args_by_view(cls, view):
         """
         #TODO: Add method docstring
@@ -61,17 +65,20 @@ class UpdatableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
+    @classmethod
     def get_update_url(cls):
         """
         #TODO: Add method docstring
         """
         return cls.get_url(UpdateView,
                             args=[cls.id,])
+    @classmethod
     def get_edit_url(cls):
         """
         #TODO: Add method docstring
         """
         return cls.get_update_url()
+    @classmethod
     def get_views(cls):
         """
         #TODO: Add method docstring

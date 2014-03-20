@@ -9,12 +9,14 @@ class DeletableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
+    @classmethod
     def get_delete_url(cls):
         """
         #TODO: Add method docstring
         """
         return cls.get_url(DeleteView,
                             args=[cls.id,])
+    @classmethod
     def get_views(cls):
         """
         #TODO: Add method docstring
