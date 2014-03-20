@@ -60,8 +60,8 @@ class SpecificCreatableModelMixin(AutoPatternsMixin):
         if view is SpecificCreateView:
             args['initial_keys'] = cls.get_spec_create_init_keys()
         return args
-    @staticmethod
-    def get_spec_create_init_keys():
+    @classmethod
+    def get_spec_create_init_keys(cls):
         """
         #TODO: Add method docstring
         """
