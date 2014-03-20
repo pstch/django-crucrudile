@@ -111,11 +111,48 @@ class AutoPatternsMixin(ModelInfoMixin):
         if type(action) is str:
             return reverse(cls._make_url_name(action),
                            args=args)
-        elif issubclass(action, View) and \
-             hasattr(action, 'get_action_name'):
-            return reverse(
-                cls._make_url_name(
-                    action.get_action_name()
+        if issubclass(action, View):
+            if hasattr(action, 'get_action_name'):
+                return reverse(
+                    cls._make_url_name(
+                        action.get_action_name()
+                    )
                 )
-            )
+            else:
+                raise Exception(
+                    "action was a view, but it did not define"
+                    "get_action_name. get_url needs a valid definition of"
+                    "the classmethod get_action_name, that should return a"
+                    "string for the action, such a 'list'"
+                )
+        raise Exception(
+            "Unknown type for the 'action' kwarg, neither a string nor a View"
+        )
 
+    @classmethod
+    def get_views(cls):
+        """
+        This class method is overriden by ModelMixin classes, so that the
+        resulting Model object (which subclasses ModelMixin classes)
+        can get the list of the views used for this Model with
+        get_views().
+
+        When overriden in a ModelMixin class, get_views() should
+        always get the current list of views using
+        super(...).get_views) before appending a new View.
+
+        This function is used by django-generic-patterns, in
+        auto_patterns(...), to get the needed views for a Model.
+        """
+        return []
+
+    @classmethod
+    def get_args_by_view(cls, view):
+        """
+        This class method is overriden by ModelMixin classes, so that the resulting Model object (which subclasses ModelMixin classes) can get the dictionary of view arguments for each view used in this Model, with get_args_by_view(view).
+
+        When overriden in a ModelMixin class or by the user, get_args_by_view should always get the current list of views using super(...).get_views) before appending a new View. Usually, args are tretrieved using super, then if the 'view' kwarg is the view on which we want to set arguments, we update the args dictionary with another dictionary.
+
+        This function is used by django-generic-patterns, in auto_patterns(...), to get the needed views for a Model.
+        """
+        return {}
