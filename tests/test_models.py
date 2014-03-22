@@ -4,7 +4,7 @@
 from django.test import TestCase
 from django.db.models import Model
 
-from django_pstch_helpers.models import UserNamed
+from django_pstch_helpers.models import UserNamed, UserDescribed
 
 class UserNamedModelTestCase(TestCase):
     class UserNamedTestModel(UserNamed, Model):
