@@ -43,12 +43,12 @@ class ModelInfoMixinTestCase(TestCase):
             instance = self.model().save()
             self.object_list.append(instance)
 
-    def test__get_objects(self):
+    def test_get_objects(self):
         self.assertEqual(
             type(self.model._get_objects()),
             Manager
         )
-    def test__get_meta(self):
+    def test_get_meta(self):
         self.assertEqual(
             type(self.model._get_meta()),
             Options
@@ -94,7 +94,7 @@ class AutoPatternsMixinTestCase(TestCase):
     def test_get_url_name(self):
         self.assertEqual(self.model.get_url_name(),
                          'model-info-mixin-test-model')
-    def test__make_url_name(self):
+    def test_make_url_name(self):
         self.assertEqual(self.model._make_url_name('action'),
                          "tests:model-info-mixin-test-model-action")
     def test_get_url(self):
