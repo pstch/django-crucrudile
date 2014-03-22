@@ -16,7 +16,7 @@ class BaseViewMixins(AuthMixin,
     """
     pass
 
-class BaseModelViewMixins(BaseMixins,
+class BaseModelViewMixins(BaseViewMixins,
                       ModelInfoMixin,
                       SingleObjectTemplateResponseMixin):
     """
@@ -24,7 +24,7 @@ class BaseModelViewMixins(BaseMixins,
     """
     pass
 
-class BaseModelFormViewMixins(BaseModelMixins, ModelFormRedirectMixin):
+class BaseModelFormViewMixins(BaseModelViewMixins, ModelFormRedirectMixin):
     """
     #TODO: Write class docstring
     """
