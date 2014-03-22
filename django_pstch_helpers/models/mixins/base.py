@@ -96,6 +96,12 @@ class AutoPatternsMixin(ModelInfoMixin):
         #pylint: disable=R0201
         return [cls._meta.app_label, ]
     @classmethod
+    def get_url_name(cls):
+        """
+        #TODO: Add method docstring
+        """
+        return self.get_dashed_verbose_name()
+    @classmethod
     def _make_url_name(cls, action):
         """
         #TODO: Add method docstring
@@ -103,6 +109,7 @@ class AutoPatternsMixin(ModelInfoMixin):
         return make_url_name(cls.get_url_namespaces(),
                              cls.get_url_name(),
                              action)
+
     @classmethod
     def get_url(cls, action, args=None):
         """
