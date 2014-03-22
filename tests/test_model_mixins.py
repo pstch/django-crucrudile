@@ -90,13 +90,13 @@ class AutoPatternsMixinTestCase(TestCase):
         self.assertEqual(self.model.get_url_prefix(), None)
     def test_get_url_namespaces(self):
         self.assertEqual(self.model.get_url_namespaces(),
-                         ['example_app'],)
+                         ['tests'],)
     def test_get_url_name(self):
         self.assertEqual(self.model.get_url_name(),
                          'model-info-mixin-test-model')
     def test__make_url_name(self):
         self.assertEqual(self.model._make_url_name('action'),
-                         "example_app:model-info-mixin-test-model-action")
+                         "tests:model-info-mixin-test-model-action")
     def test_get_url(self):
         #TODO: this
         return
