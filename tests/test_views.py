@@ -16,10 +16,10 @@ class ViewTestCase(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
+        self.request = self.factory.get('/')
         self.view = setup_view(self.view_class(),
-                               self.factory.get('/'))
+                               self.request)
 
     def test_simple_dispatch(self):
-        print "HE"
-        self.assertEqual(type(self.view.dispatch()),
+        self.assertEqual(type(self.view.dispatch(self.request)),
                          HttpResponseNotAllowed)
