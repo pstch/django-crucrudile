@@ -48,3 +48,15 @@ class LoginViewTestCase(TestCase):
         # assert that correct identifiers with invalid (disabled) account blocks login
         # assert that invalid identifiers blocks login
         return
+
+class LogoutViewTestCase(TestCase):
+    view_class = LogoutView
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        self.request = self.factory.get('/')
+        self.view = setup_view(self.view_class(),
+                               self.request)
+
+    def test_redirect(self):
+        return
