@@ -94,7 +94,7 @@ class AutoPatternsMixin(ModelInfoMixin):
         #TODO: Add method docstring
         """
         #pylint: disable=R0201
-        return []
+        return [cls._meta.app_label, ]
     @classmethod
     def _make_url_name(cls, action):
         """
