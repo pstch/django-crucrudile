@@ -6,7 +6,7 @@ from django.views.generic import CreateView as DjangoCreateView
 from django.views.generic import UpdateView as DjangoUpdateView
 from django.views.generic import DeleteView as DjangoDeleteView
 
-from .mixins.base import BaseModelFormMixins
+from .mixins.base import BaseModelFormViewMixins
 
 from .mixins.edit.messages import CreateMessageMixin, UpdateMessageMixin
 from .mixins.edit.specific import SpecificCreateMixin

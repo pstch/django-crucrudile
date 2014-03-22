@@ -7,7 +7,7 @@ from django.views.generic import ListView as DjangoListView
 from django_filters.views import FilterView
 from django_sortable_list import SortableListMixin # pylint: disable=F0401
 
-from .mixins.base import BaseModelMixins
+from .mixins.base import BaseModelViewMixins
 from .mixins.related import SelectRelatedMixin
 
 class ListView(BaseModelViewMixins,
@@ -17,12 +17,18 @@ class ListView(BaseModelViewMixins,
     """
     #TODO: Add class docstring
     """
-    @staticmethod
-    def get_action_name():
+    @classmethod
+    def get_action_name(cls):
+        """
+        #TODO: Add method docstring
+        """
         return 'list'
-    @staticmethod
-    def get_url_part():
-        return self.get_action_name()
+    @classmethod
+    def get_url_part(cls):
+        """
+        #TODO: Add method docstring
+        """
+        return cls.get_action_name()
 
 class FilteredListView(BaseModelViewMixins,
                        SortableListMixin,
@@ -32,9 +38,16 @@ class FilteredListView(BaseModelViewMixins,
     #TODO: Add class docstring
     #TODO: Could we make it a mixin ?
     """
-    @staticmethod
-    def get_action_name():
+    @classmethod
+    def get_action_name(cls):
+        """
+        #TODO: Add method docstring
+        """
         return 'filtered-list'
-    def get_url_part():
-        return self.get_action_name()
+    @classmethod
+    def get_url_part(cls):
+        """
+        #TODO: Add method docstring
+        """
+        return cls.get_action_name()
 

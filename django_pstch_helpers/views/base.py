@@ -5,7 +5,7 @@
 from django.views.generic import (View as DjangoView,
                                   TemplateView as DjangoTemplateView)
 
-from .mixins.base import BaseMixins
+from .mixins.base import BaseViewMixins
 
 class View(BaseViewMixins, DjangoView):
     """
