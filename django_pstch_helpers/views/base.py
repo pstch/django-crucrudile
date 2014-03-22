@@ -11,7 +11,6 @@ class View(BaseViewMixins, DjangoView):
     """
     #TODO: Add class docstring
     """
-    def get_action_name
     pass
 
 class TemplateView(BaseViewMixins, DjangoTemplateView):
