@@ -75,8 +75,35 @@ class ModelInfoMixinTestCase(TestCase):
         )
 
 class AutoPatternsMixinTestCase(TestCase):
-    pass
-    #TODO: this
+    class AutoPatternsMixinTestModel(AutoPatternsMixin, Model):
+        pass
+
+    def setUp(self):
+        self.model = self.AutoPatternsMixinTestModel
+        self.object_list = []
+
+        for i in range(20): # pylint: disable=W0612
+            instance = self.model()
+            self.object_list.append(instance)
+
+    def test_get_url_prefix(self):
+        self.assertEqual(self.model.get_url_prefix(), None)
+    def test_get_url_namespaces(self):
+        self.assertEqual(self.model.get_url_namespaces(),
+                         ['example_app'],)
+    def test_get_url_name(self):
+        self.assertEqual(self.model.get_url_name(),
+                         'model-info-mixin-test-model')
+    def test__make_url_name(self):
+        self.assertEqual(self.model._make_url_name('action'),
+                         "example_app:model-info-mixin-test-model-action")
+    def test_get_url(self):
+        #TODO: this
+        return
+    def test_get_views(self):
+        self.assertEqual(self.model.get_views(), [])
+    def test_get_args_by_view(self):
+        self.assertEqual(self.model.get_args_by_view(None), {})
 
 class ListableModelMixinTestCase(TestCase):
     class TestListableModel(ListableModelMixin, Model):
