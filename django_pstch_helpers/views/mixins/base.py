@@ -1,6 +1,7 @@
 """
 #TODO: Write module docstring
 """
+
 from .auth import AuthMixin
 from .context import ExtraContextMixin, ModelInfoMixin
 from .redirect import ModelFormRedirectMixin
@@ -9,22 +10,23 @@ from .template import TemplateResponseMixin, SingleObjectTemplateResponseMixin
 #pylint: disable=R0901
 
 class BaseViewMixins(AuthMixin,
-                 ExtraContextMixin,
-                 TemplateResponseMixin):
+                     ExtraContextMixin,
+                     TemplateResponseMixin):
     """
     #TODO: Write class docstring
     """
     pass
 
 class BaseModelViewMixins(BaseViewMixins,
-                      ModelInfoMixin,
-                      SingleObjectTemplateResponseMixin):
+                          ModelInfoMixin,
+                          SingleObjectTemplateResponseMixin):
     """
     #TODO: Write class docstring
     """
     pass
 
-class BaseModelFormViewMixins(BaseModelViewMixins, ModelFormRedirectMixin):
+class BaseModelFormViewMixins(BaseModelViewMixins,
+                              ModelFormRedirectMixin):
     """
     #TODO: Write class docstring
     """
