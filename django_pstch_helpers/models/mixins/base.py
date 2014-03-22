@@ -1,6 +1,8 @@
 """
 #TODO: Add module docstring
 """
+import re
+
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 
@@ -63,6 +65,10 @@ class ModelInfoMixin(object):
         """
         _meta = cls._get_meta()
         return _meta.model_name
+    @classmethod
+    def get_dashed_verbose_name(cls):
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 class AutoPatternsMixin(ModelInfoMixin):
     """
@@ -119,6 +125,7 @@ class AutoPatternsMixin(ModelInfoMixin):
                     )
                 )
             else:
+
                 raise Exception(
                     "action was a view, but it did not define"
                     "get_action_name. get_url needs a valid definition of"
