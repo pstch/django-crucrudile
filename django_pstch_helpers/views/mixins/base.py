@@ -8,7 +8,7 @@ from .template import TemplateResponseMixin, SingleObjectTemplateResponseMixin
 
 #pylint: disable=R0901
 
-class BaseMixins(AuthMixin,
+class BaseViewMixins(AuthMixin,
                  ExtraContextMixin,
                  TemplateResponseMixin):
     """
@@ -16,7 +16,7 @@ class BaseMixins(AuthMixin,
     """
     pass
 
-class BaseModelMixins(BaseMixins,
+class BaseModelViewMixins(BaseMixins,
                       ModelInfoMixin,
                       SingleObjectTemplateResponseMixin):
     """
@@ -24,7 +24,7 @@ class BaseModelMixins(BaseMixins,
     """
     pass
 
-class BaseModelFormMixins(BaseModelMixins, ModelFormRedirectMixin):
+class BaseModelFormViewMixins(BaseModelMixins, ModelFormRedirectMixin):
     """
     #TODO: Write class docstring
     """

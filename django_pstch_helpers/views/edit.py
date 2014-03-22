@@ -14,7 +14,7 @@ from .mixins.edit.specific import SpecificCreateMixin
 from .mixins.delete.collector import DeletionCollectorContextMixin
 from .mixins.delete.messages import DeleteMessageMixin
 
-class CreateView(BaseModelFormMixins,
+class CreateView(BaseModelFormViewMixins,
                  CreateMessageMixin,
                  DjangoCreateView):
     """
@@ -22,7 +22,7 @@ class CreateView(BaseModelFormMixins,
     """
     pass
 
-class UpdateView(BaseModelFormMixins,
+class UpdateView(BaseModelFormViewMixins,
                  UpdateMessageMixin,
                  DjangoUpdateView):
     """
@@ -30,7 +30,7 @@ class UpdateView(BaseModelFormMixins,
     """
     pass
 
-class SpecificCreateView(BaseModelFormMixins,
+class SpecificCreateView(BaseModelFormViewMixins,
                          CreateMessageMixin,
                          SpecificCreateMixin,
                          DjangoCreateView):
@@ -39,7 +39,7 @@ class SpecificCreateView(BaseModelFormMixins,
     """
     pass
 
-class DeleteView(BaseModelFormMixins,
+class DeleteView(BaseModelFormViewMixins,
                  DeleteMessageMixin,
                  DeletionCollectorContextMixin,
                  DjangoDeleteView):

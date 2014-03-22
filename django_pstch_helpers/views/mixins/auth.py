@@ -35,7 +35,7 @@ class AuthMixin(object):
       Is only used if perms_template is None.
     """
     #pylint: disable=R0903, W0201
-    required_login = True
+    required_login = False
     required_permissions = ()
 
     perms_template = None

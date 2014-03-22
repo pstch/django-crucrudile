@@ -10,7 +10,7 @@ from django_sortable_list import SortableListMixin # pylint: disable=F0401
 from .mixins.base import BaseModelMixins
 from .mixins.related import SelectRelatedMixin
 
-class ListView(BaseModelMixins,
+class ListView(BaseModelViewMixins,
                SortableListMixin,
                SelectRelatedMixin,
                DjangoListView):
@@ -24,7 +24,7 @@ class ListView(BaseModelMixins,
     def get_url_part():
         return self.get_action_name()
 
-class FilteredListView(BaseModelMixins,
+class FilteredListView(BaseModelViewMixins,
                        SortableListMixin,
                        SelectRelatedMixin,
                        FilterView):

@@ -6,7 +6,7 @@ from django.views.generic import DetailView as DjangoDetailView
 
 from .mixins.base import BaseModelMixins
 
-class DetailView(BaseModelMixins, DjangoDetailView):
+class DetailView(BaseModelViewMixins, DjangoDetailView):
     """
     #TODO: Add class docstring
     """

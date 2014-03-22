@@ -7,13 +7,14 @@ from django.views.generic import (View as DjangoView,
 
 from .mixins.base import BaseMixins
 
-class View(BaseMixins, DjangoView):
+class View(BaseViewMixins, DjangoView):
     """
     #TODO: Add class docstring
     """
+    def get_action_name
     pass
 
-class TemplateView(BaseMixins, DjangoTemplateView):
+class TemplateView(BaseViewMixins, DjangoTemplateView):
     """
     #TODO: Add class docstring
     """
