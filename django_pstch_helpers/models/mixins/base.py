@@ -100,7 +100,7 @@ class AutoPatternsMixin(ModelInfoMixin):
         """
         #TODO: Add method docstring
         """
-        return self.get_dashed_verbose_name()
+        return cls.get_dashed_verbose_name()
     @classmethod
     def _make_url_name(cls, action):
         """
