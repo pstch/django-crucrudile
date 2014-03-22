@@ -10,6 +10,7 @@ from .detail import DetailView
 
 from .edit import CreateView, SpecificCreateView, UpdateView, DeleteView
 
+from .auth import LoginView, LogoutView
 #pylint: enable=F0401
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     'UpdateView',
     'DeleteView',
     'SpecificCreateView'
+    'LoginView', 'LogoutView'
 ]
