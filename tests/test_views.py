@@ -21,4 +21,4 @@ class ViewTestCase(TestCase):
 
         def test_simple_dispatch(self):
             self.assertEqual(type(self.view.dispatch()),
-                             HttpResponseNotAllowed)
+                             type(HttpResponseNotAllowed))
