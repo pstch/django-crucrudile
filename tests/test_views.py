@@ -19,6 +19,7 @@ class ViewTestCase(TestCase):
         self.view = setup_view(self.view_class(),
                                self.factory.get('/'))
 
-        def test_simple_dispatch(self):
-            self.assertEqual(type(self.view.dispatch()),
-                             type(HttpResponseNotAllowed))
+    def test_simple_dispatch(self):
+        print "HE"
+        self.assertEqual(type(self.view.dispatch()),
+                         HttpResponseNotAllowed)
