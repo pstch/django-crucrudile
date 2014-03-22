@@ -6,7 +6,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
 
-class ExtraContextMixin(object): #TODO: test inheriting from ContextMixin
+class ExtraContextMixin(object): #TODO: try inheriting from ContextMixin
     """
     This mixin will read extra_context when get_context_data is
     called, and update the context with its contents.
