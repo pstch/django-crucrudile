@@ -47,3 +47,4 @@ class LoginViewTestCase(TestCase):
         # assert that correct identifiers with valid account yields successful login
         # assert that correct identifiers with invalid (disabled) account blocks login
         # assert that invalid identifiers blocks login
+        return
