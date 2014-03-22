@@ -9,6 +9,7 @@ from django.views.generic import View as DjangoView
 
 from django_pstch_helpers.utils import make_url_name
 from django_pstch_helpers.views import View
+
 class ModelInfoMixin(object):
     """
     #TODO: Add class docstring
