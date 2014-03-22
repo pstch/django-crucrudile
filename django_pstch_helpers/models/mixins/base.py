@@ -5,9 +5,10 @@ import re
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.generic.views import View as DjangoView
 
 from django_pstch_helpers.utils import make_url_name
-
+from django_pstch_helpers.views import View
 class ModelInfoMixin(object):
     """
     #TODO: Add class docstring
@@ -117,7 +118,8 @@ class AutoPatternsMixin(ModelInfoMixin):
         if type(action) is str:
             return reverse(cls._make_url_name(action),
                            args=args)
-        if issubclass(action, View):
+        if issubclass(action, View) or \
+           issubclass(action, DjangoView):
             if hasattr(action, 'get_action_name'):
                 return reverse(
                     cls._make_url_name(
