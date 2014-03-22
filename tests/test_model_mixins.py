@@ -2,11 +2,13 @@
 #TODO: Add module docstring
 """
 from django.test import TestCase
-from django.db.models import Model
+from django.db.models import Model, Manager
+from django.db.models.options import Options
 
 from django_pstch_helpers.models.mixins.list import ListableModelMixin
 from django_pstch_helpers.models.mixins.list.filtered import FilteredListableModelMixin
 from django_pstch_helpers.models.mixins.detail import DetailableModelMixin
+
 from django_pstch_helpers.models.mixins.edit import (
     CreatableModelMixin,
     SpecificCreatableModelMixin,
@@ -23,6 +25,58 @@ from django_pstch_helpers.views import (
     UpdateView,
     DeleteView
 )
+
+from django_pstch_helpers.models.mixins.base import (
+    ModelInfoMixin,
+    AutoPatternsMixin
+)
+
+class ModelInfoMixinTestCase(TestCase):
+    class ModelInfoMixinTestModel(ModelInfoMixin, Model):
+        pass
+
+    def setUp(self):
+        self.model = self.ModelInfoMixinTestModel
+        self.object_list = []
+
+        for i in range(20): # pylint: disable=W0612
+            instance = self.model().save()
+            self.object_list.append(instance)
+
+    def test__get_objects(self):
+        self.assertEqual(
+            type(self.model._get_objects()),
+            Manager
+        )
+    def test__get_meta(self):
+        self.assertEqual(
+            type(self.model._get_meta()),
+            Options
+        )
+    def test_get_verbose_name(self):
+        self.assertEqual(
+            self.model.get_verbose_name(),
+            'model info mixin test model'
+        )
+    def test_get_count(self):
+        self.assertEqual(
+            self.model.get_count(),
+            20
+        )
+    def test_get_model_name(self):
+        self.assertEqual(
+            self.model.get_model_name(),
+            'model_info_mixin_test_model'
+        )
+    def test_get_dashed_verbose_name(self):
+        self.assertEqual(
+            self.model.get_dashed_verbose_name(),
+            'model-info-mixin-test-model'
+        )
+
+class AutoPatternsMixinTestCase(TestCase):
+    pass
+    #TODO: this
 
 class ListableModelMixinTestCase(TestCase):
     class TestListableModel(ListableModelMixin, Model):
