@@ -16,6 +16,6 @@ class UserNamedModelTestCase(TestCase):
 
     def test_unicode(self):
         self.assertEqual(
-            str(self.model),
+            str(self.instance),
             "test_name"
         )
