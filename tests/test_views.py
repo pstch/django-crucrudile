@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.http.response import HttpResponseNotAllowed
 
-from django_pstch_helpers.views import View
+from django_pstch_helpers.views import View, LoginView, LogoutView
 
 from .utils import setup_view
 
