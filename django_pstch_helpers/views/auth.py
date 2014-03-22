@@ -7,15 +7,18 @@ import datetime
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.views.generic import View
+from django.views.generic import View as DjangoView
 from django.contrib.auth import login, authenticate, logout
 from django.core.urlresolvers import reverse
 
 from django.utils.translation import ugettext as _
 
 from .mixins.template import TemplateResponseMixin
+from .mixins.context import ExtraContextMixin
 
-class LoginView(TemplateResponseMixin, View):
+from .base import View
+
+class LoginView(TemplateResponseMixin, ExtraContextMixin, DjangoView):
     """
     #TODO: Add class docstring
     """
