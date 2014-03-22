@@ -22,16 +22,21 @@ class ExtraContextMixin(object):
         callables (and callables dict values) with their return value
         if there are any.
         """
-        context = super(ExtraContextMixin, self).get_context_data(**kwargs)
+        super_object = super(ExtraContextMixin, self)
+        if hasattr(super_object, 'get_context_data'):
+            context = super(ExtraContextMixin, self).get_context_data(**kwargs)
+        else:
+            context = {}
+
         if callable(self.extra_context):
             #pylint: disable=E1102
-            extra_context = self.extra_context(self, context)
+            extra_context = self.extra_context(self, context.copy())
         else:
             extra_context = self.extra_context
 
         for key in extra_context:
             if callable(extra_context[key]):
-                extra_context[key] = extra_context[key](self, context)
+                extra_context[key] = extra_context[key](self, context.copy())
 
         context.update(extra_context)
 
