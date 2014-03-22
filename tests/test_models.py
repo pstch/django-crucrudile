@@ -19,3 +19,12 @@ class UserNamedModelTestCase(TestCase):
             str(self.instance),
             "test_name"
         )
+
+class UserDescribedModelTestCase(TestCase):
+    class UserDescribedModel(UserDescribed, Model):
+        pass
+
+    def setUp(self):
+        self.model = UserDescribedModel
+        #TODO: this
+
