@@ -141,4 +141,4 @@ class TemplateResponseTestCase(TestCase):
         """
 
         self.assertEqual(self.view.get_app_name(),
-                         'tests')
+                         'test')
