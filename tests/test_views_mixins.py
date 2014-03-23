@@ -139,6 +139,66 @@ class TemplateResponseTestCase(TestCase):
         """
         #TODO: Add method docstring
         """
-
         self.assertEqual(self.view.get_app_name(),
                          'test')
+
+    def test_get_app_prefix(self):
+        self.assertEqual(self.view.get_app_prefix(),
+                         'test')
+
+        self.view.app_prefix = 'test_prefix'
+        self.assertEqual(self.view.get_app_prefix(),
+                         'test_prefix')
+        self.view.app_prefix = None
+
+    def test_get_app_prefix_setting(self):
+        setattr(settings,
+                'PER_APP_TEMPLATE_PREFIX',
+                { 'test' : 'test_prefix'})
+        self.assertEqual(self.view.get_app_prefix(),
+                         'test_prefix')
+
+        delattr(settings,
+                'PER_APP_TEMPLATE_PREFIX')
+
+    def test_prefix_name_if_needed(self):
+        self.assertEqual(self.view.prefix_name_if_needed('test_name'),
+                         'test_name')
+
+        self.view.template_add_app_prefix = True
+        self.assertEqual(self.view.prefix_name_if_needed('test_name'),
+                         'test/test_name')
+        self.view.template_add_app_prefix = False
+
+    def test_get_template_names(self):
+        self.assertRaises(self.view.get_template_names)
+
+        self.view.template_name = 'test/home.html'
+        self.assertEqual(self.view.get_template_names(),
+                         ['test/home.html'])
+        self.view.template_name = None
+
+class SingleObjectTemplateResponseTestCase(TestCase):
+    """
+    #TODO: Add class docstring
+    """
+    view_class = DjangoView
+    mixin_class = SingleObjectTemplateResponseMixin
+
+    def setUp(self):
+        """
+        #TODO: Add method docstring
+        """
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        self.request = self.factory.get('/')
+
+        class SingleObjectTemplateResponseView(self.mixin_class, self.view_class): # pylint: disable=C0111
+            pass
+
+        self.view = setup_view(SingleObjectTemplateResponseView(),
+                               self.request)
+
+    def test_get_template_names(self):
+        #TODO
+        return
