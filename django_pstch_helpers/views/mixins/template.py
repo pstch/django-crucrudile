@@ -36,18 +36,23 @@ class TemplateResponseMixin(DjangoTemplateResponseMixin):
         """
         #TODO: Fix comments & doc
         """
-        if not self.app_prefix:
-            self.app_prefix = getattr(getattr(settings,
-                                              "PER_APP_TEMPLATE_PREFIX",
-                                              {}),
-                                      self.get_app_name(),
-                                      self.get_app_name())
-        return self.app_prefix
+        if self.app_prefix:
+            return self.app_prefix
+        else:
+            setting = getattr(settings,
+                              'PER_APP_TEMPLATE_PREFIX',
+                              {})
+            app_setting = setting.get(self.get_app_name())
+            return app_setting or self.get_app_name()
 
     def prefix_name_if_needed(self, name):
         """
         #TODO: Fix comments & doc
         """
+
+
+
+
         if self.template_add_app_prefix:
             return "%s/%s" % (self.get_app_prefix(), name)
         else:
