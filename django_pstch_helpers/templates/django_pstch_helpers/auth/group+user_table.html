@@ -2,10 +2,8 @@
   <div class="col-md-7">
     <h2>Users
       <small class="pull-right btn-group">
-	<a class="btn btn-info"
-	   href="{% url user_list_url %}">Open list</a>
-	<a class="btn btn-primary"
-	   href="{% url user_create_url %}">Create user</a>
+          {% include "django_pstch_helpers/base/widgets/button.html" with btn-class='info' title='User list' url=user_list_url text='Open list' %}
+          {% include 'django_pstch_helpers/base/widgets/button.html' with btn-class='primary' title='Create user' url=user_create_url text='Create user'}
       </small>
     </h2>
     <hr/>
@@ -14,10 +12,8 @@
   <div class="col-md-5">
     <h2>Groups
       <small class="pull-right btn-group">
-	<a class="btn btn-info"
-	   href="{% url group_list_url %}">Open list</a>
-	<a class="btn btn-primary"
-	   href="{% url group_create_url %}">Create group</a>
+          {% include "django_pstch_helpers/base/widgets/button.html" with btn-class='info' title='Group list' url=group_list_url text='Open list' %}
+          {% include 'django_pstch_helpers/base/widgets/button.html' with btn-class='primary' title='Create group' url=group_create_url text='Create group'}
       </small>
     </h2>
     <hr/>
