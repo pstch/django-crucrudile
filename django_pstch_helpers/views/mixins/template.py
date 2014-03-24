@@ -28,7 +28,7 @@ class TemplateResponseMixin(DjangoTemplateResponseMixin):
         """
         if not self.app_name:
             self.app_name = resolve(self.request.path).app_name
-            if not self.app_name:
+            if not self.app_name: # pragma: no cover
                 raise Exception("Could not get application name.")
         return self.app_name
 
