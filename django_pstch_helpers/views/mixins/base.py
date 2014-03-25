@@ -2,6 +2,7 @@
 #TODO: Write module docstring
 """
 
+from .action import ActionMixin
 from .auth import AuthMixin
 from .context import ExtraContextMixin, ModelInfoMixin
 from .redirect import ModelFormRedirectMixin
@@ -17,7 +18,8 @@ class BaseViewMixins(AuthMixin,
     """
     pass
 
-class BaseModelViewMixins(BaseViewMixins,
+class BaseModelViewMixins(ActionMixin,
+                          BaseViewMixins,
                           ModelInfoMixin,
                           SingleObjectTemplateResponseMixin):
     """

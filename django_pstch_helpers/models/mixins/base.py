@@ -118,24 +118,25 @@ class AutoPatternsMixin(ModelInfoMixin):
         if type(action) is str:
             return reverse(cls._make_url_name(action),
                            args=args)
-        if issubclass(action, View) or issubclass(action, DjangoView):
-            if hasattr(action, 'get_action_name'):
-                return reverse(
-                    cls._make_url_name(
+        elif isinstance(action, type):
+            if issubclass(action, View) or \
+               issubclass(action, DjangoView):
+                if hasattr(action, 'get_action_name'):
+                    url_name = cls._make_url_name(
                         action.get_action_name()
                     )
-                )
-            else:
-
-                raise Exception(
-                    "action was a view, but it did not define "
-                    "get_action_name. get_url needs a valid definition of "
-                    "the classmethod/staticmethod get_action_name, that "
-                    "should return a string for the action, such a 'list'"
-                )
-        raise Exception(
-            "Unknown type for the 'action' kwarg, neither a string nor a View"
-        )
+                    return reverse(url_name, args=args)
+                else:
+                    raise ImproperlyConfigured(
+                        "action was a view, but it did not define "
+                        "get_action_name. get_url needs a valid definition of "
+                        "the classmethod/staticmethod get_action_name, that "
+                        "should return a string for the action, such a 'list'"
+                    )
+        else:
+            raise TypeError(
+                "Unknown type for the 'action' kwarg, neither a string nor a View"
+            )
 
     @classmethod
     def get_views(cls):

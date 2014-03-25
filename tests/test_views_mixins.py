@@ -10,14 +10,41 @@ from django.views.generic import View as DjangoView
 from django.contrib.auth.models import User, AnonymousUser
 
 from django_pstch_helpers.views.mixins.auth import AuthMixin
+from django_pstch_helpers.views.mixins.action import ActionMixin
 from django_pstch_helpers.views.mixins.context import ExtraContextMixin
-from django_pstch_helpers.views.mixins.template import TemplateResponseMixin, SingleObjectTemplateResponseMixin
+from django_pstch_helpers.views.mixins.template import (
+    TemplateResponseMixin,
+    SingleObjectTemplateResponseMixin
+)
+
 
 from django_pstch_helpers.views import View
 
 from .utils import setup_view
 
 #pylint: disable=R0201, R0903, R0904, W0232, C0103
+
+class ActionMixinTestCase(TestCase):
+    """
+    #TODO: Add class docstring
+    """
+    class ActionMixinTestView(ActionMixin, View):
+        """
+        #TODO: Add class docstring
+        """
+        pass
+
+    def setUp(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.view_class = self.ActionMixinTestView
+
+    def test_get_action_name(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.assertRaises(self.view_class.get_action_name)
 
 class AuthMixinTestCase(TestCase):
     """
@@ -142,11 +169,11 @@ class TemplateResponseTestCase(TestCase):
         #TODO: Add method docstring
         """
         self.assertEqual(self.view.get_app_name(),
-                         'test')
+                         'tests')
 
     def test_get_app_prefix(self):
         self.assertEqual(self.view.get_app_prefix(),
-                         'test')
+                         'tests')
 
         self.view.app_prefix = 'test_prefix'
         self.assertEqual(self.view.get_app_prefix(),
@@ -156,7 +183,7 @@ class TemplateResponseTestCase(TestCase):
     def test_get_app_prefix_setting(self):
         setattr(settings,
                 'PER_APP_TEMPLATE_PREFIX',
-                { 'test' : 'test_prefix'})
+                { 'tests' : 'test_prefix'})
         self.assertEqual(self.view.get_app_prefix(),
                          'test_prefix')
 
@@ -169,7 +196,7 @@ class TemplateResponseTestCase(TestCase):
 
         self.view.template_add_app_prefix = True
         self.assertEqual(self.view.prefix_name_if_needed('test_name'),
-                         'test/test_name')
+                         'tests/test_name')
         self.view.template_add_app_prefix = False
 
     def test_get_template_names(self):
@@ -180,9 +207,9 @@ class TemplateResponseTestCase(TestCase):
             raised = True
         self.assertEqual(raised, True)
 
-        self.view.template_name = 'test/home.html'
+        self.view.template_name = 'tests/home.html'
         self.assertEqual(self.view.get_template_names(),
-                         ['test/home.html'])
+                         ['tests/home.html'])
         self.view.template_name = None
 
 class SingleObjectTemplateResponseTestCase(TestCase):

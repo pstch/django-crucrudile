@@ -1,6 +1,8 @@
 """
 #TODO: Add module docstring
 """
+from django.core.urlresolvers import Resolver404, NoReverseMatch
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 from django.db.models import Model, Manager
 from django.db.models.options import Options
@@ -17,6 +19,7 @@ from django_pstch_helpers.models.mixins.edit import (
 )
 
 from django_pstch_helpers.views import (
+    View,
     ListView,
     FilteredListView,
     DetailView,
@@ -26,17 +29,26 @@ from django_pstch_helpers.views import (
     DeleteView
 )
 
+from django_pstch_helpers.views.mixins.action import ActionMixin
+
 from django_pstch_helpers.models.mixins.base import (
     ModelInfoMixin,
     AutoPatternsMixin
 )
 
+class TestModel(Model):
+    class Meta:
+        abstract = True
+
 class ModelInfoMixinTestCase(TestCase):
-    class ModelInfoMixinTestModel(ModelInfoMixin, Model):
+    class FaultyModelInfoMixin(ModelInfoMixin):
+        pass
+    class ModelInfoMixinTestModel(ModelInfoMixin, TestModel):
         pass
 
     def setUp(self):
         self.model = self.ModelInfoMixinTestModel
+        self.faulty_model = self.FaultyModelInfoMixin
         self.object_list = []
 
         for i in range(20): # pylint: disable=W0612
@@ -48,6 +60,23 @@ class ModelInfoMixinTestCase(TestCase):
             type(self.model._get_objects()),
             Manager
         )
+
+    def test_get_objects_faulty(self):
+        raised = False
+        try:
+            self.faulty_model._get_objects()
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_get_meta_faulty(self):
+        raised = False
+        try:
+            self.faulty_model._get_meta()
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
+
     def test_get_meta(self):
         self.assertEqual(
             type(self.model._get_meta()),
@@ -75,7 +104,7 @@ class ModelInfoMixinTestCase(TestCase):
         )
 
 class AutoPatternsMixinTestCase(TestCase):
-    class AutoPatternsMixinTestModel(AutoPatternsMixin, Model):
+    class AutoPatternsMixinTestModel(AutoPatternsMixin, TestModel):
         pass
 
     def setUp(self):
@@ -97,16 +126,54 @@ class AutoPatternsMixinTestCase(TestCase):
     def test_make_url_name(self):
         self.assertEqual(self.model._make_url_name('action'),
                          "tests:auto-patterns-mixin-test-model-action")
-    def test_get_url(self):
-        #TODO: this
-        return
+    def test_get_url_with_string(self):
+        raised = False
+        try:
+            self.model.get_url('test-action')
+        except Resolver404:
+            raised = True
+        except NoReverseMatch:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_get_url_with_view(self):
+        class TestView(ActionMixin, View):
+            """We need to add ActionMixin ourselves to the view because it is only included in BaseModelActionMixins."""
+            @classmethod
+            def get_action_name(cls):
+                return 'test-action'
+        raised = False
+        try:
+            self.model.get_url(TestView)
+        except Resolver404:
+            raised = True
+        except NoReverseMatch:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_get_url_with_faulty_view(self):
+        raised = False
+        try:
+            self.model.get_url(View)
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_get_url_with_faulty_type(self):
+        raised = False
+        try:
+            self.model.get_url(0)
+        except TypeError:
+            raised = True
+        self.assertEqual(raised, True)
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(), [])
     def test_get_args_by_view(self):
         self.assertEqual(self.model.get_args_by_view(None), {})
 
 class ListableModelMixinTestCase(TestCase):
-    class TestListableModel(ListableModelMixin, Model):
+    class TestListableModel(ListableModelMixin, TestModel):
         @classmethod
         def get_list_sort_fields(cls):
             return ['test_sort_field',]
@@ -129,8 +196,11 @@ class ListableModelMixinTestCase(TestCase):
                           'paginate_by' : 42,
                           'select_related' : ['test_related_field',]})
 
+    def test_get_list_url(self):
+        self.assertEqual(self.model.get_list_url(),'/test/test-list')
+
 class FilteredListableModelMixinTestCase(TestCase):
-    class TestFilteredListableModel(FilteredListableModelMixin, Model):
+    class TestFilteredListableModel(FilteredListableModelMixin, TestModel):
         @classmethod
         def get_filtered_list_sort_fields(cls):
             return ['filtered_test_sort_field',]
@@ -140,7 +210,6 @@ class FilteredListableModelMixinTestCase(TestCase):
         @classmethod
         def get_filtered_list_select_related_fields(cls):
             return ['filtered_test_related_field',]
-
     def setUp(self):
         self.model = self.TestFilteredListableModel
 
@@ -154,20 +223,32 @@ class FilteredListableModelMixinTestCase(TestCase):
              'paginate_by' : 24,
              'select_related' : ['filtered_test_related_field',]}
         )
+    def test_get_filtered_list_url(self):
+        self.assertEqual(self.model.get_filtered_list_url(), '/test/test-filtered-list')
+
 
 class DetailableModelMixinTestCase(TestCase):
-    class TestDetailableModel(DetailableModelMixin, Model):
+    class TestDetailableModel(DetailableModelMixin, TestModel):
         pass
 
     def setUp(self):
         self.model = self.TestDetailableModel
 
+        self.instance = self.TestDetailableModel(id=1)
+        self.instance.save()
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [DetailView])
 
+    def test_get_detail_url(self):
+        self.assertEqual(self.instance.get_detail_url(),'/test/test-detail/1')
+
+    def tearDown(self):
+        self.instance.delete()
+
 class CreatableModelMixinTestCase(TestCase):
-    class TestCreatableModel(CreatableModelMixin, Model):
+    class TestCreatableModel(CreatableModelMixin, TestModel):
         pass
 
     def setUp(self):
@@ -177,8 +258,11 @@ class CreatableModelMixinTestCase(TestCase):
         self.assertEqual(self.model.get_views(),
                          [CreateView])
 
+    def test_get_create_url(self):
+        self.assertEqual(self.model.get_create_url(),'/test/test-create')
+
 class SpecificCreatableModelMixinTestCase(TestCase):
-    class TestSpecificCreatableModel(SpecificCreatableModelMixin, Model):
+    class TestSpecificCreatableModel(SpecificCreatableModelMixin, TestModel):
         @classmethod
         def get_spec_create_init_keys(cls):
             return ['specific_create_key',]
@@ -198,39 +282,55 @@ class SpecificCreatableModelMixinTestCase(TestCase):
         )
 
 class UpdatableModelMixinTestCase(TestCase):
-    class TestUpdatableModel(UpdatableModelMixin, Model):
+    class TestUpdatableModel(UpdatableModelMixin, TestModel):
         pass
 
     def setUp(self):
         self.model = self.TestUpdatableModel
 
-        self.assertEqual(self.model.get_views(),
-                         [UpdateView])
+        self.instance = self.TestUpdatableModel(id=1)
+        self.instance.save()
+
 
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [UpdateView])
 
+    def test_get_update_url(self):
+        self.assertEqual(self.instance.get_update_url(),'/test/test-update/1')
+
+    def tearDown(self):
+        self.instance.delete()
+
 class DeletableModelMixinTestCase(TestCase):
-    class TestDeletableModel(DeletableModelMixin, Model):
+    class TestDeletableModel(DeletableModelMixin, TestModel):
         pass
 
     def setUp(self):
         self.model = self.TestDeletableModel
 
+        self.instance = self.TestDeletableModel(id=1)
+        self.instance.save()
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [DeleteView])
 
-class ModelMixinsTestCase(TestCase):
-    class TestModel(ListableModelMixin,
+    def test_get_delete_url(self):
+        self.assertEqual(self.instance.get_delete_url(),'/test/test-delete/1')
+
+    def tearDown(self):
+        self.instance.delete()
+
+class TestModelMixinsTestCase(TestCase):
+    class AllModelMixinsTestModel(ListableModelMixin,
                     FilteredListableModelMixin,
                     DetailableModelMixin,
                     CreatableModelMixin,
                     SpecificCreatableModelMixin,
                     UpdatableModelMixin,
                     DeletableModelMixin,
-                    Model):
+                    TestModel):
         @classmethod
         def get_list_sort_fields(cls):
             return ['test_sort_field',]
@@ -254,7 +354,7 @@ class ModelMixinsTestCase(TestCase):
             return ['specific_create_key',]
 
     def setUp(self):
-        self.model = self.TestModel
+        self.model = self.AllModelMixinsTestModel
 
     def test_get_views(self):
         self.assertEqual(

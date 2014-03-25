@@ -9,19 +9,17 @@ class DetailableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
-    @classmethod
-    def get_detail_url(cls):
+    def get_detail_url(self):
         """
         #TODO: Add method docstring
         """
-        return cls.get_url(DetailView,
-                            args=[cls.id,])
-    @classmethod
-    def get_absolute_url(cls):
+        return self.get_url(DetailView,
+                            args=[self.id,])
+    def get_absolute_url(self):
         """
         #TODO: Add method docstring
         """
-        return cls.get_detail_url()
+        return self.get_detail_url()
     @classmethod
     def get_views(cls):
         """

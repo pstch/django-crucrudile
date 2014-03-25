@@ -35,12 +35,7 @@ def make_url_name(namespaces, object_url_name, action):
         return "-".join(
             [object_url_name, action] if object_url_name else [action]
         )
-    if namespaces:
-        return  ":".join([
-            _namespaces(),
-            _short_url_name()
-        ])
-    else:
-        return ":".join([
-            _short_url_name()
-        ])
+    return  ":".join([
+        _namespaces(),
+        _short_url_name()
+    ]) if namespaces else _short_url_name()
