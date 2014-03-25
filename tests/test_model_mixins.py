@@ -196,6 +196,9 @@ class ListableModelMixinTestCase(TestCase):
                           'paginate_by' : 42,
                           'select_related' : ['test_related_field',]})
 
+    def test_get_list_url(self):
+        self.assertEqual(self.model.get_list_url(),'/test/test-list')
+
 class FilteredListableModelMixinTestCase(TestCase):
     class TestFilteredListableModel(FilteredListableModelMixin, TestModel):
         @classmethod
@@ -207,7 +210,6 @@ class FilteredListableModelMixinTestCase(TestCase):
         @classmethod
         def get_filtered_list_select_related_fields(cls):
             return ['filtered_test_related_field',]
-
     def setUp(self):
         self.model = self.TestFilteredListableModel
 
@@ -221,6 +223,9 @@ class FilteredListableModelMixinTestCase(TestCase):
              'paginate_by' : 24,
              'select_related' : ['filtered_test_related_field',]}
         )
+    def test_get_filtered_list_url(self):
+        self.assertEqual(self.model.get_filtered_list_url(), '/test/test-filtered-list')
+
 
 class DetailableModelMixinTestCase(TestCase):
     class TestDetailableModel(DetailableModelMixin, TestModel):
@@ -229,9 +234,18 @@ class DetailableModelMixinTestCase(TestCase):
     def setUp(self):
         self.model = self.TestDetailableModel
 
+        self.instance = self.TestDetailableModel(id=1)
+        self.instance.save()
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [DetailView])
+
+    def test_get_detail_url(self):
+        self.assertEqual(self.instance.get_detail_url(),'/test/test-detail/1')
+
+    def tearDown(self):
+        self.instance.delete()
 
 class CreatableModelMixinTestCase(TestCase):
     class TestCreatableModel(CreatableModelMixin, TestModel):
@@ -243,6 +257,9 @@ class CreatableModelMixinTestCase(TestCase):
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [CreateView])
+
+    def test_get_create_url(self):
+        self.assertEqual(self.model.get_create_url(),'/test/test-create')
 
 class SpecificCreatableModelMixinTestCase(TestCase):
     class TestSpecificCreatableModel(SpecificCreatableModelMixin, TestModel):
@@ -271,12 +288,19 @@ class UpdatableModelMixinTestCase(TestCase):
     def setUp(self):
         self.model = self.TestUpdatableModel
 
-        self.assertEqual(self.model.get_views(),
-                         [UpdateView])
+        self.instance = self.TestUpdatableModel(id=1)
+        self.instance.save()
+
 
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [UpdateView])
+
+    def test_get_update_url(self):
+        self.assertEqual(self.instance.get_update_url(),'/test/test-update/1')
+
+    def tearDown(self):
+        self.instance.delete()
 
 class DeletableModelMixinTestCase(TestCase):
     class TestDeletableModel(DeletableModelMixin, TestModel):
@@ -285,9 +309,18 @@ class DeletableModelMixinTestCase(TestCase):
     def setUp(self):
         self.model = self.TestDeletableModel
 
+        self.instance = self.TestDeletableModel(id=1)
+        self.instance.save()
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(),
                          [DeleteView])
+
+    def test_get_delete_url(self):
+        self.assertEqual(self.instance.get_delete_url(),'/test/test-delete/1')
+
+    def tearDown(self):
+        self.instance.delete()
 
 class TestModelMixinsTestCase(TestCase):
     class AllModelMixinsTestModel(ListableModelMixin,
