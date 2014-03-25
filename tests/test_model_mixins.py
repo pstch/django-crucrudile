@@ -137,7 +137,7 @@ class AutoPatternsMixinTestCase(TestCase):
     def test_get_url_with_faulty_type(self):
         raised = False
         try:
-            self.model.get_url(None)
+            self.model.get_url(0)
         except Exception:
             raised = True
         self.assertEqual(raised, True)
