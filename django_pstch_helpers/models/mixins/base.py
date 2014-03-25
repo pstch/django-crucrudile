@@ -125,7 +125,6 @@ class AutoPatternsMixin(ModelInfoMixin):
                     url_name = cls._make_url_name(
                         action.get_action_name()
                     )
-                    print url_name
                     return reverse(url_name, args=args)
                 else:
                     raise ImproperlyConfigured(
