@@ -13,8 +13,10 @@ from django_pstch_helpers.views.mixins.auth import AuthMixin
 from django_pstch_helpers.views.mixins.action import ActionMixin
 from django_pstch_helpers.views.mixins.context import ExtraContextMixin
 from django_pstch_helpers.views.mixins.template import (
-    TemplateResponseMixin, SingleObjectTemplateResponseMixin
+    TemplateResponseMixin,
+    SingleObjectTemplateResponseMixin
 )
+
 
 from django_pstch_helpers.views import View
 
