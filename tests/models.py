@@ -1,12 +1,43 @@
 from django.db import models
+from django.db.models import Model
 
 from django_pstch_helpers.models import UserNamed, UserDescribed
 from django_pstch_helpers.models.mixins import (
-    ModelInfoMixin, AutoPatternsMixin,
+    ModelInfoMixin,
+    AutoPatternsMixin,
     ListableModelMixin,
+    FilteredListableModelMixin,
+    DetailableModelMixin,
+    CreatableModelMixin,
+    UpdatableModelMixin,
+    DeletableModelMixin,
     BaseModelActionsMixin,
-    FullModelActionsMixin
+    FullModelActionsMixin,
 )
+
+class TestListableModel(ListableModelMixin, Model):
+    pass
+
+class TestFilteredListableModel(ListableModelMixin, Model):
+    pass
+
+class TestDetailableModel(DetailableModelMixin, Model):
+    pass
+
+class TestCreatableModel(CreatableModelMixin, Model):
+    pass
+
+class TestUpdatableModel(UpdatableModelMixin, Model):
+    pass
+
+class TestDeletableModel(DeletableModelMixin, Model):
+    pass
+
+class TestBaseModelMixinsModel(BaseModelActionsMixin, Model):
+    pass
+
+class TestFullModelMixinsModel(FullModelActionsMixin, Model):
+    pass
 
 class Genre(BaseModelActionsMixin, UserDescribed):
     pass
