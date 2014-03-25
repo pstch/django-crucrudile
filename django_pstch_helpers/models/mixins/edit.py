@@ -3,6 +3,8 @@
 """
 from django.core.exceptions import ImproperlyConfigured
 
+from django.contrib.contenttypes.models import ContentType
+
 from django_pstch_helpers.views import (
     CreateView, SpecificCreateView,
     UpdateView,
@@ -20,8 +22,7 @@ class CreatableModelMixin(AutoPatternsMixin):
         """
         #TODO: Add method docstring
         """
-        return cls.get_url(CreateView,
-                            args=[cls.id,])
+        return cls.get_url(CreateView)
     @classmethod
     def get_views(cls):
         """
@@ -36,13 +37,13 @@ class SpecificCreatableModelMixin(AutoPatternsMixin):
     #TODO: Add class docstring
     """
     @classmethod
-    def get_specific_create_url(cls):
+    def get_specific_create_url(cls, target):
         """
         #TODO: Add method docstring
         """
         #TODO: Missing args, reverse won't work
         return cls.get_url(SpecificCreateView,
-                            args=[cls.id,])
+                           args=[ContentType.objects.get_for_model(target).model,])
     @classmethod
     def get_views(cls):
         """
@@ -98,13 +99,12 @@ class DeletableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
-    @classmethod
-    def get_delete_url(cls):
+    def get_delete_url(self):
         """
         #TODO: Add method docstring
         """
-        return cls.get_url(DeleteView,
-                            args=[cls.id,])
+        return self.get_url(DeleteView,
+                            args=[self.id,])
     @classmethod
     def get_views(cls):
         """
