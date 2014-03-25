@@ -153,7 +153,6 @@ class AutoPatternsMixinTestCase(TestCase):
 
     def test_get_url_with_faulty_type(self):
         raised = False
-        self.model.get_url(0)
         try:
             self.model.get_url(0)
         except TypeError:
