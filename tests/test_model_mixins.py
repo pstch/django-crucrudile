@@ -1,7 +1,7 @@
 """
 #TODO: Add module docstring
 """
-from django.core.urlresolvers import Resolver404
+from django.core.urlresolvers import Resolver404, NoReverseMatch
 from django.test import TestCase
 from django.db.models import Model, Manager
 from django.db.models.options import Options
@@ -77,7 +77,7 @@ class ModelInfoMixinTestCase(TestCase):
             'modelinfomixintestmodel'
         )
     def test_get_dashed_verbose_name(self):
-        self.assertEqual(
+p        self.assertEqual(
             self.model.get_dashed_verbose_name(),
             'model-info-mixin-test-model'
         )
@@ -110,6 +110,8 @@ class AutoPatternsMixinTestCase(TestCase):
         try:
             self.model.get_url('test-action')
         except Resolver404:
+            raised = True
+        except NoReverseMatch:
             raised = True
         self.assertEqual(raised, True)
 
