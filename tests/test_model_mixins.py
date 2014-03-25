@@ -126,6 +126,22 @@ class AutoPatternsMixinTestCase(TestCase):
             raised = True
         self.assertEqual(raised, True)
 
+    def test_get_url_with_faulty_view(self):
+        raised = False
+        try:
+            self.model.get_url(View)
+        except Exception:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_get_url_with_faulty_type(self):
+        raised = False
+        try:
+            self.model.get_url(0)
+        except Exception:
+            raised = True
+        self.assertEqual(raised, True)
+
     def test_get_views(self):
         self.assertEqual(self.model.get_views(), [])
     def test_get_args_by_view(self):
