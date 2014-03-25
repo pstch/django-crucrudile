@@ -74,19 +74,17 @@ class UpdatableModelMixin(AutoPatternsMixin):
     """
     #TODO: Add class docstring
     """
-    @classmethod
-    def get_update_url(cls):
+    def get_update_url(self):
         """
         #TODO: Add method docstring
         """
-        return cls.get_url(UpdateView,
-                            args=[cls.id,])
-    @classmethod
-    def get_edit_url(cls):
+        return self.get_url(UpdateView,
+                            args=[self.id,])
+    def get_edit_url(self):
         """
         #TODO: Add method docstring
         """
-        return cls.get_update_url()
+        return self.get_update_url()
     @classmethod
     def get_views(cls):
         """
