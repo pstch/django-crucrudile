@@ -77,7 +77,7 @@ class ModelInfoMixinTestCase(TestCase):
             'modelinfomixintestmodel'
         )
     def test_get_dashed_verbose_name(self):
-p        self.assertEqual(
+        self.assertEqual(
             self.model.get_dashed_verbose_name(),
             'model-info-mixin-test-model'
         )
