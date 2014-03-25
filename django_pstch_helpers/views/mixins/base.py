@@ -18,7 +18,8 @@ class BaseViewMixins(AuthMixin,
     """
     pass
 
-class BaseModelViewMixins(BaseViewMixins,
+class BaseModelViewMixins(ActionMixin,
+                          BaseViewMixins,
                           ModelInfoMixin,
                           SingleObjectTemplateResponseMixin):
     """
