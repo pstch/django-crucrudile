@@ -6,7 +6,8 @@ class ActionMixin(object):
     """
     #TODO: Add class docstring
     """
-    def get_action_name():
+    @classmethod
+    def get_action_name(cls):
         """
         #TODO: Add method docstring
         """
