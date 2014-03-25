@@ -169,11 +169,11 @@ class TemplateResponseTestCase(TestCase):
         #TODO: Add method docstring
         """
         self.assertEqual(self.view.get_app_name(),
-                         'test')
+                         'tests')
 
     def test_get_app_prefix(self):
         self.assertEqual(self.view.get_app_prefix(),
-                         'test')
+                         'tests')
 
         self.view.app_prefix = 'test_prefix'
         self.assertEqual(self.view.get_app_prefix(),
@@ -183,7 +183,7 @@ class TemplateResponseTestCase(TestCase):
     def test_get_app_prefix_setting(self):
         setattr(settings,
                 'PER_APP_TEMPLATE_PREFIX',
-                { 'test' : 'test_prefix'})
+                { 'tests' : 'test_prefix'})
         self.assertEqual(self.view.get_app_prefix(),
                          'test_prefix')
 
@@ -196,15 +196,15 @@ class TemplateResponseTestCase(TestCase):
 
         self.view.template_add_app_prefix = True
         self.assertEqual(self.view.prefix_name_if_needed('test_name'),
-                         'test/test_name')
+                         'tests/test_name')
         self.view.template_add_app_prefix = False
 
     def test_get_template_names(self):
         self.assertRaises(self.view.get_template_names)
 
-        self.view.template_name = 'test/home.html'
+        self.view.template_name = 'tests/home.html'
         self.assertEqual(self.view.get_template_names(),
-                         ['test/home.html'])
+                         ['tests/home.html'])
         self.view.template_name = None
 
 class SingleObjectTemplateResponseTestCase(TestCase):
