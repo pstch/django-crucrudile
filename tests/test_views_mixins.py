@@ -19,6 +19,16 @@ from .utils import setup_view
 
 #pylint: disable=R0201, R0903, R0904, W0232, C0103
 
+class ActionMixinTestCase(TestCase):
+    class ActionMixinTestView(ActionMixin, View):
+        pass
+
+    def setUp(self):
+        self.view_class = self.ActionMixinTestView
+
+    def test_get_action_name(self):
+        self.assertRaises(self.view_class.get_action_name)
+
 class AuthMixinTestCase(TestCase):
     """
     #TODO: Add class docstring
