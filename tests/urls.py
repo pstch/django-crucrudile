@@ -12,5 +12,5 @@ test_patterns = patterns(
 urlpatterns = patterns(
     '',
     url(r'^$',
-        include((test_patterns, "test", "test")))
+        include((test_patterns, "tests", "tests")))
 )
