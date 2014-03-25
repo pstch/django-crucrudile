@@ -1,6 +1,7 @@
 """
 #TODO: Add module docstring
 """
+import re
 
 class ActionMixin(object):
     """
