@@ -10,8 +10,11 @@ from django.views.generic import View as DjangoView
 from django.contrib.auth.models import User, AnonymousUser
 
 from django_pstch_helpers.views.mixins.auth import AuthMixin
+from django_pstch_helpers.views.mixins.action import ActionMixin
 from django_pstch_helpers.views.mixins.context import ExtraContextMixin
-from django_pstch_helpers.views.mixins.template import TemplateResponseMixin, SingleObjectTemplateResponseMixin
+from django_pstch_helpers.views.mixins.template import (
+    TemplateResponseMixin, SingleObjectTemplateResponseMixin
+)
 
 from django_pstch_helpers.views import View
 
@@ -20,13 +23,25 @@ from .utils import setup_view
 #pylint: disable=R0201, R0903, R0904, W0232, C0103
 
 class ActionMixinTestCase(TestCase):
+    """
+    #TODO: Add class docstring
+    """
     class ActionMixinTestView(ActionMixin, View):
+        """
+        #TODO: Add class docstring
+        """
         pass
 
     def setUp(self):
+        """
+        #TODO: Add method docstring
+        """
         self.view_class = self.ActionMixinTestView
 
     def test_get_action_name(self):
+        """
+        #TODO: Add method docstring
+        """
         self.assertRaises(self.view_class.get_action_name)
 
 class AuthMixinTestCase(TestCase):
