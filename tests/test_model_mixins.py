@@ -2,6 +2,7 @@
 #TODO: Add module docstring
 """
 from django.core.urlresolvers import Resolver404, NoReverseMatch
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 from django.db.models import Model, Manager
 from django.db.models.options import Options
@@ -40,11 +41,14 @@ class TestModel(Model):
         abstract = True
 
 class ModelInfoMixinTestCase(TestCase):
+    class FaultyModelInfoMixin(ModelInfoMixin):
+        pass
     class ModelInfoMixinTestModel(ModelInfoMixin, TestModel):
         pass
 
     def setUp(self):
         self.model = self.ModelInfoMixinTestModel
+        self.faulty_model = self.FaultyModelInfoMixin
         self.object_list = []
 
         for i in range(20): # pylint: disable=W0612
@@ -56,6 +60,15 @@ class ModelInfoMixinTestCase(TestCase):
             type(self.model._get_objects()),
             Manager
         )
+
+    def test_get_objects_faulty(self):
+        raised = False
+        try:
+            self.faulty_model._get_objects()
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
+
     def test_get_meta(self):
         self.assertEqual(
             type(self.model._get_meta()),
@@ -117,12 +130,16 @@ class AutoPatternsMixinTestCase(TestCase):
 
     def test_get_url_with_view(self):
         class TestView(ActionMixin, View):
-            """We need to add ActionMixin ourselves to the view (and it is because we do this that we expect get_url() to fail) because it is only included in BaseModelActionMixins."""
-            pass
+            """We need to add ActionMixin ourselves to the view because it is only included in BaseModelActionMixins."""
+            @classmethod
+            def get_action_name(cls):
+                return 'test-action'
         raised = False
         try:
             self.model.get_url(TestView)
-        except Exception:
+        except Resolver404:
+            raised = True
+        except NoReverseMatch:
             raised = True
         self.assertEqual(raised, True)
 
@@ -130,15 +147,16 @@ class AutoPatternsMixinTestCase(TestCase):
         raised = False
         try:
             self.model.get_url(View)
-        except Exception:
+        except ImproperlyConfigured:
             raised = True
         self.assertEqual(raised, True)
 
     def test_get_url_with_faulty_type(self):
         raised = False
+        self.model.get_url(0)
         try:
             self.model.get_url(0)
-        except Exception:
+        except TypeError:
             raised = True
         self.assertEqual(raised, True)
 
