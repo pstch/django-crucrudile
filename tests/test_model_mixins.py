@@ -115,6 +115,7 @@ class AutoPatternsMixinTestCase(TestCase):
 
     def test_get_url_with_view(self):
         class TestView(ActionMixin, View):
+            """We need to add ActionMixin ourselves to the view (and it is because we do this that we expect get_url() to fail) because it is only included in BaseModelActionMixins."""
             pass
         raised = False
         try:
