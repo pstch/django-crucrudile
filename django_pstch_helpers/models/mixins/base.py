@@ -122,11 +122,11 @@ class AutoPatternsMixin(ModelInfoMixin):
             if issubclass(action, View) or \
                issubclass(action, DjangoView):
                 if hasattr(action, 'get_action_name'):
-                    return reverse(
-                        cls._make_url_name(
-                            action.get_action_name()
-                        )
+                    url_name = cls._make_url_name(
+                        action.get_action_name()
                     )
+                    print url_name
+                    return reverse(url_name, args=args)
                 else:
                     raise ImproperlyConfigured(
                         "action was a view, but it did not define "
