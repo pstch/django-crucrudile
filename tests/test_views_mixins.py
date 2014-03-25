@@ -173,7 +173,12 @@ class TemplateResponseTestCase(TestCase):
         self.view.template_add_app_prefix = False
 
     def test_get_template_names(self):
-        self.assertRaises(self.view.get_template_names)
+        raised = False
+        try:
+            self.view.get_template_names()
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
 
         self.view.template_name = 'test/home.html'
         self.assertEqual(self.view.get_template_names(),
