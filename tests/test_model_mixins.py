@@ -69,6 +69,14 @@ class ModelInfoMixinTestCase(TestCase):
             raised = True
         self.assertEqual(raised, True)
 
+    def test_get_meta_faulty(self):
+        raised = False
+        try:
+            self.faulty_model._get_meta()
+        except ImproperlyConfigured:
+            raised = True
+        self.assertEqual(raised, True)
+
     def test_get_meta(self):
         self.assertEqual(
             type(self.model._get_meta()),
