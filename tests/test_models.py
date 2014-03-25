@@ -21,10 +21,9 @@ class UserNamedModelTestCase(TestCase):
         )
 
 class UserDescribedModelTestCase(TestCase):
-    class UserDescribedModel(UserDescribed, Model):
+    class UserDescribedTestModel(UserDescribed, Model):
         pass
 
     def setUp(self):
-        self.model = UserDescribedModel
+        self.model = UserDescribedTestModel
         #TODO: this
-
