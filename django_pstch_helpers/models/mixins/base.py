@@ -128,14 +128,14 @@ class AutoPatternsMixin(ModelInfoMixin):
                         )
                     )
                 else:
-                    raise Exception(
+                    raise ImproperlyConfigured(
                         "action was a view, but it did not define "
                         "get_action_name. get_url needs a valid definition of "
                         "the classmethod/staticmethod get_action_name, that "
                         "should return a string for the action, such a 'list'"
                     )
         else:
-            raise Exception(
+            raise TypeError(
                 "Unknown type for the 'action' kwarg, neither a string nor a View"
             )
 
