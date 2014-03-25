@@ -120,7 +120,7 @@ class AutoPatternsMixin(ModelInfoMixin):
                            args=args)
         elif isinstance(action, type):
             if issubclass(action, View) or \
-               issubclass(action, DjangoView)):
+               issubclass(action, DjangoView):
                 if hasattr(action, 'get_action_name'):
                     return reverse(
                         cls._make_url_name(
