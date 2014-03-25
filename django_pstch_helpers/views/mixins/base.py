@@ -2,6 +2,7 @@
 #TODO: Write module docstring
 """
 
+from .action import ActionMixin
 from .auth import AuthMixin
 from .context import ExtraContextMixin, ModelInfoMixin
 from .redirect import ModelFormRedirectMixin
