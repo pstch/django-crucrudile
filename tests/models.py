@@ -9,6 +9,7 @@ from django_pstch_helpers.models.mixins import (
     FilteredListableModelMixin,
     DetailableModelMixin,
     CreatableModelMixin,
+    SpecificCreatableModelMixin,
     UpdatableModelMixin,
     DeletableModelMixin,
     BaseModelActionsMixin,
