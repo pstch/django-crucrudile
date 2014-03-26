@@ -27,6 +27,9 @@ class TestDetailableModel(DetailableModelMixin, Model):
 class TestCreatableModel(CreatableModelMixin, Model):
     pass
 
+class TestSpecificCreatableModel(SpecificCreatableModelMixin, Model):
+    pass
+
 class TestUpdatableModel(UpdatableModelMixin, Model):
     pass
 
