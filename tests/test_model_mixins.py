@@ -297,7 +297,10 @@ class UpdatableModelMixinTestCase(TestCase):
                          [UpdateView])
 
     def test_get_update_url(self):
-        self.assertEqual(self.instance.get_update_url(),'/test/test-update/1')
+        self.assertEqual(self.instance.get_update_url(), '/test/test-update/1')
+
+    def test_get_edit_url(self):
+        self.assertEqual(self.instance.get_edit_url(), '/test/test-update/1')
 
     def tearDown(self):
         self.instance.delete()
