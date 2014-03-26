@@ -92,7 +92,7 @@ class ActionMixinWithArgsTestCase(TestCase):
         #TODO: Add method docstring
         """
         self.assertEqual(self.view_class.get_url_part(),
-                         'action-mixin-test/<TEST_ARG>')
+                         'action-mixin-with-args-test/<TEST_ARG>')
 
 
 class AuthMixinTestCase(TestCase):
