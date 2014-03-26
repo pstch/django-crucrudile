@@ -280,6 +280,8 @@ class SpecificCreatableModelMixinTestCase(TestCase):
             self.model.get_args_by_view(SpecificCreateView),
             {'initial_keys' : ['specific_create_key',]}
         )
+    def test_get_specific_create_url(self):
+        self.assertEqual(self.model.get_specific_create_url(),'/test/test-specific-create')
 
 class UpdatableModelMixinTestCase(TestCase):
     class TestUpdatableModel(UpdatableModelMixin, TestModel):
