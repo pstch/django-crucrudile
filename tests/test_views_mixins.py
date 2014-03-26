@@ -44,7 +44,56 @@ class ActionMixinTestCase(TestCase):
         """
         #TODO: Add method docstring
         """
-        self.assertRaises(self.view_class.get_action_name)
+        self.assertEqual(self.view_class.get_action_name(),
+                         'action-mixin-test')
+
+    def test_get_url_args(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.assertEqual(self.view_class.get_url_args(),
+                         [])
+
+    def test_get_url_part(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.assertEqual(self.view_class.get_action_name(),
+                         'action-mixin-test')
+
+class ActionMixinWithArgsTestCase(TestCase):
+    """
+    #TODO: Add class docstring
+    """
+    class ActionMixinWithArgsTestView(ActionMixin, View):
+        """
+        #TODO: Add class docstring
+        """
+        @classmethod
+        def get_url_args(cls):
+            return ['<TEST_ARG>',]
+
+    def setUp(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.view_class = self.ActionMixinWithArgsTestView
+
+
+    def test_get_url_args(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.assertEqual(self.view_class.get_url_args(),
+                         ['<TEST_ARG>',])
+
+    def test_get_url_part(self):
+        """
+        #TODO: Add method docstring
+        """
+        self.assertEqual(self.view_class.get_action_name(),
+                         'action-mixin-test/<TEST_ARG>')
+
 
 class AuthMixinTestCase(TestCase):
     """
