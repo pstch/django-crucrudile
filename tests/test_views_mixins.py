@@ -91,7 +91,6 @@ class ActionMixinWithArgsTestCase(TestCase):
         """
         #TODO: Add method docstring
         """
-        import pdb; pdb.set_trace()
         self.assertEqual(self.view_class.get_url_part(),
                          'action-mixin-test/<TEST_ARG>')
 
