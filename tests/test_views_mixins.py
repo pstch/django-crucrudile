@@ -58,7 +58,7 @@ class ActionMixinTestCase(TestCase):
         """
         #TODO: Add method docstring
         """
-        self.assertEqual(self.view_class.get_action_name(),
+        self.assertEqual(self.view_class.get_url_part(),
                          'action-mixin-test')
 
 class ActionMixinWithArgsTestCase(TestCase):
@@ -91,7 +91,8 @@ class ActionMixinWithArgsTestCase(TestCase):
         """
         #TODO: Add method docstring
         """
-        self.assertEqual(self.view_class.get_action_name(),
+        import pdb; pdb.set_trace()
+        self.assertEqual(self.view_class.get_url_part(),
                          'action-mixin-test/<TEST_ARG>')
 
 
