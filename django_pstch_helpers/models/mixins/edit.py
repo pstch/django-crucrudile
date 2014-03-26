@@ -41,7 +41,6 @@ class SpecificCreatableModelMixin(AutoPatternsMixin):
         """
         #TODO: Add method docstring
         """
-        #TODO: Missing args, reverse won't work
         return cls.get_url(
             SpecificCreateView,
             kwargs = {
