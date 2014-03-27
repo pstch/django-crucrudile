@@ -8,11 +8,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-pstch-helpers',
+    name='django-crucudile',
     version='0.2',
-    description='Various Django helpers that I use frequently in my projets',
+    description='Model-defined CRUD views & patterns for Django',
     long_description="views, models, auto URL patterns, ...",
-    url='https://github.com/pstch/django-pstch-helpers',
+    url='https://github.com/pstch/django-crucudile',
     author='Hugo Geoffroy',
     author_email='hugo@pstch.net',
     packages=find_packages(exclude=['tests']),

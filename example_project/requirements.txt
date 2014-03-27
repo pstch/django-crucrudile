@@ -1,13 +1,3 @@
 django
 
-markdown
-
-django-extensions
-django-markitup
-
--e git+https://github.com/pstch/django-pstch-helpers.git#egg=django-pstch-helpers
--e git+https://github.com/pstch/django-generic-patterns.git#egg=django-generic-patterns
--e git+https://github.com/pstch/django-auto-perms.git#egg=django-auto-perms
--e git+https://github.com/pstch/django-sortable-list.git#egg=django-sortable-list
--e git+https://github.com/pstch/django-filter.git#egg=django-filter
-
+-e git+https://github.com/pstch/django-crucrudile.git#egg=django-crucrudile

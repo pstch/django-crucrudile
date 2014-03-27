@@ -37,11 +37,7 @@ INSTALLED_APPS = (
 
     'django_extensions',
 
-    'django_pstch_helpers',
-    'django_generic_patterns',
-    'django_auto_perms',
-    'django_sortable_list',
-    'django_filters',
+    'django_crucudile',
 
     'example_app'
 )

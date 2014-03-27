@@ -28,11 +28,6 @@ if not settings.configured:
         )
     })
 
-    # django-markitup args
-    SETTINGS_DICT.update({
-        'MARKITUP_FILTER' : ('markdown.markdown', {'safe_mode': True})
-    })
-
     # Misc
     SETTINGS_DICT.update({
         'ROOT_URLCONF' : 'tests.urls',
