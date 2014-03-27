@@ -69,14 +69,6 @@ class AutoPatternsMixin(ModelInfoMixin):
     Base mixin for all action model mixins
     """
     @classmethod
-    def get_url_prefix(cls):
-        """
-        #TODO: Add method docstring
-        ""
-        #TODO: Where is this function used ? Obsolete ?
-        #pylint: disable=R0201
-        return None
-    @classmethod
     def get_url_namespaces(cls):
         """
         #TODO: Add method docstring

@@ -115,8 +115,6 @@ class AutoPatternsMixinTestCase(TestCase):
             instance = self.model()
             self.object_list.append(instance)
 
-    def test_get_url_prefix(self):
-        self.assertEqual(self.model.get_url_prefix(), None)
     def test_get_url_namespaces(self):
         self.assertEqual(self.model.get_url_namespaces(),
                          ['tests'],)
