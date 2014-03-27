@@ -11,16 +11,10 @@ from django_pstch_helpers.utils import make_url_name
 from django_pstch_helpers.views import View
 
 class ModelInfoMixin(object):
-    """
-    #TODO: Add class docstring
-    """
-    #TODO: Write tests for this class :
-    # with a sample Model where we test each function
+    """Provides utility functions to get some metadata from the model"""
     @classmethod
     def _get_objects(cls):
-        """
-        #TODO: Add method docstring
-        """
+        """Gets the default manager"""
         try:
             objects = cls.objects
             return objects
@@ -33,9 +27,7 @@ class ModelInfoMixin(object):
 
     @classmethod
     def _get_meta(cls):
-        """
-        #TODO: Add method docstring
-        """
+        """Get Django's Options object"""
         try:
             _meta = cls._meta
             return _meta
@@ -48,44 +40,40 @@ class ModelInfoMixin(object):
 
     @classmethod
     def get_verbose_name(cls):
-        """
-        #TODO: Add method docstring
-        """
+        """Get the model verbose name"""
         _meta = cls._get_meta()
         return _meta.verbose_name
     @classmethod
     def get_count(cls):
-        """
-        #TODO: Add method docstring
-        """
+        """Get the object count for this model (using the manager returned by
+_get_objects())"""
         objects = cls._get_objects()
-        return objects.count()
-    @classmethod
+        return objects.count():
+p    @classmethod
     def get_model_name(cls):
-        """
-        #TODO: Add method docstring
+        """Get the model name
+        (example for FooBarTestModel : 'foobartestmodel')
         """
         _meta = cls._get_meta()
         return _meta.model_name
     @classmethod
-    def get_dashed_verbose_name(cls):
-        """
-        #TODO: Add method docstring
+    def get_dashed_model_name(cls):
+        """Get the dashed model name
+        (example for FooBarTestModel : 'foo-bar-test-model')
         """
         step = re.sub('(.)([A-Z][a-z]+)', r'\1-\2', cls.__name__)
         return re.sub('([a-z0-9])([A-Z])', r'\1-\2', step).lower()
 
 class AutoPatternsMixin(ModelInfoMixin):
     """
-    #TODO: Add class docstring
+    Base mixin for all action model mixins
     """
-    #TODO: Write tests for this class :
-    # with a sample Model where we test each function
     @classmethod
     def get_url_prefix(cls):
         """
         #TODO: Add method docstring
-        """
+        ""
+        #TODO: Where is this function used ? Obsolete ?
         #pylint: disable=R0201
         return None
     @classmethod
