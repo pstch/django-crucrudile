@@ -37,13 +37,17 @@ class SpecificCreatableModelMixin(AutoPatternsMixin):
     #TODO: Add class docstring
     """
     @classmethod
-    def get_specific_create_url(cls, target):
+    def get_specific_create_url(cls, target_model_instance):
         """
         #TODO: Add method docstring
         """
-        #TODO: Missing args, reverse won't work
-        return cls.get_url(SpecificCreateView,
-                           args=[ContentType.objects.get_for_model(target).model,])
+        return cls.get_url(
+            SpecificCreateView,
+            kwargs = {
+                'specific_key' : target_model_instance._meta.model_name,
+                'specific_value' : target_model_instance.id
+            }
+        )
     @classmethod
     def get_views(cls):
         """

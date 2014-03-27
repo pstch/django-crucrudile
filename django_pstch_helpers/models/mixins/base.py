@@ -91,13 +91,13 @@ class AutoPatternsMixin(ModelInfoMixin):
                              action)
 
     @classmethod
-    def get_url(cls, action, args=None):
+    def get_url(cls, action, args=None, kwargs=None):
         """
         #TODO: Add method docstring
         """
         if type(action) is str:
             return reverse(cls._make_url_name(action),
-                           args=args)
+                           args=args, kwargs=kwargs)
         elif isinstance(action, type):
             if issubclass(action, View) or \
                issubclass(action, DjangoView):
@@ -105,7 +105,8 @@ class AutoPatternsMixin(ModelInfoMixin):
                     url_name = cls._make_url_name(
                         action.get_action_name()
                     )
-                    return reverse(url_name, args=args)
+                    return reverse(url_name,
+                                   args=args, kwargs=kwargs)
                 else:
                     raise ImproperlyConfigured(
                         "action was a view, but it did not define "

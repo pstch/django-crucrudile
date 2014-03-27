@@ -9,6 +9,7 @@ from django_pstch_helpers.models.mixins import (
     FilteredListableModelMixin,
     DetailableModelMixin,
     CreatableModelMixin,
+    SpecificCreatableModelMixin,
     UpdatableModelMixin,
     DeletableModelMixin,
     BaseModelActionsMixin,
@@ -25,6 +26,9 @@ class TestDetailableModel(DetailableModelMixin, Model):
     pass
 
 class TestCreatableModel(CreatableModelMixin, Model):
+    pass
+
+class TestSpecificCreatableModel(SpecificCreatableModelMixin, Model):
     pass
 
 class TestUpdatableModel(UpdatableModelMixin, Model):

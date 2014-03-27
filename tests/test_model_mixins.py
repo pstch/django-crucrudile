@@ -260,6 +260,8 @@ class CreatableModelMixinTestCase(TestCase):
         self.assertEqual(self.model.get_create_url(),'/test/test-create')
 
 class SpecificCreatableModelMixinTestCase(TestCase):
+    class SpecificTargetModel(Model):
+        pass
     class TestSpecificCreatableModel(SpecificCreatableModelMixin, TestModel):
         @classmethod
         def get_spec_create_init_keys(cls):
@@ -267,6 +269,9 @@ class SpecificCreatableModelMixinTestCase(TestCase):
 
     def setUp(self):
         self.model = self.TestSpecificCreatableModel
+        self.target = self.SpecificTargetModel
+        self.target_instance = self.target(id=1)
+        self.target_instance.save()
 
     def test_get_views(self):
         self.assertEqual(
@@ -277,6 +282,11 @@ class SpecificCreatableModelMixinTestCase(TestCase):
         self.assertEqual(
             self.model.get_args_by_view(SpecificCreateView),
             {'initial_keys' : ['specific_create_key',]}
+        )
+    def test_get_specific_create_url(self):
+        self.assertEqual(
+            self.model.get_specific_create_url(self.target_instance),
+            '/test/test-specific-create/of-specifictargetmodel/1'
         )
 
 class UpdatableModelMixinTestCase(TestCase):
@@ -295,7 +305,10 @@ class UpdatableModelMixinTestCase(TestCase):
                          [UpdateView])
 
     def test_get_update_url(self):
-        self.assertEqual(self.instance.get_update_url(),'/test/test-update/1')
+        self.assertEqual(self.instance.get_update_url(), '/test/test-update/1')
+
+    def test_get_edit_url(self):
+        self.assertEqual(self.instance.get_edit_url(), '/test/test-update/1')
 
     def tearDown(self):
         self.instance.delete()

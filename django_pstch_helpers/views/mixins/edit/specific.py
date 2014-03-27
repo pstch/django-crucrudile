@@ -31,7 +31,7 @@ class SpecificCreateMixin(object):
         context = super(SpecificCreateMixin,
                         self).get_context_data(*args, **kwargs)
 
-        key = self.kwargs['specific_key']
+        key = self.kwargs.get('specific_key')
 
         if key in self.initial_keys:
             value = self.kwargs['specific_value']
