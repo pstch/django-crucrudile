@@ -164,12 +164,32 @@ class AutoPatternsMixin(ModelInfoMixin):
             )
         return {}
 
-def make_model_mixin(view, extra_args = extra_funcs = {}):
-    """Use this function to create a Model action mixin for a given view.
-    Arguments :
-     -- view : View to use for this mixin
+def auto_make_model_mixin(view, pk_arg = False, url = None, extra_funcs = {}):
+    view_name = view.__name__
+    view_name = view_name[:-4] if view_name.endswith('View') else view_name
 
+    if pk_arg:
+        return make_model_mixin(view,
+                                get_underscored_name(view_name),
+                                get_dashed_name(view_name))
+def make_model_mixin(view, extra_funcs = {}):
+    """Use this function to create a Model action mixin for a given view.
+
+    Arguments :
+     -- view : view to use for this mixin.
+         (this view should subclass ModelActionMixin)
+     -- extra_funcs :
+         dict of functions to add on the model mixin.
+         (the dict key is the function name, and might be a callable,
+          and will be called with view as argument)
     """
+    #test that
+    if not issubclass(view, ModelActionMixin):
+        raise ImproperlyConfigured(
+            "The view argument does not subclass ModelActionMixin,"
+            " cannot make a model mixin with this view."
+        )
+
     class mixin(AutoPatternsMixin):
         @classmethod
         def get_views(cls):
@@ -182,7 +202,7 @@ def make_model_mixin(view, extra_args = extra_funcs = {}):
         return cls.get_url(view)
 
     setattr(mixin,
-            'get_%s_url' % view.get_underscored_action_name(),
+            'get_%s_url' % view.get_underscored_action_name,
             get_url)
 
     for func_name, func in extra_funcs.items():
