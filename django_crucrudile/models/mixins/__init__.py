@@ -52,7 +52,7 @@ class AutoPatternsMixin(ModelInfoMixin):
         return [cls._meta.app_label, ]
 
     @classmethod
-    def get_url(cls, view, args=None, kwargs=None):
+    def get_url_name(cls, view):
         """
         #TODO: Add method docstring
         """
