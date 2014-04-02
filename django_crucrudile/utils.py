@@ -1,6 +1,12 @@
 """
 Utility functions
 """
+import re
+
+def call_if_needed(arg, *args, **kwargs):
+    return arg if not callable(arg) else arg(*args, **kwargs)
+
+
 def convert_camel_case(camel_cased, separator):
     """
     #TODO: Add method docstring
