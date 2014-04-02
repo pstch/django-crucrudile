@@ -1,7 +1,7 @@
 """
 #TODO: Add module docstring
 """
-from django_crucrudile.utils import get_underscored_name, get_dashed_name
+from django_crucrudile.utils import convert_camel_case
 
 class ModelActionMixin(object):
     """
@@ -17,7 +17,7 @@ class ModelActionMixin(object):
         class_name = cls.__name
         if class_name.endswith('View'):
             class_name = class_name[:-4]
-        return convert_camel_cased(class_name, '-')
+        return convert_camel_case(class_name, '-')
 
     @classmethod
     def get_action_name(cls):
