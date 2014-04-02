@@ -10,7 +10,7 @@ from django.views.generic import View as View
 from django_crucrudile.utils import call_if_needed
 
 
-class AutoPatternsMixin(ModelInfoMixin):
+class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
     """
