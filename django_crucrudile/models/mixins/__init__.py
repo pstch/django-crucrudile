@@ -8,21 +8,12 @@ from django.core.urlresolvers import reverse
 from django.views.generic import View as View
 
 from django_crucrudile.utils import call_if_needed
-class ModelInfoMixin(object):
-    """Provides utility functions to get some metadata from the model"""
-    @classmethod
-    def _get_meta(cls):
-        """Get Django's Options object"""
-        try:
-            _meta = cls._meta
-            return _meta
-        except AttributeError:
-            raise ImproperlyConfigured(
-                "Could not find manager : '_meta' not present on"
-                " the current object. Check that ModelInfoMixin is"
-                " used on a Model object (currently %s)." % \
-                cls.__class__.__name__)
 
+
+class AutoPatternsMixin(ModelInfoMixin):
+    """
+    Base mixin for all action model mixins
+    """
     @classmethod
     def get_model_name(cls):
         """Get the model name
@@ -30,16 +21,19 @@ class ModelInfoMixin(object):
         """
         return cls.__name__.lower()
 
-class AutoPatternsMixin(ModelInfoMixin):
-    """
-    Base mixin for all action model mixins
-    """
     @classmethod
     def get_url_namespaces(cls):
         """
         #TODO: Add method docstring
         """
         #pylint: disable=R0201
+
+        # FIXME: we have two choices here : we can get app_label from
+        # _meta, but it's dirty, or we can get app_label using
+        # ContentTypes and get_for_model(cls).app_label. However this
+        # introduces a hard dependency to django.contrib.contenttypes
+        # not sure yet which one is the best, sticking to _meta to
+        # avoid the dependency
         return [cls._meta.app_label, ]
 
     @classmethod
