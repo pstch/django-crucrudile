@@ -24,16 +24,6 @@ class ModelInfoMixin(object):
                 cls.__class__.__name__)
 
     @classmethod
-    def get_verbose_name(cls):
-        """Get the model verbose name"""
-        return cls._get_meta().verbose_name
-
-    @classmethod
-    def get_verbose_name_plural(cls):
-        """Get the model verbose name"""
-        return cls._get_meta().verbose_name_plural
-
-    @classmethod
     def get_model_name(cls):
         """Get the model name
         (example for FooBarTestModel : 'foobartestmodel')
