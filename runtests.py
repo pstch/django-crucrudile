@@ -4,45 +4,17 @@
 #TODO: Missing module docstring
 """
 import sys
+import os
 
-from django.conf import settings
 from django.core.management import execute_from_command_line
 
-if not settings.configured:
-    SETTINGS_DICT = {}
-    # Database settings
-    SETTINGS_DICT.update({
-        'DATABASES' : {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory:',
-            }}
-    })
-    # INSTALLED_APPS
-    SETTINGS_DICT.update({
-        'INSTALLED_APPS' : (
-            'django.contrib.contenttypes',
-            'django.contrib.auth',
-            'django_pstch_helpers',
-            'tests',
-        )
-    })
-
-    # Misc
-    SETTINGS_DICT.update({
-        'ROOT_URLCONF' : 'tests.urls',
-        'USE_TZ' : True,
-        'SECRET_KEY' : 'so long and thanks for all the fish'
-    })
-
-    settings.configure(**SETTINGS_DICT)
-
-
 def runtests():
-    argv = sys.argv[:1] + sys.argv[1:]
+    argv = ['runtests.py', 'test',]
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
     execute_from_command_line(argv)
     sys.exit(0)
 
 
 if __name__ == '__main__':
     runtests()
+
