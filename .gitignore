@@ -2,9 +2,8 @@
 *.pyc
 build/
 pylint/
-bare_settings.py
 dist/
 *.egg-info/
-django-pstch-helpers.org
+django-crucrudile.org
 .coverage
 htmlcov/
