@@ -25,6 +25,30 @@ class AutoPatternsMixinTestCase(TestCase):
     def test_get_url_name(self):
         # we use the same fake view as ModelActionMixinTestCase
         self.assertEqual(
-            self.model.get_url_name(ModelActionMixinTestView),
-            "tests:autopatternsmixintestmodel-model-action-mixin-test"
+            self.model.get_url_name(AutoPatternsMixinTestView),
+            "tests:autopatternsmixintestmodel-auto-patterns-mixin-test"
         )
+
+    def test_get_views(self):
+        # by default get_views returns an empty list
+        self.assertEqual(
+            self.model.get_views(),
+            []
+        )
+
+    def test_get_args_by_view(self):
+        # by defaults args are an empty directory, and when view is
+        # not in get_views(), ImproperlyConfigured shall be raised
+        try:
+            self.model.get_args_by_view(AutoPatternsMixinTestView)
+        except ImproperlyConfigured:
+            raised = True
+        else:
+            raised = False
+
+        self.assertTrue(raised)
+        self.assertEqual(
+            AuxAutoPatternsMixinTestModel.get_args_by_view(AuxAutoPatternsMixinTestView),
+            {}
+        )
+
