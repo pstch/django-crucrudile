@@ -104,7 +104,7 @@ class AutoPatternsMixin(ModelInfoMixin):
             )
         return {}
 
-def make_model_mixin(view_class, view_args = {}, extra_funcs = {}):
+def make_model_mixin(view_class, view_args=None, extra_funcs=None):
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
