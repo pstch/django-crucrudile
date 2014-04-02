@@ -8,11 +8,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-crucudile',
+    name='django-crucrudile',
     version='0.2',
     description='Model-defined CRUD views & patterns for Django',
     long_description="views, models, auto URL patterns, ...",
-    url='https://github.com/pstch/django-crucudile',
+    url='https://github.com/pstch/django-crucrudile',
     author='Hugo Geoffroy',
     author_email='hugo@pstch.net',
     packages=find_packages(exclude=['tests']),
