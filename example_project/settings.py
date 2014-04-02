@@ -37,7 +37,7 @@ INSTALLED_APPS = (
 
     'django_extensions',
 
-    'django_crucudile',
+    'django_crucrudile',
 
     'example_app'
 )
