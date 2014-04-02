@@ -116,39 +116,37 @@ def make_model_mixin(view_class, view_args=None, extra_funcs=None):
          (the dict key is the function name, and might be a callable,
           and will be called with view as argument)
     """
-    def parse_arg_value(value):
-        return arg_value if not callable(arg_value) else arg_value(cls)
 
-    class mixin(AutoPatternsMixin):
+    class ModelMixin(AutoPatternsMixin):
         @classmethod
         def get_views(cls):
-            views = super(mixin, cls).get_views()
+            views = super(ModelMixin, cls).get_views()
             views.append(view_class)
             return views
 
         @classmethod
         def get_args_by_view(cls, view):
-            args = super(mixin, cls).get_args_by_view(view)
-            if view is view_class and args:
+            args = super(ModelMixin, cls).get_args_by_view(view)
+            if view is view_class and view_args is not None:
                 args.update({
-                    arg_key: parse_arg_value(arg_value) \
-                    for arg_key, arg_value in view_args
+                    arg_key: call_if_needed(arg_value, cls) \
+                    for (arg_key, arg_value) in view_args.items()
                 })
             return args
 
     @classmethod
     def _get_url(cls):
-        return cls.get_url(view)
+        return cls.get_url(view_class)
 
-    setattr(mixin,
-            'get_%s_url' % view.get_underscored_action_name,
+    setattr(ModelMixin,
+            'get_%s_url' % view_class.get_underscored_action_name,
             _get_url)
 
-    for func_name, func in extra_funcs.items():
-        if callable(func_name):
-            func_name = func_name(view)
-        setattr(mixin,
-                func_name,
-                func)
+    if extra_funcs:
+        for func_name, func in extra_funcs.items():
+            func_name = call_if_needed(func_name, view_class)
+            setattr(ModelMixin,
+                    func_name,
+                    func)
 
-    return mixin
+    return ModelMixin
