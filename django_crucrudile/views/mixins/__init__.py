@@ -14,7 +14,7 @@ class ModelActionMixin(object):
         """
         #TODO: Add method docstring
         """
-        class_name = cls.__name
+        class_name = cls.__name__
         if class_name.endswith('View'):
             class_name = class_name[:-4]
         return convert_camel_case(class_name, '-')
