@@ -24,7 +24,7 @@ class ModelActionMixin(object):
         """
         #TODO: Add method docstring
         """
-        return cls.action or cls.get_dashed_action_name()
+        return cls.action or cls.get_fallback_action_name()
 
     @classmethod
     def get_underscored_action_name(cls):
