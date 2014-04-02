@@ -7,45 +7,43 @@ class ModelActionMixin(object):
     """
     #TODO: Add class docstring
     """
+    action = None
+
     @classmethod
-    def get_camel_cased_action_name(cls):
+    def get_fallback_action_name(cls):
         """
         #TODO: Add method docstring
         """
         class_name = cls.__name
         if class_name.endswith('View'):
-            return class_name[:-4]
-        else:
-            return class_name
-    @classmethod
-    def get_dashed_action_name(cls):
-        """
-        #TODO: Add method docstring
-        """
-        return get_dashed_name(cls.get_camel_cased_action_name())
-    @classmethod
-    def get_underscored_action_name(cls):
-        """
-        #TODO: Add method docstring
-        """
-        return get_underscored_name(cls.get_camel_cased_action_name())
+            class_name = class_name[:-4]
+        return convert_camel_cased(class_name, '-')
+
     @classmethod
     def get_action_name(cls):
         """
         #TODO: Add method docstring
         """
-        return cls.get_dashed_action_name()
+        return cls.action or cls.get_dashed_action_name()
+
+    @classmethod
+    def get_underscored_action_name(cls):
+        """
+        #TODO: Add method docstring
+        """
+        return cls.get_action_name.replace('-', '_')
+
     @classmethod
     def get_url_args(cls):
         """
         #TODO: Add method docstring
         """
         return []
+
     @classmethod
     def get_url_part(cls):
         """
         #TODO: Add method docstring
         """
-        url_part = [cls.get_action_name()]
-        url_part += cls.get_url_args()
+        url_part = [cls.get_action_name()] + cls.get_url_args()
         return "/".join(url_part)

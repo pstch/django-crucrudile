@@ -12,19 +12,6 @@ from django_crucrudile.utils import make_url_name, get_dashed_name, get_undersco
 class ModelInfoMixin(object):
     """Provides utility functions to get some metadata from the model"""
     @classmethod
-    def _get_objects(cls):
-        """Gets the default manager"""
-        try:
-            objects = cls.objects
-            return objects
-        except AttributeError:
-            raise ImproperlyConfigured(
-                "Could not find manager : 'objects' not present on"
-                " the current object. Check that ModelInfoMixin is"
-                " used on a Model object (currently %s)." % \
-                cls.__class__.__name__)
-
-    @classmethod
     def _get_meta(cls):
         """Get Django's Options object"""
         try:
@@ -40,33 +27,19 @@ class ModelInfoMixin(object):
     @classmethod
     def get_verbose_name(cls):
         """Get the model verbose name"""
-        _meta = cls._get_meta()
-        return _meta.verbose_name
+        return cls._get_meta().verbose_name
+
     @classmethod
-    def get_count(cls):
-        """Get the object count for this model (using the manager returned by
-_get_objects())"""
-        objects = cls._get_objects()
-        return objects.count():
-p    @classmethod
+    def get_verbose_name_plural(cls):
+        """Get the model verbose name"""
+        return cls._get_meta().verbose_name_plural
+
+    @classmethod
     def get_model_name(cls):
         """Get the model name
         (example for FooBarTestModel : 'foobartestmodel')
         """
-        _meta = cls._get_meta()
-        return _meta.model_name
-    @classmethod
-    def get_dashed_model_name(cls):
-        """Get the dashed model name
-        (example for FooBarTestModel : 'foo-bar-test-model')
-        """
-        return get_dashed_name(cls.__name__)
-    @classmethod
-    def get_underscored_model_name(cls):
-        """Get the underscored model name
-        (example for FooBarTestModel : 'foo_bar_test_model')
-        """
-        return get_underscored_name(cls.__name__)
+        return cls.__name__.lower()
 
 class AutoPatternsMixin(ModelInfoMixin):
     """
@@ -79,49 +52,18 @@ class AutoPatternsMixin(ModelInfoMixin):
         """
         #pylint: disable=R0201
         return [cls._meta.app_label, ]
-    @classmethod
-    def get_url_name(cls):
-        """
-        #TODO: Add method docstring
-        """
-        return cls.get_dashed_verbose_name()
-    @classmethod
-    def _make_url_name(cls, action):
-        """
-        #TODO: Add method docstring
-        """
-        return make_url_name(cls.get_url_namespaces(),
-                             cls.get_url_name(),
-                             action)
 
     @classmethod
-    def get_url(cls, action, args=None, kwargs=None):
+    def get_url(cls, view, args=None, kwargs=None):
         """
         #TODO: Add method docstring
         """
-        if type(action) is str:
-            return reverse(cls._make_url_name(action),
-                           args=args, kwargs=kwargs)
-        elif isinstance(action, type):
-            if issubclass(action, View) or \
-               issubclass(action, DjangoView):
-                if hasattr(action, 'get_action_name'):
-                    url_name = cls._make_url_name(
-                        action.get_action_name()
-                    )
-                    return reverse(url_name,
-                                   args=args, kwargs=kwargs)
-                else:
-                    raise ImproperlyConfigured(
-                        "action was a view, but it did not define "
-                        "get_action_name. get_url needs a valid definition of "
-                        "the classmethod/staticmethod get_action_name, that "
-                        "should return a string for the action, such a 'list'"
-                    )
-        else:
-            raise TypeError(
-                "Unknown type for the 'action' kwarg, neither a string nor a View"
-            )
+        action = view.get_action_name()
+        name = cls.get_model_name()
+        namespaces = cls.get_url_namespaces()
+
+        url_name = '-'.join([name, action]) if name else action
+        return ':'.join(namespaces + [url_name,])
 
     @classmethod
     def get_views(cls):
@@ -164,15 +106,7 @@ class AutoPatternsMixin(ModelInfoMixin):
             )
         return {}
 
-def auto_make_model_mixin(view, pk_arg = False, url = None, extra_funcs = {}):
-    view_name = view.__name__
-    view_name = view_name[:-4] if view_name.endswith('View') else view_name
-
-    if pk_arg:
-        return make_model_mixin(view,
-                                get_underscored_name(view_name),
-                                get_dashed_name(view_name))
-def make_model_mixin(view, extra_funcs = {}):
+def make_model_mixin(view_class, view_args = {}, extra_funcs = {}):
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
@@ -183,27 +117,33 @@ def make_model_mixin(view, extra_funcs = {}):
          (the dict key is the function name, and might be a callable,
           and will be called with view as argument)
     """
-    #test that
-    if not issubclass(view, ModelActionMixin):
-        raise ImproperlyConfigured(
-            "The view argument does not subclass ModelActionMixin,"
-            " cannot make a model mixin with this view."
-        )
+    def parse_arg_value(value):
+        return arg_value if not callable(arg_value) else arg_value(cls)
 
     class mixin(AutoPatternsMixin):
         @classmethod
         def get_views(cls):
             views = super(mixin, cls).get_views()
-            views.append(view)
-            return views()
+            views.append(view_class)
+            return views
+
+        @classmethod
+        def get_args_by_view(cls, view):
+            args = super(mixin, cls).get_args_by_view(view)
+            if view is view_class and args:
+                args.update({
+                    arg_key: parse_arg_value(arg_value) \
+                    for arg_key, arg_value in view_args
+                })
+            return args
 
     @classmethod
-    def get_url(cls):
+    def _get_url(cls):
         return cls.get_url(view)
 
     setattr(mixin,
             'get_%s_url' % view.get_underscored_action_name,
-            get_url)
+            _get_url)
 
     for func_name, func in extra_funcs.items():
         if callable(func_name):
