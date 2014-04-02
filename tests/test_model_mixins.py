@@ -1,10 +1,10 @@
 from django.test import TestCase
 
-from .models import ModelInfoMixinTestModel
-
+from .models import AutoPatternsMixinTestModel
+from .views import ModelActionMixinTestView
 
 class AutoPatternsMixinTestCase(TestCase):
-    model_class = ModelInfoMixinTestModel
+    model_class = AutoPatternsMixinTestModel
 
     def setUp(self):
         self.model = self.model_class()
@@ -22,3 +22,9 @@ class AutoPatternsMixinTestCase(TestCase):
             ['tests',]
         )
 
+    def test_get_url_name(self):
+        # we use the same fake view as ModelActionMixinTestCase
+        self.assertEqual(
+            self.model.get_url_name(ModelActionMixinTestView),
+            "tests:autopatternsmixintestmodel-model-action-mixin-test"
+        )
