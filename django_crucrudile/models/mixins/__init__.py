@@ -7,8 +7,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.views.generic import View as View
 
-from django_crucrudile.utils import make_url_name, get_dashed_name, get_underscored_name
-
 class ModelInfoMixin(object):
     """Provides utility functions to get some metadata from the model"""
     @classmethod
