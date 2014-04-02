@@ -1,7 +1,15 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
-from .models import AutoPatternsMixinTestModel
-from .views import ModelActionMixinTestView
+from .models import (
+    AutoPatternsMixinTestModel,
+    AuxAutoPatternsMixinTestModel
+)
+from .views import (
+
+    AutoPatternsMixinTestView,
+    AuxAutoPatternsMixinTestView
+)
 
 class AutoPatternsMixinTestCase(TestCase):
     model_class = AutoPatternsMixinTestModel
