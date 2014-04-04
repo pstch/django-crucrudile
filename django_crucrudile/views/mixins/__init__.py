@@ -31,7 +31,7 @@ class ModelActionMixin(object):
         """
         #TODO: Add method docstring
         """
-        return cls.get_action_name.replace('-', '_')
+        return cls.get_action_name().replace('-', '_')
 
     @classmethod
     def get_url_args(cls):
