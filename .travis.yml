@@ -1,10 +1,9 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
 env:
-#  - DJANGO=1.5 (django 1.5 tests disabled for now, as they are not running anyway)
   - DJANGO=1.6
+  - DJANGO=1.7
 install:
   - pip install Django==$DJANGO
   - pip install -r requirements.txt
