@@ -5,3 +5,9 @@ class AutoPatternsMixinTestView(ModelActionMixin):
 
 class AuxAutoPatternsMixinTestView(ModelActionMixin):
     pass
+
+class MakeModelMixinTestView(ModelActionMixin):
+    pass
+
+class ModelActionMixinTestView(ModelActionMixin):
+    pass
