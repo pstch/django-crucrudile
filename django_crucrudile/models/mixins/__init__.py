@@ -10,6 +10,53 @@ from django.views.generic import View as View
 from django_crucrudile.utils import call_if_needed
 
 
+def make_model_mixin(view_class, extra_args=None, extra_funcs=None):
+    """Use this function to create a Model action mixin for a given view.
+
+    Arguments :
+     -- view : view to use for this mixin.
+         (this view should subclass ModelActionMixin)
+     -- extra_funcs :
+         dict of functions to add on the model mixin.
+         (the dict key is the function name, and might be a callable,
+          and will be called with view as argument)
+    """
+
+    class ModelMixin(AutoPatternsMixin):
+        @classmethod
+        def get_views(cls):
+            views = super(ModelMixin, cls).get_views()
+            views.append(view_class)
+            return views
+
+        @classmethod
+        def get_args_by_view(cls, view):
+            args = super(ModelMixin, cls).get_args_by_view(view)
+            if view is view_class and extra_args is not None:
+                args.update({
+                    arg_key: call_if_needed(arg_value, cls) \
+                    for (arg_key, arg_value) in extra_args.items()
+                })
+            return args
+
+    @classmethod
+    def _get_url(cls):
+        return cls.get_url_name(view_class)
+
+    setattr(ModelMixin,
+            'get_%s_url' % view_class.get_underscored_action_name(),
+            _get_url)
+
+    if extra_funcs:
+        for func_name, func in extra_funcs.items():
+            func_name = call_if_needed(func_name, view_class)
+            setattr(ModelMixin,
+                    func_name,
+                    func)
+
+    return ModelMixin
+
+
 class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
@@ -89,48 +136,3 @@ class AutoPatternsMixin(object):
             )
         return {}
 
-def make_model_mixin(view_class, view_args=None, extra_funcs=None):
-    """Use this function to create a Model action mixin for a given view.
-
-    Arguments :
-     -- view : view to use for this mixin.
-         (this view should subclass ModelActionMixin)
-     -- extra_funcs :
-         dict of functions to add on the model mixin.
-         (the dict key is the function name, and might be a callable,
-          and will be called with view as argument)
-    """
-
-    class ModelMixin(AutoPatternsMixin):
-        @classmethod
-        def get_views(cls):
-            views = super(ModelMixin, cls).get_views()
-            views.append(view_class)
-            return views
-
-        @classmethod
-        def get_args_by_view(cls, view):
-            args = super(ModelMixin, cls).get_args_by_view(view)
-            if view is view_class and view_args is not None:
-                args.update({
-                    arg_key: call_if_needed(arg_value, cls) \
-                    for (arg_key, arg_value) in view_args.items()
-                })
-            return args
-
-    @classmethod
-    def _get_url(cls):
-        return cls.get_url(view_class)
-
-    setattr(ModelMixin,
-            'get_%s_url' % view_class.get_underscored_action_name,
-            _get_url)
-
-    if extra_funcs:
-        for func_name, func in extra_funcs.items():
-            func_name = call_if_needed(func_name, view_class)
-            setattr(ModelMixin,
-                    func_name,
-                    func)
-
-    return ModelMixin
