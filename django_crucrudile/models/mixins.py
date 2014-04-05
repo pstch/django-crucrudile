@@ -2,9 +2,11 @@
 #TODO: Add module docstring
 """
 import re
+from itertools import chain
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.conf.urls import url
 from django.views.generic import View as View
 
 from django_crucrudile.utils import call_if_needed
