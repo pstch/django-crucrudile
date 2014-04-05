@@ -54,7 +54,8 @@ class ModelActionMixin(object):
     @classmethod
     def get_url_parts(cls):
         url_args = cls.get_url_args()
-        if all([True if isinstance(x, list) else False for x in url_args]):
+        if len(url_args) > 0 and \
+           all([True if isinstance(x, list) else False for x in url_args]):
             # url_part is a list of lists of URL args
             return [cls.get_url_part(x) for x in url_args]
         else:
