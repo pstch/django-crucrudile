@@ -45,8 +45,8 @@ class ModelActionMixinTestCase(TestCase):
 
     def test_get_url_part(self):
         self.assertEqual(
-            self.view_class.get_url_part(),
-            'model-action-mixin-test'
+            self.view_class.get_url_parts(),
+            ['model-action-mixin-test']
         )
 
     def test_get_url_part_with_args(self):
@@ -58,8 +58,8 @@ class ModelActionMixinTestCase(TestCase):
 
         self.view_class.get_url_args = get_url_args
         self.assertEqual(
-            self.view_class.get_url_part(),
-            'model-action-mixin-test/arg1/arg2'
+            self.view_class.get_url_parts(),
+            ['model-action-mixin-test/arg1/arg2']
         )
 
         self.view_class.get_url_args = orig_url_args_func
