@@ -8,9 +8,12 @@ from django.core.urlresolvers import reverse
 from django.views.generic import View as View
 
 from django_crucrudile.utils import call_if_needed
+from django_crucrudile.views.mixins import ModelActionMixin
 
-
-def make_model_mixin(view_class, extra_args=None, extra_funcs=None):
+def make_model_mixin(view_class,
+                     extra_args=None,
+                     extra_funcs=None,
+                     no_auto_view_mixin = False):
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
@@ -21,6 +24,13 @@ def make_model_mixin(view_class, extra_args=None, extra_funcs=None):
          (the dict key is the function name, and might be a callable,
           and will be called with view as argument)
     """
+    if not no_auto_view_mixin:
+        for attr in dir(ModelActionMixin):
+            if not attr.startswith('__') and \
+               not attr.endswith('__') and \
+               not hasattr(view_class, attr):
+                setattr(view_class, attr,
+                        ModelActionMixin.__dict__[attr])
 
     class ModelMixin(AutoPatternsMixin):
         @classmethod
@@ -135,4 +145,3 @@ class AutoPatternsMixin(object):
                 " defined by get_views()"
             )
         return {}
-
