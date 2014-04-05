@@ -9,7 +9,8 @@ from django_crucrudile.models.mixins import (
 
 from tests.views import (
     AutoPatternsMixinTestView,
-    MakeModelMixinTestView
+    MakeModelMixinTestView,
+    MakeModelMixinWithoutViewMixinTestView,
 )
 
 class AutoPatternsMixinTestCase(TestCase):
@@ -79,81 +80,123 @@ class AutoPatternsMixinTestCase(TestCase):
         )
 
 class MakeModelMixinTestCase(TestCase):
-    # data to test basic make_model_mixin with
-    model_mixin = make_model_mixin(MakeModelMixinTestView)
-    class MakeModelMixinTestModel(
-            model_mixin,
-            models.Model): pass
-    model_class = MakeModelMixinTestModel
+    _key_test_func = lambda arg: arg.test_callable_key
+    _value_test_func = lambda arg: arg.test_callable_value
+    _value_test_class_func = classmethod(_value_test_func)
+
+    view_class = MakeModelMixinTestView
+    url_func_name = 'get_make_model_mixin_test_url'
+    url_func_return_value = 'tests:makemodelmixintestmodel-make-model-mixin-test'
 
     # data to test make_model_mixin (with extra_args argument) with
     extra_args = {'test_key' : 'test_value',
-                  'test_callable_key' : lambda model: model.test_callable_value}
+                  'test_callable_key' : _value_test_func}
     extra_args_called = {'test_key' : 'test_value',
-                         'test_callable_key' : 'test_callable_value'}
-    extra_args_model_mixin = make_model_mixin(
-        MakeModelMixinTestView,
-        extra_args=extra_args
-    )
-    class ExtraArgsMakeModelMixinTestModel(
-            extra_args_model_mixin,
-            models.Model):
-        test_callable_value = 'test_callable_value'
-    extra_args_model_class = ExtraArgsMakeModelMixinTestModel
+                         'test_callable_key' : 'model_test_callable_value'}
 
-    # data to test make_model_mixin (with extra_funcs argument) with
-    @classmethod
-    def extra_func(cls):
-        return 'extra_func_return'
-    # we set up a custom view so that we can be sure that the callable
-    # receives the view as argument
-    class ExtraFuncMakeModelMixinTestView(MakeModelMixinTestView):
-        test_callable_key = 'test_callable_key'
-    extra_funcs = {'test_key' : extra_func,
-                   lambda view: view.test_callable_key : extra_func}
-    extra_funcs_called = {'test_key' : extra_func,
-                          'test_callable_key' : extra_func}
-    extra_funcs_model_mixin = make_model_mixin(
-        ExtraFuncMakeModelMixinTestView,
-        extra_funcs=extra_funcs
-    )
-    class ExtraFuncsMakeModelMixinTestModel(
-            extra_funcs_model_mixin,
-            models.Model): pass
-    extra_funcs_model_class = ExtraFuncsMakeModelMixinTestModel
+    extra_funcs = {'test_key' : _value_test_class_func,
+                   lambda arg: 'test_callable_key' : _value_test_class_func}
+    extra_funcs_called = {'test_key' : 'test_value',
+                          'test_callable_key' : 'model_test_callable_value'}
+
+    def setUp(self):
+        class MakeModelMixinTestModel(
+                make_model_mixin(
+                    self.view_class,
+                ),
+                models.Model):
+            pass
+        self.model_class = MakeModelMixinTestModel
+
+        class ExtraArgsMakeModelMixinTestModel(
+                make_model_mixin(
+                    self.view_class,
+                    extra_args=self.extra_args
+                ),
+                models.Model):
+            test_callable_value = 'model_test_callable_value'
+        self.extra_args_model_class = ExtraArgsMakeModelMixinTestModel
+
+        class ExtraFuncsMakeModelMixinTestModel(
+                make_model_mixin(
+                    type(self.view_class.__name__,
+                         (self.view_class,),
+                         {'test_callable_key' : 'view_test_callable_value'}),
+                    extra_funcs=self.extra_funcs
+                ),
+                models.Model):
+            test_callable_value = 'model_test_callable_value'
+        self.extra_funcs_model_class = ExtraFuncsMakeModelMixinTestModel
 
     def test_make_model_mixin(self):
         self.assertEqual(
             self.model_class.get_views(),
-            [MakeModelMixinTestView, ]
+            [self.view_class, ]
         )
         self.assertEqual(
             self.model_class.get_args_by_view(
-                MakeModelMixinTestView
+                self.view_class
             ),
             {}
         )
         self.assertTrue(
             hasattr(self.model_class,
-                    'get_make_model_mixin_test_url')
+                    self.url_func_name)
         )
         self.assertEqual(
             getattr(self.model_class,
-                    'get_make_model_mixin_test_url',
+                    self.url_func_name,
                     lambda: None)(),
-            'tests:makemodelmixintestmodel-make-model-mixin-test'
+            self.url_func_return_value
         )
+
     def test_make_model_mixin_extra_args(self):
         self.assertEqual(
             self.extra_args_model_class.get_args_by_view(
-                MakeModelMixinTestView
+                self.view_class
             ),
             self.extra_args_called
         )
+
     def test_make_model_mixin_extra_funcs(self):
         for func in self.extra_funcs_called:
             self.assertTrue(hasattr(self.extra_funcs_model_class, func))
-            self.assertEqual(getattr(self.extra_funcs_model_class,
-                                     func,
-                                     lambda cls: None)(),
-                             'extra_func_return')
+            self.assertEqual(
+                getattr(self.extra_funcs_model_class,
+                        func,
+                        lambda arg: None)(),
+                'model_test_callable_value')
+
+class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
+    view_class = MakeModelMixinWithoutViewMixinTestView
+    url_func_name = 'get_make_model_mixin_without_view_mixin_test_url'
+    url_func_return_value = 'tests:makemodelmixinwithoutviewmixintestmodel-make-model-mixin-without-view-mixin-test'
+
+    def setUp(self):
+        class MakeModelMixinWithoutViewMixinTestModel(
+                make_model_mixin(
+                    self.view_class,
+                ),
+                models.Model):
+            pass
+        self.model_class = MakeModelMixinWithoutViewMixinTestModel
+
+        class ExtraArgsMakeModelMixinWithoutViewMixinTestModel(
+                make_model_mixin(
+                    self.view_class,
+                    extra_args=self.extra_args
+                ),
+                models.Model):
+            test_callable_value = 'model_test_callable_value'
+        self.extra_args_model_class = ExtraArgsMakeModelMixinWithoutViewMixinTestModel
+
+        class ExtraFuncsMakeModelMixinWithoutViewMixinTestModel(
+                make_model_mixin(
+                    type(self.view_class.__name__,
+                         (self.view_class,),
+                         {'test_callable_key' : 'view_test_callable_value'}),
+                    extra_funcs=self.extra_funcs
+                ),
+                models.Model):
+            test_callable_value = 'model_test_callable_value'
+        self.extra_funcs_model_class = ExtraFuncsMakeModelMixinWithoutViewMixinTestModel
