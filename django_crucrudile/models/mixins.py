@@ -115,6 +115,31 @@ class AutoPatternsMixin(object):
         return ':'.join(namespaces + [url_name,])
 
     @classmethod
+    def get_url_prefix(cls):
+        return "/".join(cls.get_url_namespaces)
+
+    @classmethod
+    def get_url_patterns_by_view(cls, view):
+        url_prefix = cls.get_url_prefix()
+        return [url(
+            "/".join(
+                [url_pefix,] if url_prefix else [] + \
+                [url_part] if url_part else []
+            ),
+            view.as_view(model=cls,
+                         **cls.get_args_by_view(view)),
+            name=cls.get_url_name(view)
+        ) for url_part in view.get_url_parts()]
+
+    @classmethod
+    def get_url_patterns(cls):
+        urlpatterns = []
+        for view in cls.get_views():
+            for pattern in cls.get_url_patterns_by_view(view):
+                urlpatterns += pattern
+
+
+    @classmethod
     def get_views(cls):
         """This class method is overriden by ModelMixin classes, so that the
         resulting Model object (which subclasses ModelMixin classes)

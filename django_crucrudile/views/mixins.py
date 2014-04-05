@@ -35,15 +35,28 @@ class ModelActionMixin(object):
 
     @classmethod
     def get_url_args(cls):
-        """
-        #TODO: Add method docstring
+        """Return the list of regex specifications for URL arguments, as in
+        urls.py.  Will be joined with a forward slash ('/').  Can be a
+        list of lists, in which case multiple URL patterns will be
+        defined (with the same name).
+
         """
         return []
 
     @classmethod
-    def get_url_part(cls):
+    def get_url_part(cls, args):
         """
         #TODO: Add method docstring
         """
-        url_part = [cls.get_action_name()] + cls.get_url_args()
+        url_part = [cls.get_action_name()] + args
         return "/".join(url_part)
+
+    @classmethod
+    def get_url_parts(cls):
+        url_args = cls.get_url_args()
+        if all([True if isinstance(x, list) else False for x in url_args]):
+            # url_part is a list of lists of URL args
+            return [cls.get_url_part(x) for x in url_args]
+        else:
+            # url_part is a list of args
+            return [cls.get_url_part(url_args)]
