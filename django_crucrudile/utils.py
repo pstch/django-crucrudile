@@ -3,7 +3,7 @@ Utility functions
 """
 import re
 
-from django.core.exceptions
+from django.core.exceptions import ImproperlyConfigured
 
 def auto_patterns_for_app(app_name):
     try:
