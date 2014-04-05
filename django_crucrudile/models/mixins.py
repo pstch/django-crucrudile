@@ -25,12 +25,19 @@ def make_model_mixin(view_class,
           and will be called with view as argument)
     """
     if not no_auto_view_mixin:
+        # not inhibiting automatic adding of ModelActionMixin
+        # functionality
         for attr in dir(ModelActionMixin):
             if not attr.startswith('__') and \
                not attr.endswith('__') and \
                not hasattr(view_class, attr):
-                setattr(view_class, attr,
-                        ModelActionMixin.__dict__[attr])
+                # we found a non-special attribute in ModeActionMixin
+                # that is not present in view_class
+                setattr(
+                    view_class, attr,
+                    ModelActionMixin.__dict__[attr])
+                # we use .__dict__[] because we need unbound
+                # attributes
 
     class ModelMixin(AutoPatternsMixin):
         @classmethod
