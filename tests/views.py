@@ -11,3 +11,6 @@ class MakeModelMixinTestView(ModelActionMixin):
 
 class ModelActionMixinTestView(ModelActionMixin):
     pass
+
+class MakeModelMixinWithoutViewMixinTestView(object):
+    pass
