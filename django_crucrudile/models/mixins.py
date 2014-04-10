@@ -158,7 +158,9 @@ class AutoPatternsMixin(object):
 
     @classmethod
     def get_args_by_view(cls, view): # pylint: disable=W0613
-        """This class method is overriden by ModelMixin classes, so that the
+        """Return dict of keyword arguments for a view
+
+        This class method is overriden by ModelMixin classes, so that the
         resulting Model object (which subclasses ModelMixin classes)
         can get the dictionary of view arguments for each view used in
         this Model, with get_args_by_view(view).
