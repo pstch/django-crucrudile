@@ -37,6 +37,7 @@ class AutoPatternsMixinTestCase(TestCase):
 
     def test_get_url_namespaces(self):
         # default namespaces is application name (here, 'tests')
+        #TODO: Fix test (try with no_content_types=True)
         self.assertEqual(
             self.model_class.get_url_namespaces(),
             ['tests',]
