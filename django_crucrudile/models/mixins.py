@@ -15,7 +15,7 @@ from django_crucrudile.views.mixins import ModelActionMixin
 def make_model_mixin(view_class,
                      extra_args=None,
                      extra_funcs=None,
-                     no_auto_view_mixin = False):
+                     no_auto_view_mixin=False):
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
