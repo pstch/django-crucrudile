@@ -7,3 +7,6 @@ dist/
 django-crucrudile.org
 .coverage
 htmlcov/
+.cov2emacs*
+pycallgraph.gdf
+.#*
