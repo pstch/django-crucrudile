@@ -36,13 +36,10 @@ def auto_patterns_for_app(app_name):
         *[c.model_class().get_url_patterns() for c in content_types]
     ))
 
-
-
 def try_calling(arg, *args, **kwargs):
     """Evaluate and return arg if it's a callable, otherwise return None
     """
     return arg(*args, **kwargs) if callable(arg) else None
-
 
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
