@@ -193,7 +193,7 @@ class AutoPatternsMixin(object):
     def get_url_prefix(cls):
         """Return URL prefix (using get_ur_namespaces)"""
         #TODO: Write test
-        return "/".join(cls.get_url_namespaces)
+        return "/".join(cls.get_url_namespaces())
 
     @classmethod
     def get_url_patterns_by_view(cls, view):
