@@ -59,7 +59,7 @@ class ModelActionMixin(object):
         defined (with the same name).
 
         """
-        return []
+        return cls.url_args or []
 
     @classmethod
     def get_url_part(cls, args):
