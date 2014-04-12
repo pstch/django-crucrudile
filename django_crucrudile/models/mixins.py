@@ -200,10 +200,11 @@ class AutoPatternsMixin(object):
         """Get list of URL patterns for a given view"""
         #TODO: Write test
         url_prefix = cls.get_url_prefix()
+        url_name = cls.get_model_name()
+
         return [url(
             "/".join(
-                [url_prefix,] if url_prefix else [] + \
-                [url_part] if url_part else []
+                filter(None, (url_prefix, url_name, url_part))
             ),
             view.as_view(model=cls,
                          **cls.get_args_by_view(view)),
