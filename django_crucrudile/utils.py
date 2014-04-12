@@ -26,21 +26,16 @@ def auto_patterns_for_app(app_name):
     """
     try:
         from django.contrib.contenttypes.models import ContentType
-    except ImportError:
+    except ImportError: #pragma: no cover
         raise ImproperlyConfigured(
             "auto_patterns_for_app must be able to import"
             " django.contrib.contenttypes"
         )
-    content_types = ContentType.objects.filter(app_name=app_name)
+    content_types = ContentType.objects.filter(app_label=app_name)
     return list(chain(
         *[c.model_class().get_url_patterns() for c in content_types]
     ))
 
-def auto_patterns_for_model(model):
-    """Returns a list of URL patterns (Django URL objects) for the given
-    Model class
-    """
-    return model.get_url_patterns()
 
 
 def try_calling(arg, *args, **kwargs):
