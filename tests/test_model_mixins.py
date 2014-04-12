@@ -4,13 +4,17 @@ from django.db import models
 
 from django_crucrudile.models.mixins import (
     AutoPatternsMixin,
-    make_model_mixin
+    make_model_mixin,
+    make_model_mixins
 )
 
 from tests.views import (
     AutoPatternsMixinTestView,
     MakeModelMixinTestView,
     MakeModelMixinWithoutViewMixinTestView,
+    MakeModelMixinsFirstTestView,
+    MakeModelMixinsSecondTestView,
+    MakeModelMixinsThirdTestView
 )
 
 class AutoPatternsMixinTestCase(TestCase):
@@ -201,3 +205,36 @@ class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
                 models.Model):
             test_callable_value = 'model_test_callable_value'
         self.extra_funcs_model_class = ExtraFuncsMakeModelMixinWithoutViewMixinTestModel
+
+class MakeModelMixinsTestCase(TestCase):
+    views = [MakeModelMixinsFirstTestView,
+             MakeModelMixinsSecondTestView,
+             MakeModelMixinsThirdTestView]
+
+    def check_views_in_mixins(self, mixins):
+        for index, mixin in enumerate(mixins):
+            self.assertEqual(
+                mixin.get_views(),
+                [self.views[index]]
+            )
+
+    def test_make_model_mixins_1tuple(self):
+        self.check_views_in_mixins(
+            make_model_mixins(
+                [(view,) for view in self.views]
+            )
+        )
+
+    def test_make_model_mixins_2tuple(self):
+        self.check_views_in_mixins(
+            make_model_mixins(
+                [(view,) for view in self.views]
+            )
+        )
+
+    def test_make_model_mixins_3tuple(self):
+        self.check_views_in_mixins(
+            make_model_mixins(
+                [(view,) for view in self.views]
+            )
+        )
