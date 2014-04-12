@@ -63,6 +63,22 @@ class AutoPatternsMixinTestCase(TestCase):
             'tests'
         )
 
+    def test_get_url_patterns(self):
+        pattern = self.model_class.get_url_patterns()[0]
+        self.assertEqual(
+            pattern.name,
+            'tests:autopatternsmixintestmodel-auto-patterns-mixin-test'
+        )
+        self.assertEqual(
+            pattern.callback.__name__,
+            'AutoPatternsMixinTestView'
+        )
+        self.assertEqual(
+            pattern.regex.pattern,
+            'tests/autopatternsmixintestmodel/auto-patterns-mixin-test'
+        )
+
+
     def test_get_views(self):
         # by default get_views returns an empty list
         self.assertEqual(
