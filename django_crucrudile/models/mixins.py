@@ -164,7 +164,7 @@ class AutoPatternsMixin(object):
             if no_content_types is True: raise ImportError(
                     "django.contrib.contenttypes import explicitly disabled"
             )
-            from django.contrib.contenttypes.db.models import ContentType
+            from django.contrib.contenttypes.models import ContentType
         except ImportError:
             return [cls._meta.app_label, ]
         else:
