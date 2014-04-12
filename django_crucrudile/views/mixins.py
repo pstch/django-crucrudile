@@ -26,6 +26,7 @@ class ModelActionMixin(object):
     #TODO: Add class docstring
     """
     action = None
+    url_args = []
 
     @classmethod
     def get_fallback_action_name(cls):
