@@ -217,7 +217,8 @@ class AutoPatternsMixin(object):
         urlpatterns = []
         for view in cls.get_views():
             for pattern in cls.get_url_patterns_by_view(view):
-                urlpatterns += pattern
+                urlpatterns.append(pattern)
+        return urlpatterns
 
 
     @classmethod
