@@ -18,20 +18,22 @@ from tests.views import (
 )
 
 class AutoPatternsMixinTestCase(TestCase):
-    class AutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
-        @classmethod
-        def get_views(cls):
-            views = super(
-                AutoPatternsMixinTestCase.AutoPatternsMixinTestModel,
-                cls
-            ).get_views()
-            views.append(AutoPatternsMixinTestView)
-            return views
-    class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
-        pass
 
-    model_class = AutoPatternsMixinTestModel
-    no_views_model_class = NoViewsAutoPatternsMixinTestModel
+    def setUp(self):
+        class AutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
+            @classmethod
+            def get_views(cls):
+                views = super(
+                    AutoPatternsMixinTestModel,
+                    cls
+                ).get_views()
+                views.append(AutoPatternsMixinTestView)
+                return views
+        class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
+            pass
+
+        self.model_class = AutoPatternsMixinTestModel
+        self.no_views_model_class = NoViewsAutoPatternsMixinTestModel
 
     def test_get_model_name(self):
         self.assertEqual(
