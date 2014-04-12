@@ -1,9 +1,14 @@
+from django.views.generic import View
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.list import MultipleObjectMixin
+
 from django_crucrudile.views.mixins import ModelActionMixin
 
-class AutoPatternsMixinTestView(ModelActionMixin):
+
+class AutoPatternsMixinTestView(ModelActionMixin, SingleObjectMixin, View):
     pass
 
-class AuxAutoPatternsMixinTestView(ModelActionMixin):
+class AuxAutoPatternsMixinTestView(ModelActionMixin, SingleObjectMixin, View):
     pass
 
 class MakeModelMixinTestView(ModelActionMixin):
