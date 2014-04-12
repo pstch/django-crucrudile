@@ -1,5 +1,23 @@
-"""
-#TODO: Add module docstring
+"""View mixins classes
+
+This module contains a base view mixin to specify an interface, that
+will be used by Model Mixin (in models.mixins) to get informations
+about the view :
+
+-- action name : will be used for URLs, URL names and get_*_url
+functions. when used in URLs or get_*_url functions, it will be
+underscore-separated, otherwise dash-separated.
+
+-- url parts : will be used for URLs. compiles the multiple possible
+combinations of URL arguments to create a list of possible URL
+specifications for this view (which will be joined to the model name
+by the model mixin)
+
+Classes :
+-- ModelActionMixin : base class for views used by model mixins
+
+Tests:
+-- ../../tests/test_view_mixins.py
 """
 from django_crucrudile.utils import convert_camel_case
 
