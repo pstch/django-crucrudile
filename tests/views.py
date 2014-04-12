@@ -13,20 +13,20 @@ class AutoPatternsMixinTestView(ModelActionMixin, SingleObjectMixin, View):
 class AuxAutoPatternsMixinTestView(ModelActionMixin, SingleObjectMixin, View):
     pass
 
-class MakeModelMixinTestView(ModelActionMixin):
+class MakeModelMixinTestView(ModelActionMixin, SingleObjectMixin, View):
     pass
 
-class ModelActionMixinTestView(ModelActionMixin):
+class ModelActionMixinTestView(ModelActionMixin, View):
     pass
 
-class MakeModelMixinWithoutViewMixinTestView(object):
+class MakeModelMixinWithoutViewMixinTestView(SingleObjectMixin, View):
     pass
 
-class MakeModelMixinsFirstTestView(ModelActionMixin):
+class MakeModelMixinsFirstTestView(ModelActionMixin, View):
     pass
 
-class MakeModelMixinsSecondTestView(object):
+class MakeModelMixinsSecondTestView(View):
     pass
 
-class MakeModelMixinsThirdTestView(object):
+class MakeModelMixinsThirdTestView(View):
     pass
