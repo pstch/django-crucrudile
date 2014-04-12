@@ -101,17 +101,19 @@ def make_model_mixins(views,
     Return a tuple of model_action_mixins
 
     Arguments :
-    -- views : set of views to make mixins for (should be
-    a tuple (with at least one item and at most three) containing :
-    view_class, extra_args, extra_func, defined later in this
-    docstring)
+    -- views : set of tuples, views to make mixins for (should contain
+    tuples (with at least one item and at most three), themselves
+    containing :
+     - view_class (mandatory)
+     - extra_args (optional)
+     - extra_func (optional)
     -- no_auto_view_mixin : disable autopatching of view
     with ModelActionMixin (when view_class is missing a method or
     attribute from ModelActionMixin, it is automatically added (and
     bound if needed) to view_class. Set this to True to disable this
     behaviour. See docs fr more information)
 
-    views items :
+    views tuple items :
     -- view : view to use for this mixin.
          (this view should subclass ModelActionMixin)
     -- extra_args : dict of keyword arguments for the view
@@ -122,7 +124,6 @@ def make_model_mixins(views,
     and will be called with view as argument)
 
     """
-    #TODO: Write test
     return tuple([
         make_model_mixin(
             *view_tuple,
