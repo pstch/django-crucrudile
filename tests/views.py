@@ -4,6 +4,8 @@ from django.views.generic.list import MultipleObjectMixin
 
 from django_crucrudile.views.mixins import ModelActionMixin
 
+class TestModelTestView(ModelActionMixin, SingleObjectMixin, View):
+    action = 'test-action'
 
 class AutoPatternsMixinTestView(ModelActionMixin, SingleObjectMixin, View):
     pass
