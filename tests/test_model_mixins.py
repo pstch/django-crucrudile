@@ -57,6 +57,12 @@ class AutoPatternsMixinTestCase(TestCase):
             "tests:autopatternsmixintestmodel-auto-patterns-mixin-test"
         )
 
+    def test_get_url_prefix(self):
+        self.assertEqual(
+            self.model_class.get_url_prefix(),
+            'tests'
+        )
+
     def test_get_views(self):
         # by default get_views returns an empty list
         self.assertEqual(
