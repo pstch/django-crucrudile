@@ -5,32 +5,33 @@ django-crucrudile
 
 For example :
 
-    from django.db.models import Model
-    from django.generic.views import ListView, DetailView
-    from django_crucrudile.models.mixins import make_model_mixin
+```python
+from django.db.models import Model
+from django.generic.views import ListView, DetailView
+from django_crucrudile.models.mixins import make_model_mixin
 
+DetailView.url_args = ['(?P<pk>\d+)',]
 
-    DetailView.url_args = ['(?P<pk>\d+)',]
+Listable = make_model_mixin(ListView)
+Detailable = make_model_mixin(DetailView)
 
-    Listable = make_model_mixin(ListView)
-    Detailable = make_model_mixin(DetailView)
-
-    class Book(Listable, Detailable, Model):
-        pass
+class Book(Listable, Detailable, Model):
+    pass
         
-    >> Book.get_views()
-    [ListView, DetailView]
+>> Book.get_views()
+[ListView, DetailView]
     
-    >> Book.get_url_name(ListView)
-    'library:book-list'
+>> Book.get_url_name(ListView)
+'library:book-list'
     
-    >> Book.get_list_url()
-    '/library/book/list'
+>> Book.get_list_url()
+'/library/book/list'
         
-    >> Book.get_url_patterns()
-    [<RegexURLPattern library:book-list library/book/list>,
-     <RegexURLPattern library:book-detail library/book/detail/<pk>>]
-     
+>> Book.get_url_patterns()
+[<RegexURLPattern library:book-list library/book/list>,
+ <RegexURLPattern library:book-detail library/book/detail/<pk>>]
+```
+
 The return value of `get_url_patterns()` can be used in `urls.py` (for example, in `patterns('', ..)`).
 
 Here, `ListView` and `DetailView` can be standard generic views, or your own CBVs. As you can see, the only requirement is that, when a view needs an URL argument, it must be specified in the `url_args` attribute of the view class.
