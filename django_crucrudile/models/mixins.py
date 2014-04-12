@@ -79,7 +79,7 @@ def make_model_mixin(view_class,
 
     @classmethod
     def _get_url(cls):
-        return cls.get_url_name(view_class)
+        return reverse(cls.get_url_name(view_class))
 
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
@@ -177,7 +177,7 @@ class AutoPatternsMixin(object):
         Compiles the URL name using view.get_action_name,
         cls.get_model_name(), and cls.get_url_namespaces()
 
-        get_model_name() and get_urlnamespaces() can respectively be
+        get_model_name() and get_url_namespaces() can respectively be
         None and [], in which case the URL name will be compiled
         without them (and their adjacent separators)
 
