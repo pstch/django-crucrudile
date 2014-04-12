@@ -11,6 +11,8 @@ can contain additional parameters to make_model_mixin(...))
 Classes :
 -- AutoPatternsMixin : base class for model mixins
 
+Tests:
+-- ../../tests/test_model_mixins.py
 """
 import re
 from itertools import chain
