@@ -60,7 +60,7 @@ class AutoPatternsMixinTestCase(TestCase):
         )
         self.assertEqual(
             pattern.regex.pattern,
-            'tests/autopatternsmixintestmodel/auto-patterns-mixin-test'
+            'autopatternsmixintestmodel/auto-patterns-mixin-test'
         )
 
 
