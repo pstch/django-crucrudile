@@ -143,34 +143,6 @@ class AutoPatternsMixin(object):
         return cls.__name__.lower()
 
     @classmethod
-    def get_url_namespaces(cls, no_content_types=False):
-        """Return URL namespaces (as a list) using applicatio name
-
-        Application name is obtained using contenttypes if available,
-        otherwise model._meta.app_label
-
-        Also, if no_content_types is True, force fallback to model._meta.app_label
-        """
-        #pylint: disable=R0201
-        #TODO: Test for when no_content_types is True
-
-        # FIXME: we have two choices here : we can get app_label from
-        # _meta, but it's dirty, or we can get app_label using
-        # ContentTypes and get_for_model(cls).app_label. However this
-        # introduces a hard dependency to django.contrib.contenttypes
-        # not sure yet which one is the best, using ContentType if
-        # available, otherwise fallback to _meta
-        try:
-            if no_content_types is True: raise ImportError(
-                    "django.contrib.contenttypes import explicitly disabled"
-            )
-            from django.contrib.contenttypes.models import ContentType
-        except ImportError:
-            return [cls._meta.app_label, ]
-        else:
-            return [ContentType.objects.get_for_model(cls).app_label, ]
-
-    @classmethod
     def get_url_name(cls, view):
         """Return the URL name for a given view
 
@@ -189,21 +161,14 @@ class AutoPatternsMixin(object):
         return url_name
 
     @classmethod
-    def get_url_prefix(cls):
-        """Return URL prefix (using get_ur_namespaces)"""
-        #TODO: Write test
-        return "/".join(cls.get_url_namespaces())
-
-    @classmethod
     def get_url_patterns_by_view(cls, view):
         """Get list of URL patterns for a given view"""
         #TODO: Write test
-        url_prefix = cls.get_url_prefix()
         url_name = cls.get_model_name()
 
         return [url(
             "/".join(
-                filter(None, (url_prefix, url_name, url_part))
+                filter(None, (url_name, url_part))
             ),
             view.as_view(model=cls,
                          **cls.get_args_by_view(view)),
