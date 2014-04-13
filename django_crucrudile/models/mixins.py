@@ -184,10 +184,9 @@ class AutoPatternsMixin(object):
         """
         action = view.get_action_name()
         name = cls.get_model_name()
-        namespaces = cls.get_url_namespaces()
 
         url_name = '-'.join([name, action]) if name else action
-        return ':'.join(namespaces + [url_name,])
+        return url_name
 
     @classmethod
     def get_url_prefix(cls):
