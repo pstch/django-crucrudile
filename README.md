@@ -22,14 +22,14 @@ class Book(Listable, Detailable, Model):
 [ListView, DetailView]
     
 >> Book.get_url_name(ListView)
-'library:book-list'
+'book-list'
     
 >> Book.get_list_url()
-'/library/book/list'
+'/book/list'
         
 >> Book.get_url_patterns()
-[<RegexURLPattern library:book-list library/book/list>,
- <RegexURLPattern library:book-detail library/book/detail/<pk>>]
+[<RegexURLPattern book-list book/list>,
+ <RegexURLPattern book-detail book/detail/<pk>>]
 ```
 
 The return value of `get_url_patterns()` can be used in `urls.py` (for example, in `patterns('', ..)`).
