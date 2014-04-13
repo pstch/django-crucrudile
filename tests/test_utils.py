@@ -20,7 +20,7 @@ class AutoPatternsForAppTestCase(TestCase):
     def test_pattern_url(self):
         self.assertEqual(
             self.patterns[0].regex.pattern,
-            'tests/testmodel/test-action'
+            'testmodel/test-action'
         )
     # TODO: add test for URL func (get_*_url)
     # TODO: test reverse for URL name
