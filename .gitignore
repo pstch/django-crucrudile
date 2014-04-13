@@ -10,3 +10,4 @@ htmlcov/
 .cov2emacs*
 pycallgraph.gdf
 .#*
+.coveralls.yml
