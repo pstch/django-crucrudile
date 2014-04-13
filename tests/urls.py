@@ -5,7 +5,5 @@ from django_crucrudile.utils import auto_patterns_for_app
 x = lambda x: None
 
 urlpatterns = [
-    url(r"", include(auto_patterns_for_app('tests'))),
+    url(r"", include(auto_patterns_for_app('tests'), namespace='tests')),
 ]
-
-print urlpatterns
