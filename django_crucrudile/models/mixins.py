@@ -146,12 +146,11 @@ class AutoPatternsMixin(object):
     def get_url_name(cls, view):
         """Return the URL name for a given view
 
-        Compiles the URL name using view.get_action_name,
-        cls.get_model_name(), and cls.get_url_namespaces()
+        Compiles the URL name using view.get_action_name
+        and cls.get_model_name()
 
-        get_model_name() and get_url_namespaces() can respectively be
-        None and [], in which case the URL name will be compiled
-        without them (and their adjacent separators)
+        get_model_name() can be None, in which case the URL
+        name will be compiled using the action
 
         """
         action = view.get_action_name()
