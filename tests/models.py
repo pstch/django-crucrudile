@@ -4,6 +4,11 @@ from django_crucrudile.models.mixins import make_model_mixin
 
 from .views import TestModelTestView
 
-class TestModel(make_model_mixin(TestModelTestView),
+TestViewMixin = make_model_mixin(
+    TestModelTestView,
+    guess_url_namespace=True
+)
+
+class TestModel(TestViewMixin,
                 Model):
     pass

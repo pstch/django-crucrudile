@@ -83,10 +83,7 @@ def make_model_mixin(view_class,
 
     @classmethod
     def _get_url(cls):
-        try:
-            return reverse(cls.get_url_name(view_class, prefix=True))
-        except:
-            import ipdb; ipdb.set_trace()
+        return reverse(cls.get_url_name(view_class, prefix=True))
 
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
@@ -94,7 +91,7 @@ def make_model_mixin(view_class,
 
     setattr(ModelMixin,
             'guess_url_namespace',
-            True)
+            guess_url_namespace)
 
     if extra_funcs:
         for func_name, func in extra_funcs.items():
