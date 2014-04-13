@@ -41,28 +41,11 @@ class AutoPatternsMixinTestCase(TestCase):
             "autopatternsmixintestmodel"
         )
 
-    def test_get_url_namespaces(self):
-        # default namespaces is application name (here, 'tests')
-        self.assertEqual(
-            self.model_class.get_url_namespaces(),
-            ['tests',]
-        )
-        self.assertEqual(
-            self.model_class.get_url_namespaces(no_content_types=True),
-            ['tests',]
-        )
-
     def test_get_url_name(self):
         # we use the same fake view as ModelActionMixinTestCase
         self.assertEqual(
             self.model_class.get_url_name(AutoPatternsMixinTestView),
             "autopatternsmixintestmodel-auto-patterns-mixin-test"
-        )
-
-    def test_get_url_prefix(self):
-        self.assertEqual(
-            self.model_class.get_url_prefix(),
-            'tests'
         )
 
     def test_get_url_patterns(self):
