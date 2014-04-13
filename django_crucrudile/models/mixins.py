@@ -28,22 +28,18 @@ from django_crucrudile.views.mixins import ModelActionMixin
 def make_model_mixin(view_class,
                      extra_args=None,
                      extra_funcs=None,
-                     guess_url_namespace=False,
                      no_auto_view_mixin=False):
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
-    -- view : view to use for this mixin.
-         (this view should subclass ModelActionMixin)
-    -- extra_args : dict of keyword arguments for the view
-    (the dict value is the argument value, and might be a callable,
-    and will be called with model as argument)
+    -- view : view to use for this mixin (this view should subclass
+         ModelActionMixin)
+    -- extra_args : dict of keyword arguments for the view (the dict
+    value is the argument value, and might be a callable, and will be
+    called with model as argument)
     -- extra_funcs : dict of functions to add on the model mixin.
-    (the dict key is the function name, and might be a callable,
-    and will be called with view as argument)
-    -- guess_url_namespace : when reversing URL names (specifically,
-    when calling get_url_name with prefix=True), try to guess
-    namespace in get_url_namespaces()
+    (the dict key is the function name, and might be a callable, and
+    will be called with view as argument)
     -- no_auto_view_mixin : disable autopatching of view with ModelActionMixin
     (when view_class is missing a method or attribute from ModelActionMixin,
     it is automatically added (and bound if needed) to view_class. Set this to
@@ -89,10 +85,6 @@ def make_model_mixin(view_class,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
 
-    setattr(ModelMixin,
-            'guess_url_namespace',
-            guess_url_namespace)
-
     if extra_funcs:
         for func_name, func in extra_funcs.items():
             func_name = try_calling(func_name, view_class) or func_name
@@ -103,7 +95,6 @@ def make_model_mixin(view_class,
     return ModelMixin
 
 def make_model_mixins(views,
-                      guess_url_namespace=False,
                       no_auto_view_mixin=False):
     """Use this function to create Model action mixinx for the given views
 
@@ -116,9 +107,6 @@ def make_model_mixins(views,
      - view_class (mandatory)
      - extra_args (optional)
      - extra_func (optional)
-    -- guess_url_namespace : when reversing URL names (specifically,
-    when calling get_url_name with prefix=True), try to guess
-    namespace in get_url_namespaces()
     -- no_auto_view_mixin : disable autopatching of view with
     ModelActionMixin (when view_class is missing a method or attribute
     from ModelActionMixin, it is automatically added (and bound if
@@ -139,7 +127,6 @@ def make_model_mixins(views,
     return tuple([
         make_model_mixin(
             *view_tuple,
-            guess_url_namespace=guess_url_namespace,
             no_auto_view_mixin=no_auto_view_mixin
         ) for view_tuple in views
     ])
@@ -156,77 +143,68 @@ class AutoPatternsMixin(object):
         return cls.__name__.lower()
 
     @classmethod
-    def get_url_name(cls, view, prefix=False):
+    def get_url_name(cls, view, namespaces=None):
         """Return the URL name for a given view
 
-        Compiles the URL name using view.get_action_name
-        and cls.get_model_name()
+        Compiles the URL name using view.get_action_name and
+        cls.get_model_name() (and cls.get_url_namespaces() if prefix
+        argument is True)
 
         get_model_name() can be None, in which case the URL
         name will be compiled using the action
 
         """
-        action = view.get_action_name()
-        name = cls.get_model_name()
-
-        url_name = '-'.join([name, action]) if name else action
-        if prefix:
-            return ':'.join(cls.get_url_namespaces() + [url_name,])
-        else:
-            return url_name
-
-    @classmethod
-    def get_url_namespaces(cls, no_content_types=False):
-        """Return URL namespaces (as a list) using applicatio name
-
-        Application name is obtained using contenttypes if available,
-        otherwise model._meta.app_label
-
-        Also, if no_content_types is True, force fallback to model._meta.app_label
-        """
-        #pylint: disable=R0201
-
-        # FIXME: we have two choices here : we can get app_label from
-        # _meta, but it's dirty, or we can get app_label using
-        # ContentTypes and get_for_model(cls).app_label. However this
-        # introduces a hard dependency to django.contrib.contenttypes
-        # not sure yet which one is the best, using ContentType if
-        # available, otherwise fallback to _meta
-        if cls.guess_url_namespace:
-            try:
-                if no_content_types is True: raise ImportError(
-                        "django.contrib.contenttypes import explicitly disabled"
-                )
-                from django.contrib.contenttypes.models import ContentType
-            except ImportError:
-                return [cls._meta.app_label, ]
-            else:
-                return [ContentType.objects.get_for_model(cls).app_label, ]
-        else:
-            return []
+        return ':'.join(
+            filter(None,
+                   (namespaces or []) + \
+                   + [
+                       '-'.join(
+                           filter(None,
+                                  [view.get_action_name(),
+                                   cls.get_model_name()]
+                              )
+                       ),
+                   ]
+               )
+        )
 
     @classmethod
-    def get_url_patterns_by_view(cls, view):
+    def get_url_patterns_by_view(cls, view, namespaces=None):
         """Get list of URL patterns for a given view"""
         #TODO: Write test
-        url_name = cls.get_model_name()
+        def make_url(url_part):
+            #TODO: Write test
+            return "/".join(
+                filter(None,
+                       (cls.get_model_name(), url_part))
+            )
+        def make_view():
+            #TODO: Write test
+            return view.as_view(
+                model=cls,
+                **cls.get_args_by_view(view)
+            )
+        def make_name():
+            #TODO: Write test
+            return cls.get_url_name(view, namespaces)
 
-        return [url(
-            "/".join(
-                filter(None, (url_name, url_part))
-            ),
-            view.as_view(model=cls,
-                         **cls.get_args_by_view(view)),
-            name=cls.get_url_name(view)
-        ) for url_part in view.get_url_parts()]
+        return [
+            url(
+                make_url(url_part),
+                make_view()
+                name=make_name()
+            ) for url_part in view.get_url_parts()
+
+
+]
 
     @classmethod
-    def get_url_patterns(cls):
+    def get_url_patterns(cls, namespaces=None):
         """Get list of URL patterns for all views"""
         #TODO: Write test
         urlpatterns = []
         for view in cls.get_views():
-            for pattern in cls.get_url_patterns_by_view(view):
+            for pattern in cls.get_url_patterns_by_view(view, namespaces):
                 urlpatterns.append(pattern)
         return urlpatterns
 

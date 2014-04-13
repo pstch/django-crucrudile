@@ -22,6 +22,3 @@ class AutoPatternsForAppTestCase(TestCase):
             self.patterns[0].regex.pattern,
             'testmodel/test-action'
         )
-
-    # TODO: add test for URL func (get_*_url)
-    # TODO: test reverse for URL name
