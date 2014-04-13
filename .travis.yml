@@ -12,4 +12,5 @@ install:
 script:
   - coverage run --source=django_crucrudile runtests.py 
 after_success:
+  - coverage report -m
   - coveralls
