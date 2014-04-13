@@ -10,7 +10,8 @@ install:
   - pip install -r requirements.txt
   - pip install .
 script:
-  - coverage run --source=django_crucrudile runtests.py 
+  - coverage run --source=django_crucrudile runtests.py
 after_success:
+  - pep8 django_crucrudile
   - coverage report -m
   - coveralls
