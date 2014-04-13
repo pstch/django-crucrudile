@@ -10,7 +10,7 @@ class AutoPatternsForAppTestCase(TestCase):
     def test_pattern_name(self):
         self.assertEqual(
             self.patterns[0].name,
-            'tests:testmodel-test-action'
+            'testmodel-test-action'
         )
     def test_pattern_callback_name(self):
         self.assertEqual(
