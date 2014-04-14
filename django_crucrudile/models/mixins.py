@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.conf.urls import url
 from django.views.generic import View as View
 
-from django_crucrudile.utils import try_calling
+from django_crucrudile.utils import try_calling, supple_join
 from django_crucrudile.views.mixins import ModelActionMixin
 
 def make_model_mixin(view_class,
@@ -135,79 +135,13 @@ class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
     """
+
     @classmethod
     def get_model_name(cls):
         """Get the model name
         (example for FooBarTestModel : 'foobartestmodel')
         """
         return cls.__name__.lower()
-
-    @classmethod
-    def get_url_name(cls, view, namespaces=None):
-        """Return the URL name for a given view
-
-        Compiles the URL name using view.get_action_name and
-        cls.get_model_name() (and cls.get_url_namespaces() if prefix
-        argument is True)
-
-        get_model_name() can be None, in which case the URL
-        name will be compiled using the action
-
-        """
-        return ':'.join(
-            filter(None,
-                   (namespaces or []) + \
-                   + [
-                       '-'.join(
-                           filter(None,
-                                  [view.get_action_name(),
-                                   cls.get_model_name()]
-                              )
-                       ),
-                   ]
-               )
-        )
-
-    @classmethod
-    def get_url_patterns_by_view(cls, view, namespaces=None):
-        """Get list of URL patterns for a given view"""
-        #TODO: Write test
-        def make_url(url_part):
-            #TODO: Write test
-            return "/".join(
-                filter(None,
-                       (cls.get_model_name(), url_part))
-            )
-        def make_view():
-            #TODO: Write test
-            return view.as_view(
-                model=cls,
-                **cls.get_args_by_view(view)
-            )
-        def make_name():
-            #TODO: Write test
-            return cls.get_url_name(view, namespaces)
-
-        return [
-            url(
-                make_url(url_part),
-                make_view()
-                name=make_name()
-            ) for url_part in view.get_url_parts()
-
-
-]
-
-    @classmethod
-    def get_url_patterns(cls, namespaces=None):
-        """Get list of URL patterns for all views"""
-        #TODO: Write test
-        urlpatterns = []
-        for view in cls.get_views():
-            for pattern in cls.get_url_patterns_by_view(view, namespaces):
-                urlpatterns.append(pattern)
-        return urlpatterns
-
 
     @classmethod
     def get_views(cls):
@@ -253,3 +187,85 @@ class AutoPatternsMixin(object):
                 " defined by get_views()"
             )
         return {}
+
+    @classmethod
+    def get_url_namespaces(cls, no_content_types=False):
+        try:
+            if no_content_types is True:
+                raise ImportError(
+                    "django.contrib.contenttypes import explicitly disabled"
+                )
+            from django.contrib.contenttypes.models import ContentType
+        except ImportError:
+            return [cls._meta.app_label, ]
+        else:
+            return [ContentType.objects.get_for_model(cls).app_label, ]
+
+    @classmethod
+    def get_url_name(cls, view, prefix=False):
+        """Return the URL name for a given view
+
+        Compiles the URL name using view.get_action_name() and
+        cls.get_model_name() (and namespaces kwarg if specified)
+
+        get_model_name() can be None, in which case the URL
+        name will be compiled using the action
+
+        """
+        return supple_join(
+            ':',
+            (cls.get_url_namespaces() if prefix else []) + \
+            [supple_join(
+                '-',
+                [cls.get_model_name(),
+                 view.get_action_name(),]
+            )]
+        )
+
+    @classmethod
+    def get_url_prefix(cls):
+        """Return path prefix
+
+        By default, returns an empty string (so that the URL is prefixed directly
+        in urls.py), but it's possible to return a prefix based on
+        get_url_namespaces() too.
+        """
+        return None
+
+    @classmethod
+    def get_url_patterns_by_view(cls, view):
+        """Get list of URL patterns for a given view"""
+        def make_url(url_part):
+            return supple_join(
+                '/',
+                [
+                    cls.get_url_prefix(),
+                    cls.get_model_name(),
+                    url_part
+                ]
+            )
+        def make_view():
+            return view.as_view(
+                model=cls,
+                **cls.get_args_by_view(view)
+            )
+        def make_name():
+            return cls.get_url_name(view)
+
+        return [
+            url(
+                make_url(url_part),
+                make_view(),
+                name=make_name()
+            ) for url_part in view.get_url_parts()
+        ]
+
+    @classmethod
+    def get_url_patterns(cls):
+        """Get list of URL patterns for all views"""
+        #TODO: Write test
+        urlpatterns = []
+        for view in cls.get_views():
+            for pattern in cls.get_url_patterns_by_view(view):
+                urlpatterns.append(pattern)
+        return urlpatterns
