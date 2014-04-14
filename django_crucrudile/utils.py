@@ -49,13 +49,6 @@ def try_calling(arg, *args, **kwargs):
     """
     return arg(*args, **kwargs) if callable(arg) else None
 
-def supple_join(separator, items):
-    """Joins items with separator, excluding items that are None
-
-    Example: _supple_join([1, 2, 0, 3], '-') -> '1-2-3'
-    """
-    return separator.join(filter(None, items))
-
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
 

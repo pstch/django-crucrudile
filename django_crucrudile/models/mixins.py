@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.conf.urls import url
 from django.views.generic import View as View
 
-from django_crucrudile.utils import try_calling, supple_join
+from django_crucrudile.utils import try_calling
 from django_crucrudile.views.mixins import ModelActionMixin
 
 def make_model_mixin(view_class,
@@ -177,9 +177,6 @@ class AutoPatternsMixin(object):
         View. Usually, args are tretrieved using super, then if the
         'view' kwarg is the view on which we want to set arguments, we
         update the args dictionary with another dictionary.
-
-        This function is used by django-generic-patterns, in
-        auto_patterns(...), to get the needed views for a Model.
         """
         if not view in cls.get_views():
             raise ImproperlyConfigured(
@@ -190,8 +187,15 @@ class AutoPatternsMixin(object):
 
     @classmethod
     def get_url_namespaces(cls, no_content_types=False):
+        """Returns the list of URL namespaces to use when creating the URLs.
+
+        To disable usage of URL namespaces, set this to return an
+        empty list.  You will need to override this if don't want the
+        application name as a namespace.
+
+        """
         try:
-            if no_content_types is True:
+            if no_content_types is True: # force fallback to _meta.app_label
                 raise ImportError(
                     "django.contrib.contenttypes import explicitly disabled"
                 )
@@ -212,15 +216,16 @@ class AutoPatternsMixin(object):
         name will be compiled using the action
 
         """
-        return supple_join(
-            ':',
-            (cls.get_url_namespaces() if prefix else []) + \
-            [supple_join(
-                '-',
-                [cls.get_model_name(),
-                 view.get_action_name(),]
-            )]
-        )
+        name = '-'.join(filter(
+            None,
+            [cls.get_model_name(),
+             view.get_action_name()]
+        ))
+
+        namespaces_list = cls.get_url_namespaces()
+        if prefix and namespaces_list:
+            return ':'.join(cls.get_url_namespaces() + [name, ])
+        return name
 
     @classmethod
     def get_url_prefix(cls):
@@ -236,14 +241,14 @@ class AutoPatternsMixin(object):
     def get_url_patterns_by_view(cls, view):
         """Get list of URL patterns for a given view"""
         def make_url(url_part):
-            return supple_join(
-                '/',
+            return '/'.join(filter(
+                None,
                 [
                     cls.get_url_prefix(),
                     cls.get_model_name(),
                     url_part
                 ]
-            )
+            ))
         def make_view():
             return view.as_view(
                 model=cls,
