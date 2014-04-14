@@ -17,7 +17,7 @@ from itertools import chain
 
 from django.core.exceptions import ImproperlyConfigured
 
-def auto_patterns_for_app(app_name):
+def auto_patterns_for_app(app_name, exclude_models = None):
     """Returns a list of URL patterns (Django URL objects) for the given
     application, using content types.
 
@@ -31,15 +31,30 @@ def auto_patterns_for_app(app_name):
             "auto_patterns_for_app must be able to import"
             " django.contrib.contenttypes"
         )
+
     content_types = ContentType.objects.filter(app_label=app_name)
-    return list(chain(
-        *[c.model_class().get_url_patterns() for c in content_types]
-    ))
+    urlpatterns = []
+
+    for ct in content_types:
+        model = ct.model_class()
+        if not exclude_models or \
+           (exclude_models and model.__name__ not in exclude_models):
+            for pattern in model.get_url_patterns():
+                urlpatterns.append(pattern)
+
+    return urlpatterns
 
 def try_calling(arg, *args, **kwargs):
     """Evaluate and return arg if it's a callable, otherwise return None
     """
     return arg(*args, **kwargs) if callable(arg) else None
+
+def supple_join(separator, items):
+    """Joins items with separator, excluding items that are None
+
+    Example: _supple_join([1, 2, 0, 3], '-') -> '1-2-3'
+    """
+    return separator.join(filter(None, items))
 
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
