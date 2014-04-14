@@ -6,7 +6,9 @@ from .views import TestModelTestView
 
 TestViewMixin = make_model_mixin(
     TestModelTestView,
-    guess_url_namespace=True
+    extra_funcs = {
+        'get_url_prefix' : classmethod(lambda cls: 'testprefix'),
+    }
 )
 
 class TestModel(TestViewMixin,

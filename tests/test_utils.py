@@ -20,5 +20,5 @@ class AutoPatternsForAppTestCase(TestCase):
     def test_pattern_url(self):
         self.assertEqual(
             self.patterns[0].regex.pattern,
-            'testmodel/test-action'
+            'testprefix/testmodel/test-action'
         )

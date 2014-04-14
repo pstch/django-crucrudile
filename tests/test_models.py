@@ -32,5 +32,5 @@ class TestModelTestCase(TestCase):
         )
         self.assertEqual(
             url_func(),
-            '/testmodel/test-action'
+            '/testprefix/testmodel/test-action'
         )
