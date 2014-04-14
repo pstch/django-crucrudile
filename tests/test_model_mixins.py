@@ -41,29 +41,6 @@ class AutoPatternsMixinTestCase(TestCase):
             "autopatternsmixintestmodel"
         )
 
-    def test_get_url_name(self):
-        # we use the same fake view as ModelActionMixinTestCase
-        self.assertEqual(
-            self.model_class.get_url_name(AutoPatternsMixinTestView),
-            "autopatternsmixintestmodel-auto-patterns-mixin-test"
-        )
-
-    def test_get_url_patterns(self):
-        pattern = self.model_class.get_url_patterns()[0]
-        self.assertEqual(
-            pattern.name,
-            'autopatternsmixintestmodel-auto-patterns-mixin-test'
-        )
-        self.assertEqual(
-            pattern.callback.__name__,
-            'AutoPatternsMixinTestView'
-        )
-        self.assertEqual(
-            pattern.regex.pattern,
-            'autopatternsmixintestmodel/auto-patterns-mixin-test'
-        )
-
-
     def test_get_views(self):
         # by default get_views returns an empty list
         self.assertEqual(
@@ -93,6 +70,50 @@ class AutoPatternsMixinTestCase(TestCase):
             ),
             {}
         )
+
+    def test_get_url_prefix(self):
+        self.assertEqual(
+            self.model_class.get_url_prefix(),
+            None
+        )
+
+    def test_get_url_namespaces(self):
+        self.assertEqual(
+            self.model_class.get_url_namespaces(),
+            ['tests']
+        )
+        self.assertEqual(
+            self.model_class.get_url_namespaces(no_content_types=True),
+            ['tests']
+        )
+
+    def test_get_url_name(self):
+        # we use the same fake view as ModelActionMixinTestCase
+        self.assertEqual(
+            self.model_class.get_url_name(AutoPatternsMixinTestView),
+            "autopatternsmixintestmodel-auto-patterns-mixin-test"
+        )
+        self.assertEqual(
+            self.model_class.get_url_name(AutoPatternsMixinTestView, prefix=True),
+            "tests:autopatternsmixintestmodel-auto-patterns-mixin-test"
+        )
+
+    def test_get_url_patterns(self):
+        pattern = self.model_class.get_url_patterns()[0]
+        self.assertEqual(
+            pattern.name,
+            'autopatternsmixintestmodel-auto-patterns-mixin-test'
+        )
+        self.assertEqual(
+            pattern.callback.__name__,
+            'AutoPatternsMixinTestView'
+        )
+        self.assertEqual(
+            pattern.regex.pattern,
+            'autopatternsmixintestmodel/auto-patterns-mixin-test'
+        )
+
+
 
 class MakeModelMixinTestCase(TestCase):
     _key_test_func = lambda arg: arg.test_callable_key
