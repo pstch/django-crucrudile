@@ -34,11 +34,11 @@ def auto_patterns_for_app(app_name, exclude_models = None):
 
     content_types = ContentType.objects.filter(app_label=app_name)
     urlpatterns = []
+    exclude_models = exclude_models or []
 
     for ct in content_types:
         model = ct.model_class()
-        if not exclude_models or \
-           (exclude_models and model.__name__ not in exclude_models):
+        if model.__name__ not in exclude_models:
             for pattern in model.get_url_patterns():
                 urlpatterns.append(pattern)
 
