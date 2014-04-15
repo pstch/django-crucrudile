@@ -135,7 +135,7 @@ class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
     """
-    url_namespaces = []
+    url_namespaces = None
     @classmethod
     def get_model_name(cls):
         """Get the model name
@@ -194,7 +194,7 @@ class AutoPatternsMixin(object):
         application name as a namespace.
 
         """
-        if not cls.url_namespaces:
+        if cls.url_namespaces is None:
             try:
                 if no_content_types is True: # force fallback to _meta.app_label
                     raise ImportError(
