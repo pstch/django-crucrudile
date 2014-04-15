@@ -13,16 +13,16 @@ Functions :
 
 """
 import re
-from itertools import chain
 
 from django.core.exceptions import ImproperlyConfigured
 
-def auto_patterns_for_app(app_name, exclude_models = None):
+def auto_patterns_for_app(app_name, exclude_models=None):
     """Returns a list of URL patterns (Django URL objects) for the given
     application, using content types.
 
     This function will try to import django.contrib.contenttypes, and
     fail if it can't.
+
     """
     try:
         from django.contrib.contenttypes.models import ContentType
@@ -32,12 +32,12 @@ def auto_patterns_for_app(app_name, exclude_models = None):
             " django.contrib.contenttypes"
         )
 
-    content_types = ContentType.objects.filter(app_label=app_name)
     urlpatterns = []
     exclude_models = exclude_models or []
+    content_types = ContentType.objects.filter(app_label=app_name)
+    models = [content_type.model_class() for content_type in content_types]
 
-    for ct in content_types:
-        model = ct.model_class()
+    for model in models:
         if model.__name__ not in exclude_models:
             for pattern in model.get_url_patterns():
                 urlpatterns.append(pattern)
@@ -45,18 +45,19 @@ def auto_patterns_for_app(app_name, exclude_models = None):
     return urlpatterns
 
 def try_calling(arg, *args, **kwargs):
-    """Evaluate and return arg if it's a callable, otherwise return None
+    """Evaluate and return arg (with given args and kwargs) if it's a
+    callable, otherwise return None
+
     """
     return arg(*args, **kwargs) if callable(arg) else None
 
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
 
-    Keywords :
-    -- camel_cased (ex:"CamelCased")
-    -- separator (ex:"-")
+    Keywords : -- camel_cased (ex:"CamelCased") -- separator (ex:"-")
 
     Above parameters will return "camel-cased"
+
     """
     separator_expression = r'\1%s\2' % separator
     step = re.sub('(.)([A-Z][a-z]+)',
