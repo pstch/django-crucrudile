@@ -21,17 +21,27 @@ Tests:
 """
 from django_crucrudile.utils import convert_camel_case
 
+
 class ModelActionMixin(object):
-    """
-    #TODO: Add class docstring
+    r"""This Mixin may be used by any view to indicate parameters for
+    the URL, such as the action name (ex: 'list', 'filtered-list',
+    'detail', 'create', etc...) and URL arguments (ex: '(?P<pk>\d+)'),
+    if needed.
+
+    It defines two attributes, url_args and action, defaulting to None :
+    -- action : action name (examples above), should be dash-separated
+    -- url_args : list of arguments (as used in Django's URL regular expressions)
+
     """
     action = None
-    url_args = []
+    url_args = None
 
     @classmethod
     def get_fallback_action_name(cls):
-        """
-        #TODO: Add method docstring
+        """Guess a fallback action name, based on the view class name,
+        stripped of the tailing 'View', and converted from CamelCase
+        (capitalized words) to words_separated_by_underscore.
+
         """
         class_name = cls.__name__
         if class_name.endswith('View'):
@@ -40,17 +50,22 @@ class ModelActionMixin(object):
 
     @classmethod
     def get_action_name(cls):
-        """
-        #TODO: Add method docstring
+        """Return the action name, using the action attribute of the view, or,
+        if not specified, get_fallback_action_name()
+
         """
         return cls.action or cls.get_fallback_action_name()
 
     @classmethod
     def get_underscored_action_name(cls):
-        """
-        #TODO: Add method docstring
+        """Return the underscored action name, which is the same as the action
+        name except all dashes are replaced by underscores.
+
+        Used in action-specific function names, and in URL paths.
+
         """
         return cls.get_action_name().replace('-', '_')
+
 
     @classmethod
     def get_url_args(cls):
@@ -64,14 +79,18 @@ class ModelActionMixin(object):
 
     @classmethod
     def get_url_part(cls, args):
-        """
-        #TODO: Add method docstring
-        """
+        """Return the URL part for given list of arguments"""
         url_part = [cls.get_action_name()] + args
         return "/".join(url_part)
 
     @classmethod
+
     def get_url_parts(cls):
+        r"""Return a list of possible URL specifications
+
+        (example: 'list', 'detail/(?P<pk>\d+)')
+
+        """
         url_args = cls.get_url_args()
         if len(url_args) > 0 and \
            all([True if isinstance(x, list) else False for x in url_args]):
