@@ -79,10 +79,14 @@ class AutoPatternsMixinTestCase(TestCase):
         )
 
     def test_get_url_namespaces(self):
+        self.model_class.url_namespaces = None
         self.assertEqual(
             self.model_class.get_url_namespaces(),
             ['tests']
         )
+
+    def test_get_url_namespaces_no_content_types(self):
+        self.model_class.url_namespaces = None
         self.assertEqual(
             self.model_class.get_url_namespaces(no_content_types=True),
             ['tests']
