@@ -30,7 +30,8 @@ class ModelActionMixin(object):
 
     It defines two attributes, url_args and action, defaulting to None :
     -- action : action name (examples above), should be dash-separated
-    -- url_args : list of arguments (as used in Django's URL regular expressions)
+    -- url_args : list of arguments
+    (as used in Django's URL regular expressions)
 
     """
     action = None
