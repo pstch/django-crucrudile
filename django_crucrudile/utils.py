@@ -23,6 +23,7 @@ def try_calling(arg, *args, **kwargs):
     """
     return arg(*args, **kwargs) if callable(arg) else None
 
+
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
 
@@ -39,12 +40,14 @@ def convert_camel_case(camel_cased, separator):
                   separator_expression,
                   step).lower()
 
+
 def _is_special_attribute(attr):
     """Return True if attr is a Python special attribute, otherwise
     False"""
     return \
         attr.startswith('__') and \
         attr.endswith('__')
+
 
 def monkeypatch_mixin(class_, mixin):
     """Monkeypatch all non-special (bound and unbound) attributes of mixin

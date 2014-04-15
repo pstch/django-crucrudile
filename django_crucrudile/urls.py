@@ -15,7 +15,7 @@ def auto_patterns_for_app(app_name, exclude_models=None):
     """
     try:
         from django.contrib.contenttypes.models import ContentType
-    except ImportError: #pragma: no cover
+    except ImportError:  # pragma: no cover
         raise ImproperlyConfigured(
             "auto_patterns_for_app must be able to import"
             " django.contrib.contenttypes"
