@@ -29,7 +29,8 @@ class AutoPatternsMixinTestCase(TestCase):
                 ).get_views()
                 views.append(AutoPatternsMixinTestView)
                 return views
-        class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
+        class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin,
+                                                models.Model):
             pass
 
         self.model_class = AutoPatternsMixinTestModel
@@ -78,10 +79,14 @@ class AutoPatternsMixinTestCase(TestCase):
         )
 
     def test_get_url_namespaces(self):
+        self.model_class.url_namespaces = None
         self.assertEqual(
             self.model_class.get_url_namespaces(),
             ['tests']
         )
+
+    def test_get_url_namespaces_no_content_types(self):
+        self.model_class.url_namespaces = None
         self.assertEqual(
             self.model_class.get_url_namespaces(no_content_types=True),
             ['tests']
