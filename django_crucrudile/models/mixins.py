@@ -135,7 +135,7 @@ class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
     """
-
+    url_namespaces = []
     @classmethod
     def get_model_name(cls):
         """Get the model name
@@ -194,16 +194,20 @@ class AutoPatternsMixin(object):
         application name as a namespace.
 
         """
-        try:
-            if no_content_types is True: # force fallback to _meta.app_label
-                raise ImportError(
-                    "django.contrib.contenttypes import explicitly disabled"
-                )
-            from django.contrib.contenttypes.models import ContentType
-        except ImportError:
-            return [cls._meta.app_label, ]
-        else:
-            return [ContentType.objects.get_for_model(cls).app_label, ]
+        if not cls.url_namespaces:
+            try:
+                if no_content_types is True: # force fallback to _meta.app_label
+                    raise ImportError(
+                        "django.contrib.contenttypes import explicitly disabled"
+                    )
+                from django.contrib.contenttypes.models import ContentType
+            except ImportError:
+                cls.url_namespaces = [cls._meta.app_label, ]
+            else:
+                cls.url_namespaces = [
+                    ContentType.objects.get_for_model(cls).app_label,
+                ]
+        return cls.url_namespaces
 
     @classmethod
     def get_url_name(cls, view, prefix=False):
@@ -244,7 +248,9 @@ class AutoPatternsMixin(object):
 (combinations of URL arguments specification)"""
 
         def make_url(url_part):
-            """Make URL pattern (join prefix, model name, and view's URL part)"""
+            """Make URL pattern (join prefix, model name, and view's URL part)
+
+            """
             return '/'.join(filter(
                 None,
                 [
