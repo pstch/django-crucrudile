@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django_crucrudile.utils import auto_patterns_for_app
+from django_crucrudile.urls import auto_patterns_for_app
 
 
 class AutoPatternsForAppTestCase(TestCase):
