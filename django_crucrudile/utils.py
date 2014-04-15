@@ -43,8 +43,8 @@ def _is_special_attribute(attr):
     """Return True if attr is a Python special attribute, otherwise
     False"""
     return \
-        not attr.startswith('__') and \
-        not attr.endswith('__')
+        attr.startswith('__') and \
+        attr.endswith('__')
 
 def monkeypatch_mixin(class_, mixin):
     """Monkeypatch all non-special (bound and unbound) attributes of mixin
