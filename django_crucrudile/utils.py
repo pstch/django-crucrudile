@@ -66,3 +66,28 @@ def convert_camel_case(camel_cased, separator):
     return re.sub('([a-z0-9])([A-Z])',
                   separator_expression,
                   step).lower()
+
+def _is_special_attribute(attr):
+    """Return True if attr is a Python special attribute, otherwise
+    False"""
+    return \
+        not attr.startswith('__') and \
+        not attr.endswith('__')
+
+def monkeypatch_mixin(class_, mixin):
+    """Monkeypatch all non-special (bound and unbound) attributes of mixin
+into class_, then return class_"""
+    for attr in dir(mixin):
+        if not _is_special_attribute(attr) and \
+           not hasattr(class_, attr):
+            # we found a non-special attribute in ModeActionMixin
+            # that is not present in view_class
+            # let's monkeypatch it to class_
+            setattr(
+                class_,
+                attr,
+                mixin.__dict__[attr]
+            )
+            # we use .__dict__[] because we need unbound
+            # attributes
+    return class_
