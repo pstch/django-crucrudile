@@ -12,3 +12,4 @@ pycallgraph.gdf
 .#*
 .coveralls.yml
 pylint.html
+pycallgraph.png
