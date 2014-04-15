@@ -11,3 +11,4 @@ htmlcov/
 pycallgraph.gdf
 .#*
 .coveralls.yml
+pylint.html
