@@ -240,8 +240,11 @@ class AutoPatternsMixin(object):
 
     @classmethod
     def get_url_patterns_by_view(cls, view):
-        """Get list of URL patterns for a given view"""
+        """Get list of URL patterns for a given view and its URL parts
+(combinations of URL arguments specification)"""
+
         def make_url(url_part):
+            """Make URL pattern (join prefix, model name, and view's URL part)"""
             return '/'.join(filter(
                 None,
                 [
@@ -251,11 +254,14 @@ class AutoPatternsMixin(object):
                 ]
             ))
         def make_view():
+            """Create view callback using current model and args from
+            get_args_by_view"""
             return view.as_view(
                 model=cls,
                 **cls.get_args_by_view(view)
             )
         def make_name():
+            """View URL name (unprefixed, this is the name we give to url())"""
             return cls.get_url_name(view)
 
         return [

@@ -54,7 +54,9 @@ class ModelActionMixin(object):
         if not specified, get_fallback_action_name()
 
         """
-        return cls.action or cls.get_fallback_action_name()
+        if cls.action is None:
+            cls.action = cls.get_fallback_action_name()
+        return cls.action
 
     @classmethod
     def get_underscored_action_name(cls):
