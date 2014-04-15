@@ -29,7 +29,8 @@ class AutoPatternsMixinTestCase(TestCase):
                 ).get_views()
                 views.append(AutoPatternsMixinTestView)
                 return views
-        class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin, models.Model):
+        class NoViewsAutoPatternsMixinTestModel(AutoPatternsMixin,
+                                                models.Model):
             pass
 
         self.model_class = AutoPatternsMixinTestModel
