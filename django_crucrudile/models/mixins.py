@@ -14,15 +14,12 @@ Classes :
 Tests:
 -- ../../tests/test_model_mixins.py
 """
-import re
-from itertools import chain
-
+#pylint: disable=W0141, W0142
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.conf.urls import url
-from django.views.generic import View as View
 
-from django_crucrudile.utils import try_calling
+from django_crucrudile.utils import try_calling, monkeypatch_mixin
 from django_crucrudile.views.mixins import ModelActionMixin
 
 def make_model_mixin(view_class,
@@ -32,8 +29,8 @@ def make_model_mixin(view_class,
     """Use this function to create a Model action mixin for a given view.
 
     Arguments :
-    -- view : view to use for this mixin (this view should subclass
-         ModelActionMixin)
+    -- view : view to use for this mixin
+    (this view should subclass ModelActionMixin)
     -- extra_args : dict of keyword arguments for the view (the dict
     value is the argument value, and might be a callable, and will be
     called with model as argument)
@@ -48,19 +45,13 @@ def make_model_mixin(view_class,
     if not no_auto_view_mixin:
         # not inhibiting automatic adding of ModelActionMixin
         # functionality
-        for attr in dir(ModelActionMixin):
-            if not attr.startswith('__') and \
-               not attr.endswith('__') and \
-               not hasattr(view_class, attr):
-                # we found a non-special attribute in ModeActionMixin
-                # that is not present in view_class
-                setattr(
-                    view_class, attr,
-                    ModelActionMixin.__dict__[attr])
-                # we use .__dict__[] because we need unbound
-                # attributes
+        view_class = monkeypatch_mixin(view_class, ModelActionMixin)
 
     class ModelMixin(AutoPatternsMixin):
+        """Class mixin created by make_model_mixin, in order to dynamically
+        define the needed functions based on the arguments.
+
+        """
         @classmethod
         def get_views(cls):
             views = super(ModelMixin, cls).get_views()
@@ -78,8 +69,17 @@ def make_model_mixin(view_class,
             return args
 
     @classmethod
-    def _get_url(cls):
-        return reverse(cls.get_url_name(view_class, prefix=True))
+    def _get_url(cls, *args, **kwargs):
+        """Private function, renamed to get_<action>_url when monkeypatched to
+        the view. Used to implement model functions such as
+        get_list_url()
+
+        """
+        return reverse(
+            cls.get_url_name(view_class, prefix=True),
+            *args,
+            **kwargs
+        )
 
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
@@ -231,9 +231,10 @@ class AutoPatternsMixin(object):
     def get_url_prefix(cls):
         """Return path prefix
 
-        By default, returns an empty string (so that the URL is prefixed directly
-        in urls.py), but it's possible to return a prefix based on
-        get_url_namespaces() too.
+        By default, returns an empty string (so that the URL is
+        prefixed directly in urls.py), but it's possible to return a
+        prefix based on get_url_namespaces() too.
+
         """
         return None
 
@@ -268,7 +269,6 @@ class AutoPatternsMixin(object):
     @classmethod
     def get_url_patterns(cls):
         """Get list of URL patterns for all views"""
-        #TODO: Write test
         urlpatterns = []
         for view in cls.get_views():
             for pattern in cls.get_url_patterns_by_view(view):
