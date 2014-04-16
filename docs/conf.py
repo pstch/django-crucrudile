@@ -262,4 +262,4 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # Autodoc settings
-autodoc_member_order = 'groupwise'
+autodoc_member_order = 'bysource'
