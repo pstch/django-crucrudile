@@ -3,6 +3,8 @@ django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile
 
 `django-crucrudile` allows you to create "model mixins", that define possible actions for this model. Those model mixins allow the model to be able to generate its URL patterns by itself, so that they can be included in `urls.py` using just a call to the `get_url_patterns()` method of the model class. 
 
+**WARNING :** This project is still a WIP. The implementation of the concept is stable, and I already use it in my own projects, but it will still take some times before I can release a proper version (somewhen in April 2014).
+
 ## Documentation
 
 The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the docstrings present in the source code, using Sphynx (and some extensions).
