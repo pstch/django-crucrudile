@@ -1,5 +1,0 @@
-Dynamic Model Mixins
-====================
-
-.. automodule:: django_crucrudile.models.mixins
-   :members:

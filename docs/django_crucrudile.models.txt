@@ -1,0 +1,17 @@
+django_crucrudile.models package
+================================
+
+Submodules
+----------
+
+.. toctree::
+
+   django_crucrudile.models.mixins
+
+Module contents
+---------------
+
+.. automodule:: django_crucrudile.models
+    :members:
+    :undoc-members:
+    :show-inheritance:

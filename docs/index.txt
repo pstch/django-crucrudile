@@ -1,18 +1,18 @@
-.. -*- mode: rst -*-
-
 django-crucrudile
 =================
 
-``django-crucrudile`` allows you to create **model mixins**, that define possible **actions** for this **model**. Those model mixins allow the model to be able to generate **its own URL patterns** by itself, so that they can be included in ``urls.py`` using just a call to the ``get_url_patterns()`` method of the model class.
-
-Contents:
+Contents :
 
 .. toctree::
-   :maxdepth: 2
 
-   install
-   usage
-   ref/make_model_mixin.txt
-   ref/model_mixins.txt
-   ref/view_mixins.txt
-   tests
+   django_crucrudile.models.mixins
+   django_crucrudile.views.mixins
+   django_crucrudile.urls
+   django_crucrudile.utils
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

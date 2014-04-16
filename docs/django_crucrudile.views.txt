@@ -1,0 +1,17 @@
+django_crucrudile.views package
+===============================
+
+Submodules
+----------
+
+.. toctree::
+
+   django_crucrudile.views.mixins
+
+Module contents
+---------------
+
+.. automodule:: django_crucrudile.views
+    :members:
+    :undoc-members:
+    :show-inheritance:

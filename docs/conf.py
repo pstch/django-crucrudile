@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# django-crucrudile documentation build configuration file, created by
-# sphinx-quickstart on Wed Apr 16 00:33:45 2014.
+# django-ciblassur documentation build configuration file, created by
+# sphinx-quickstart on Wed Apr 16 14:26:23 2014.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -29,7 +29,9 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.coverage',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -45,7 +47,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-crucrudile'
+project = u'django-ciblassur'
 copyright = u'2014, Hugo Geoffroy (pstch)'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -178,7 +180,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-crucrudiledoc'
+htmlhelp_basename = 'django-ciblassurdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -198,7 +200,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'django-crucrudile.tex', u'django-crucrudile Documentation',
+  ('index', 'django-ciblassur.tex', u'django-ciblassur Documentation',
    u'Hugo Geoffroy (pstch)', 'manual'),
 ]
 
@@ -228,7 +230,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-crucrudile', u'django-crucrudile Documentation',
+    ('index', 'django-ciblassur', u'django-ciblassur Documentation',
      [u'Hugo Geoffroy (pstch)'], 1)
 ]
 
@@ -242,8 +244,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-crucrudile', u'django-crucrudile Documentation',
-   u'Hugo Geoffroy (pstch)', 'django-crucrudile', 'One line description of project.',
+  ('index', 'django-ciblassur', u'django-ciblassur Documentation',
+   u'Hugo Geoffroy (pstch)', 'django-ciblassur', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -258,3 +260,6 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# Autodoc settings
+autodoc_member_order = 'groupwise'
