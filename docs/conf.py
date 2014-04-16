@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# django-ciblassur documentation build configuration file, created by
+# django-crucrudile documentation build configuration file, created by
 # sphinx-quickstart on Wed Apr 16 14:26:23 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -47,7 +47,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-ciblassur'
+project = u'django-crucrudile'
 copyright = u'2014, Hugo Geoffroy (pstch)'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -180,7 +180,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-ciblassurdoc'
+htmlhelp_basename = 'django-crucrudiledoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -200,7 +200,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'django-ciblassur.tex', u'django-ciblassur Documentation',
+  ('index', 'django-crucrudile.tex', u'django-crucrudile Documentation',
    u'Hugo Geoffroy (pstch)', 'manual'),
 ]
 
@@ -230,7 +230,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-ciblassur', u'django-ciblassur Documentation',
+    ('index', 'django-crucrudile', u'django-crucrudile Documentation',
      [u'Hugo Geoffroy (pstch)'], 1)
 ]
 
@@ -244,8 +244,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-ciblassur', u'django-ciblassur Documentation',
-   u'Hugo Geoffroy (pstch)', 'django-ciblassur', 'One line description of project.',
+  ('index', 'django-crucrudile', u'django-crucrudile Documentation',
+   u'Hugo Geoffroy (pstch)', 'django-crucrudile', 'One line description of project.',
    'Miscellaneous'),
 ]
 
