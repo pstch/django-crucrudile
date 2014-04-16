@@ -3,11 +3,16 @@ django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile
 
 `django-crucrudile` allows you to create "model mixins", that define possible actions for this model. Those model mixins allow the model to be able to generate its URL patterns by itself, so that they can be included in `urls.py` using just a call to the `get_url_patterns()` method of the model class. 
 
-# Documentation
+## Documentation
 
 The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the documentation strings present in the source code, using Sphynx (and some extensions).
 
-# Example
+## Example
+
+Here, we create two **model mixins** : `Listable` and `Detailable`, and we set the url_args attribute of DetailView so that django-crucrudile knows that the URL should contain a named capture group for the ID of the object to view.
+
+Then, we create a Django Model, in which we use `Listable` and `Detailable` as mixins.
+
 
 ```python
 from django.db.models import Model
