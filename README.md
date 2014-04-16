@@ -45,7 +45,7 @@ The return value of `get_url_patterns()` can be used in `urls.py` (for example, 
 
 Here, `ListView` and `DetailView` can be standard generic views, or your own CBVs. As you can see, the only requirement is that, when a view needs an URL argument, it must be specified in the `url_args` attribute of the view class.
 
-For more flexibility, it can be  better to redefine the views, to subclass `views.mixins.ModelActionMixin`, and to override the needed methods (see documentation).
+`make_model_mixin` automatically patches the given view with utility functions from `views.mixins.ModelActionMixin`, needed to have information about "what does the view do" (action name), and "what paths should point to it" (URLs specification). For more flexibility, it can be  better to redefine the views, to subclass `views.mixins.ModelActionMixin`, and to override the needed methods (see documentation).
 
 It is also possible to create the model mixins by yourself (`make_model_mixin` is just a convenience function to automatically create model mixins based on a view) (see documentation).
 
@@ -62,3 +62,8 @@ This is my first attempt at creating a (hopefully) useful Django application. If
 ## Contributing
 
 If you feel like you want to contribute to this project, please fork/send patches/submit pull requests ! The documentation and tests really need some improvement. This was my first time writing serious test cases, and my testing code is particularly ugly :(
+
+`django-crucrudile` only consists of 4 files, with 2 of them being just utility functions (`utils.py` and `urls.py`). The two other files are what really makes it working :
+
+* `models/mixins.py` :: Model mixins (one base class) and on-the-run mixin creator (function)
+* `views/mixins.py` :: View mixins (one base class)
