@@ -28,12 +28,12 @@ def make_model_mixin(view_class,
     """Return a generated Model mixin for a given view HAHA.
 
     :param view: view to use for this mixin
-                 *(this view should subclass ModelActionMixin)*
+    *(this view should subclass ``ModelActionMixin``)*
     :type view: django.views.generic.View
     :param extra_args: dict of keyword arguments for the view
                        *(the dict value is the argument value,
                        and might be a callable, and will be
-                       called with model as argument)*
+                       called with the model as argument)*
     :type extra_args: dict
     :param extra_funcs: dict of functions to add on the model mixin.
                         *(the dict key is the function name, and might
@@ -41,16 +41,16 @@ def make_model_mixin(view_class,
                         as argument)*
     :type extra_funcs: dict
     :param no_auto_view_mixin: disable autopatching of view with
-                               ModelActionMixin *(when view_class
+                               ``ModelActionMixin`` *(when ``view_class``
                                is missing a method or attribute
-                               from ModelActionMixin, it is
+                               from ``ModelActionMixin``, it is
                                automatically added (and bound if
-                               needed) to view_class. Set this to
-                               True to disable this behaviour)*
+                               needed). Set this to True to disable
+                               this behaviour)*
     :type no_auto_view_mixin: bool
 
-    :return: Model mixin for :param:`view`
-    :rtype: subclass of :class:`AutoPatternsMixin`
+    :return: Model mixin for ``view_class``
+    :rtype: subclass of ``AutoPatternsMixin``
 
     """
     if not no_auto_view_mixin:
@@ -111,11 +111,11 @@ def make_model_mixins(views,
     :param views: Views to make mixins for. Should
                   contain tuples (with at least one item and at most
                   three), themselves containing :
-                   - view_class (mandatory)
-                   - extra_args (optional)
-                   - extra_func (optional)
+                   - **view_class** (*mandatory*)
+                   - **extra_args** (*optional*)
+                   - **extra_func** (*optional*)
                   For a definition of the above keywords, please see
-                  the documentation of :func:`make_model_mixin`.
+                  the documentation of ``make_model_mixin``.
 
     :type views: list
     :param no_auto_view_mixin: disable autopatching of view with
@@ -128,7 +128,7 @@ def make_model_mixins(views,
                                information)
     :type no_auto_view_mixin bool:
 
-    :return: list of model action mixins for views in :param:`views`
+    :return: list of model action mixins for ``views``
     :rtype: list
 
     """
@@ -152,7 +152,7 @@ class AutoPatternsMixin(object):
     @classmethod
     def get_model_name(cls):
         """Get the model name
-        (example for FooBarTestModel : 'foobartestmodel')
+        (example for ``FooBarTestModel`` : 'foobartestmodel')
 
         :return: model name
         :rtype: str
@@ -163,17 +163,14 @@ class AutoPatternsMixin(object):
     def get_views(cls):
         """Return list of views for this model
 
-        This class method is overriden by ModelMixin classes, so that the
-        resulting Model object (which subclasses ModelMixin classes)
+        This class method is overriden by model mixin classes, so that the
+        resulting Model object (which subclasses model mixins classes)
         can get the list of the views used for this Model with
-        get_views().
+        ``get_views()``.
 
-        When overriden in a ModelMixin class, get_views() should
+        When overriden in a model mixin class, ``get_views()`` should
         always get the current list of views using
-        super(...).get_views) before appending a new View.
-
-        This function is used by django-generic-patterns, in
-        auto_patterns(...), to get the nnxeeded views for a Model.
+        ``super(...).get_views``) before appending a new view.
 
         :return: list of views for this model
         :rtype: list
@@ -185,14 +182,14 @@ class AutoPatternsMixin(object):
     def get_args_by_view(cls, view):
         """Return dict of keyword arguments for a view
 
-        This class method is overriden by ModelMixin classes, so that the
-        resulting Model object (which subclasses ModelMixin classes)
+        This class method is overriden by model mixin classes, so that the
+        resulting Model object (which subclasses model mixin classes)
         can get the dictionary of view arguments for each view used in
-        this Model, with get_args_by_view(view).
+        this Model, with ``get_args_by_view(view)``.
 
         When overriden in a ModelMixin class or by the user,
         get_args_by_view should always get the current list of views
-        using super(...).get_views) before appending a new
+        using ``super(...).get_views``) before appending a new
         View. Usually, args are tretrieved using super, then if the
         'view' kwarg is the view on which we want to set arguments, we
         update the args dictionary with another dictionary.
@@ -200,15 +197,17 @@ class AutoPatternsMixin(object):
         :param view: view to get the args for
         :type view: view class
 
-        :return: arguments for view given in :param:`view`
+        :return: arguments for view given in ``view``, or empty dict
         :rtype: dict
+
+        :raise ImproperlyConfigured: ``view`` not in ``cls.get_views()``
 
         """
         # pylint: disable=W0613
         if view not in cls.get_views():
             raise ImproperlyConfigured(
                 "Tried to get the view arguments for a view that is not"
-                " defined by get_views()"
+                " defined by get_views"
             )
         return {}
 
@@ -222,7 +221,7 @@ class AutoPatternsMixin(object):
 
         :param no_content_types: disable usage of content types framework
                                  (fallback to Django internals
-                                 (model._meta...))
+                                 (``model._meta``...))
         :type: no_content_types: bool
 
         :return: URL namespaces
@@ -250,11 +249,17 @@ class AutoPatternsMixin(object):
     def get_url_name(cls, view, prefix=False):
         """Return the URL name for a given view
 
-        Compiles the URL name using view.get_action_name() and
-        cls.get_model_name() (and namespaces kwarg if specified)
+        Compiles the URL name using ``view.get_action_name`` and
+        ``cls.get_model_name`` (and namespaces kwarg if specified)
 
-        get_model_name() can be None, in which case the URL
+        ``get_model_name`` can be None, in which case the URL
         name will be compiled using the action
+
+        :param view: view class to get the URL name for
+        :type view:  view class
+
+        :param prefix: add namespaces prefix to URL name (by default, No)
+        :type prefix: bool
 
         """
         name = '-'.join(filter(
@@ -276,13 +281,23 @@ class AutoPatternsMixin(object):
         prefixed directly in urls.py), but it's possible to return a
         prefix based on get_url_namespaces() too.
 
+        :return: URL prefix
+        :rtype: str
         """
         return None
 
     @classmethod
     def get_url_patterns_by_view(cls, view):
         """Get list of URL patterns for a given view and its URL parts
-(combinations of URL arguments specification)"""
+(combinations of URL arguments specification)
+
+        :param view: view to get patterns for
+        :type view: view class
+
+        :return: URL patterns for a given view
+        :rtype: list
+
+        """
 
         def make_url(url_part):
             """Make URL pattern (join prefix, model name, and view's URL part)
@@ -319,7 +334,12 @@ class AutoPatternsMixin(object):
 
     @classmethod
     def get_url_patterns(cls):
-        """Get list of URL patterns for all views"""
+        """
+        Get list of URL patterns for all views
+
+        :return: all URL patterns, for all views
+        :rtype: list
+        """
         urlpatterns = []
         for view in cls.get_views():
             for pattern in cls.get_url_patterns_by_view(view):
