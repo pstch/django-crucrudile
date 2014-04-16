@@ -5,13 +5,14 @@ env:
   - DJANGO=1.6
 install:
   - pip install coveralls
-  - pip install coverage
-  - pip install Django==$DJANGO
-  - pip install -r requirements.txt
+  - pip install pep8
+  - pip install pylint
+  - pip install -r tests/requirements.txt
   - pip install .
 script:
   - coverage run --source=django_crucrudile runtests.py
 after_success:
+  - pylint --rcfile=.pylintrc django_crucrudile
   - pep8 django_crucrudile
   - coverage report -m
   - coveralls
