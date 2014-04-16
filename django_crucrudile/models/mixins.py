@@ -1,4 +1,15 @@
-"""Model mixins utility functions and base classes
+"""
+Model mixin function and base class
+===================================
+
+This module contains a base model mixin that defines functions related
+to URL pattern generation, and URL handling, and a function that can
+create real model mixins (based on the aforementionned base model
+mixin) for a given view class.
+
+This module is the main part of ``django-crucrudile``.
+
+----------------
 
 """
 # pylint: disable=W0141, W0142
@@ -38,6 +49,9 @@ def make_model_mixin(view_class,
                                True to disable this behaviour)*
     :type no_auto_view_mixin: bool
 
+    :return: Model mixin for :param:`view`
+    :rtype: subclass of :class:`AutoPatternsMixin`
+
     """
     if not no_auto_view_mixin:
         # not inhibiting automatic adding of ModelActionMixin
@@ -67,17 +81,14 @@ def make_model_mixin(view_class,
 
     @classmethod
     def _get_url(cls, *args, **kwargs):
-        """Private function, renamed to get_<action>_url when monkeypatched to
-        the view. Used to implement model functions such as
-        get_list_url()
-
-        """
+        """Get %s URL"""
         return reverse(
             cls.get_url_name(view_class, prefix=True),
             *args,
             **kwargs
         )
 
+    _get_url.__doc__ = _get_url.__doc__ % view_class.get_action_name()
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
@@ -94,32 +105,31 @@ def make_model_mixin(view_class,
 
 def make_model_mixins(views,
                       no_auto_view_mixin=False):
-    """Use this function to create Model action mixinx for the given views
+    """Return a list of model action mixins for
+    the given list of views.
 
-    Return a tuple of model_action_mixins
+    :param views: Views to make mixins for. Should
+                  contain tuples (with at least one item and at most
+                  three), themselves containing :
+                   - view_class (mandatory)
+                   - extra_args (optional)
+                   - extra_func (optional)
+                  For a definition of the above keywords, please see
+                  the documentation of :func:`make_model_mixin`.
 
-    Arguments :
-    -- views : set of tuples, views to make mixins for (should contain
-    tuples (with at least one item and at most three), themselves
-    containing :
-     - view_class (mandatory)
-     - extra_args (optional)
-     - extra_func (optional)
-    -- no_auto_view_mixin : disable autopatching of view with
-    ModelActionMixin (when view_class is missing a method or attribute
-    from ModelActionMixin, it is automatically added (and bound if
-    needed) to view_class. Set this to True to disable this
-    behaviour. See docs fr more information)
+    :type views: list
+    :param no_auto_view_mixin: disable autopatching of view with
+                               ModelActionMixin (when view_class is
+                               missing a method or attribute from
+                               ModelActionMixin, it is automatically
+                               added (and bound if needed) to
+                               view_class. Set this to True to disable
+                               this behaviour. See docs fr more
+                               information)
+    :type no_auto_view_mixin bool:
 
-    views tuple items :
-    -- view : view to use for this mixin.
-         (this view should subclass ModelActionMixin)
-    -- extra_args : dict of keyword arguments for the view
-    (the dict value is the argument value, and might be a callable,
-    and will be called with model as argument)
-    -- extra_funcs : dict of functions to add on the model mixin.
-    (the dict key is the function name, and might be a callable,
-    and will be called with view as argument)
+    :return: list of model action mixins for views in :param:`views`
+    :rtype: list
 
     """
     return tuple([
@@ -135,11 +145,17 @@ class AutoPatternsMixin(object):
     Base mixin for all action model mixins
     """
     url_namespaces = None
-
+    """
+    :attribute url_namespaces: List of URL namespaces
+    :type url_namespaces: list
+    """
     @classmethod
     def get_model_name(cls):
         """Get the model name
         (example for FooBarTestModel : 'foobartestmodel')
+
+        :return: model name
+        :rtype: str
         """
         return cls.__name__.lower()
 
@@ -159,6 +175,9 @@ class AutoPatternsMixin(object):
         This function is used by django-generic-patterns, in
         auto_patterns(...), to get the nnxeeded views for a Model.
 
+        :return: list of views for this model
+        :rtype: list
+
         """
         return []
 
@@ -177,6 +196,13 @@ class AutoPatternsMixin(object):
         View. Usually, args are tretrieved using super, then if the
         'view' kwarg is the view on which we want to set arguments, we
         update the args dictionary with another dictionary.
+
+        :param view: view to get the args for
+        :type view: view class
+
+        :return: arguments for view given in :param:`view`
+        :rtype: dict
+
         """
         # pylint: disable=W0613
         if view not in cls.get_views():
@@ -193,6 +219,14 @@ class AutoPatternsMixin(object):
         To disable usage of URL namespaces, set this to return an
         empty list.  You will need to override this if don't want the
         application name as a namespace.
+
+        :param no_content_types: disable usage of content types framework
+                                 (fallback to Django internals
+                                 (model._meta...))
+        :type: no_content_types: bool
+
+        :return: URL namespaces
+        :rtype: list
 
         """
         if cls.url_namespaces is None:
