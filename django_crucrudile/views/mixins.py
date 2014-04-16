@@ -4,20 +4,17 @@ This module contains a base view mixin to specify an interface, that
 will be used by Model Mixin (in models.mixins) to get informations
 about the view :
 
--- action name : will be used for URLs, URL names and get_*_url
-functions. when used in URLs or get_*_url functions, it will be
-underscore-separated, otherwise dash-separated.
+Action name
+  Will be used for URLs, URL names and get_*_url functions. when used
+  in URLs or get_*_url functions, it will be underscore-separated,
+  otherwise dash-separated.
 
--- url parts : will be used for URLs. compiles the multiple possible
-combinations of URL arguments to create a list of possible URL
-specifications for this view (which will be joined to the model name
-by the model mixin)
+URL parts
+  Will be used for URLs. compiles the multiple possible combinations
+  of URL arguments to create a list of possible URL specifications for
+  this view (which will be joined to the model name by the model
+  mixin).
 
-Classes :
--- ModelActionMixin : base class for views used by model mixins
-
-Tests:
--- ../../tests/test_view_mixins.py
 """
 from django_crucrudile.utils import convert_camel_case
 
@@ -28,10 +25,12 @@ class ModelActionMixin(object):
     'detail', 'create', etc...) and URL arguments (ex: '(?P<pk>\d+)'),
     if needed.
 
-    It defines two attributes, url_args and action, defaulting to None :
-    -- action : action name (examples above), should be dash-separated
-    -- url_args : list of arguments
-    (as used in Django's URL regular expressions)
+    :param action: action name (examples above), should be
+                   dash-separated
+    :type action: str
+    :param url_args: list of arguments (as used in Django's URL
+                     regular expressions)
+    :type url_args: list
 
     """
     action = None
@@ -43,6 +42,8 @@ class ModelActionMixin(object):
         stripped of the tailing 'View', and converted from CamelCase
         (capitalized words) to words_separated_by_underscore.
 
+        :return: fallback action name
+        :rtype: str
         """
         class_name = cls.__name__
         if class_name.endswith('View'):
@@ -52,8 +53,12 @@ class ModelActionMixin(object):
     @classmethod
     def get_action_name(cls):
         """Return the action name, using the action attribute of the view, or,
-        if not specified, get_fallback_action_name()
+        if not specified, get_fallback_action_name().
 
+        Action name will be cached in cls.action (only computed on first call)
+
+        :return: action name
+        :rtype: str
         """
         if cls.action is None:
             cls.action = cls.get_fallback_action_name()
@@ -66,6 +71,8 @@ class ModelActionMixin(object):
 
         Used in action-specific function names, and in URL paths.
 
+        :return: underscored action name
+        :rtype: str
         """
         return cls.get_action_name().replace('-', '_')
 
@@ -76,12 +83,20 @@ class ModelActionMixin(object):
         list of lists, in which case multiple URL patterns will be
         defined (with the same name).
 
+        :return: URL argument specification
+        :rtype: list
+
         """
         return cls.url_args or []
 
     @classmethod
     def get_url_part(cls, args):
-        """Return the URL part for given list of arguments"""
+        """Return the URL part for given list of arguments
+
+        :return: compiled URL part
+        :rtype: str
+
+        """
         url_part = [cls.get_action_name()] + args
         return "/".join(url_part)
 
@@ -90,6 +105,9 @@ class ModelActionMixin(object):
         r"""Return a list of possible URL specifications
 
         (example: 'list', 'detail/(?P<pk>\d+)')
+
+        :return: compiled URL parts
+        :rtype: list
 
         """
         url_args = cls.get_url_args()
