@@ -1,5 +1,5 @@
 """
-View mixins clas
+View mixins class
 =================
 
 This module contains a base view mixin to specify an interface, that
