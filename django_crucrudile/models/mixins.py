@@ -1,18 +1,5 @@
 """Model mixins utility functions and base classes
 
-Functions :
--- make_model_mixin(view_class, ...): creates a Model
-mixin for a given view class, that allows to automatically get URL
-patterns from the Model class
--- make_model_mixin([(view_class1), (view_class2)], ...): run the above
-function for each tuple given in the list in the first argument. (this tuple
-can contain additional parameters to make_model_mixin(...))
-
-Classes :
--- AutoPatternsMixin : base class for model mixins
-
-Tests:
--- ../../tests/test_model_mixins.py
 """
 # pylint: disable=W0141, W0142
 from django.core.exceptions import ImproperlyConfigured
@@ -27,21 +14,30 @@ def make_model_mixin(view_class,
                      extra_args=None,
                      extra_funcs=None,
                      no_auto_view_mixin=False):
-    """Use this function to create a Model action mixin for a given view.
+    """Return a generated Model mixin for a given view HAHA.
 
-    Arguments :
-    -- view : view to use for this mixin
-    (this view should subclass ModelActionMixin)
-    -- extra_args : dict of keyword arguments for the view (the dict
-    value is the argument value, and might be a callable, and will be
-    called with model as argument)
-    -- extra_funcs : dict of functions to add on the model mixin.
-    (the dict key is the function name, and might be a callable, and
-    will be called with view as argument)
-    -- no_auto_view_mixin : disable autopatching of view with ModelActionMixin
-    (when view_class is missing a method or attribute from ModelActionMixin,
-    it is automatically added (and bound if needed) to view_class. Set this to
-    True to disable this behaviour)
+    :param view: view to use for this mixin
+                 *(this view should subclass ModelActionMixin)*
+    :type view: django.views.generic.View
+    :param extra_args: dict of keyword arguments for the view
+                       *(the dict value is the argument value,
+                       and might be a callable, and will be
+                       called with model as argument)*
+    :type extra_args: dict
+    :param extra_funcs: dict of functions to add on the model mixin.
+                        *(the dict key is the function name, and might
+                        be a callable, and will be called with view
+                        as argument)*
+    :type extra_funcs: dict
+    :param no_auto_view_mixin: disable autopatching of view with
+                               ModelActionMixin *(when view_class
+                               is missing a method or attribute
+                               from ModelActionMixin, it is
+                               automatically added (and bound if
+                               needed) to view_class. Set this to
+                               True to disable this behaviour)*
+    :type no_auto_view_mixin: bool
+
     """
     if not no_auto_view_mixin:
         # not inhibiting automatic adding of ModelActionMixin
