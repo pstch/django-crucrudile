@@ -50,3 +50,15 @@ For more flexibility, it can be  better to redefine the views, to subclass `view
 It is also possible to create the model mixins by yourself (`make_model_mixin` is just a convenience function to automatically create model mixins based on a view) (see documentation).
 
 `django-crucrudile` also provides a convenience function, `auto_patterns_for_app`, that can generate the URL patterns for each Model in an application (using `ContentType` to find the models), and that can be used directly in `urls.py`.
+
+## Tests
+
+`django-crucrudile` usually has a 100% code coverage, as its internals aren't really complicated. You can watch the latest results of the tests on [Travis-CI/pstch/django-crucrudile](https://travis-ci.org/pstch/django-crucrudile).
+
+## Getting help
+
+This is my first attempt at creating a (hopefully) useful Django application. If you're trying it out, and need some help, feel free to contact me at hugo@pstch.net ! Really, this will make me really happy :)
+
+## Contributing
+
+If you feel like you want to contribute to this project, please fork/send patches/submit pull requests ! The documentation and tests really need some improvement. This was my first time writing serious test cases, and my testing code is particularly ugly :(
