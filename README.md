@@ -5,7 +5,7 @@ django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile
 
 ## Documentation
 
-The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the documentation strings present in the source code, using Sphynx (and some extensions).
+The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the docstrings present in the source code, using Sphynx (and some extensions).
 
 ## Example
 
