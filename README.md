@@ -5,6 +5,8 @@ django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile
 
 **WARNING :** This project is still a WIP. The implementation of the concept is stable, and I already use it in my own projects, but it will still take some times before I can release a proper version (somewhen in April 2014).
 
+**NOTE :** Development is done on the `develop` branch, and when needed, merged into the `master` branch, which is more stable. **Code on the `develop` branch may not work at all !** (Which doesn't mean that the code on the `master` branch will work..)
+
 ## Documentation
 
 The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the docstrings present in the source code, using Sphynx (and some extensions).
