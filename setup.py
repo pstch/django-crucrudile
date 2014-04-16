@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-crucrudile',
-    version='0.2',
+    version='0.3',
     description='Model-defined CRUD views & patterns for Django',
     long_description="views, models, auto URL patterns, ...",
     url='https://github.com/pstch/django-crucrudile',
