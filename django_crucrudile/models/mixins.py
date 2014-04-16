@@ -14,13 +14,14 @@ Classes :
 Tests:
 -- ../../tests/test_model_mixins.py
 """
-#pylint: disable=W0141, W0142
+# pylint: disable=W0141, W0142
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.conf.urls import url
 
 from django_crucrudile.utils import try_calling, monkeypatch_mixin
 from django_crucrudile.views.mixins import ModelActionMixin
+
 
 def make_model_mixin(view_class,
                      extra_args=None,
@@ -63,7 +64,7 @@ def make_model_mixin(view_class,
             args = super(ModelMixin, cls).get_args_by_view(view)
             if view is view_class and extra_args is not None:
                 args.update({
-                    arg_key: try_calling(arg_value, cls) or arg_value \
+                    arg_key: try_calling(arg_value, cls) or arg_value
                     for (arg_key, arg_value) in extra_args.items()
                 })
             return args
@@ -93,6 +94,7 @@ def make_model_mixin(view_class,
                     func)
 
     return ModelMixin
+
 
 def make_model_mixins(views,
                       no_auto_view_mixin=False):
@@ -131,11 +133,13 @@ def make_model_mixins(views,
         ) for view_tuple in views
     ])
 
+
 class AutoPatternsMixin(object):
     """
     Base mixin for all action model mixins
     """
     url_namespaces = None
+
     @classmethod
     def get_model_name(cls):
         """Get the model name
@@ -163,7 +167,7 @@ class AutoPatternsMixin(object):
         return []
 
     @classmethod
-    def get_args_by_view(cls, view): # pylint: disable=W0613
+    def get_args_by_view(cls, view):
         """Return dict of keyword arguments for a view
 
         This class method is overriden by ModelMixin classes, so that the
@@ -178,7 +182,8 @@ class AutoPatternsMixin(object):
         'view' kwarg is the view on which we want to set arguments, we
         update the args dictionary with another dictionary.
         """
-        if not view in cls.get_views():
+        # pylint: disable=W0613
+        if view not in cls.get_views():
             raise ImproperlyConfigured(
                 "Tried to get the view arguments for a view that is not"
                 " defined by get_views()"
@@ -196,9 +201,11 @@ class AutoPatternsMixin(object):
         """
         if cls.url_namespaces is None:
             try:
-                if no_content_types is True: # force fallback to _meta.app_label
+                if no_content_types is True:
+                    # force fallback to _meta.app_label
                     raise ImportError(
-                        "django.contrib.contenttypes import explicitly disabled"
+                        "django.contrib.contenttypes import "
+                        "explicitly disabled"
                     )
                 from django.contrib.contenttypes.models import ContentType
             except ImportError:
@@ -259,6 +266,7 @@ class AutoPatternsMixin(object):
                     url_part
                 ]
             ))
+
         def make_view():
             """Create view callback using current model and args from
             get_args_by_view"""
@@ -266,6 +274,7 @@ class AutoPatternsMixin(object):
                 model=cls,
                 **cls.get_args_by_view(view)
             )
+
         def make_name():
             """View URL name (unprefixed, this is the name we give to url())"""
             return cls.get_url_name(view)

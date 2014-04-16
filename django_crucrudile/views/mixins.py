@@ -76,7 +76,6 @@ class ModelActionMixin(object):
         """
         return cls.get_action_name().replace('-', '_')
 
-
     @classmethod
     def get_url_args(cls):
         """Return the list of regex specifications for URL arguments, as in
@@ -102,7 +101,6 @@ class ModelActionMixin(object):
         return "/".join(url_part)
 
     @classmethod
-
     def get_url_parts(cls):
         r"""Return a list of possible URL specifications
 
