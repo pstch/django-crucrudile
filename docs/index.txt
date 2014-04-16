@@ -1,0 +1,18 @@
+django-crucrudile
+=================
+
+Contents :
+
+.. toctree::
+
+   django_crucrudile.models.mixins
+   django_crucrudile.views.mixins
+   django_crucrudile.urls
+   django_crucrudile.utils
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

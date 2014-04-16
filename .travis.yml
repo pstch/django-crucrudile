@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+env:
+  - DJANGO=1.6
+install:
+  - pip install coveralls
+  - pip install pep8
+  - pip install pylint
+  - pip install -r tests/requirements.txt
+  - pip install .
+script:
+  - coverage run --source=django_crucrudile runtests.py
+after_success:
+  - pylint --rcfile=.pylintrc django_crucrudile
+  - pep8 django_crucrudile
+  - coverage report -m
+  - coveralls
