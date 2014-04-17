@@ -63,7 +63,7 @@ def _is_special_attribute(attr):
 
 
 def monkeypatch_mixin(class_, mixin):
-    """Monkeypatch all non-special (bound and unbound) attributes of ``mixin``
+    r"""Monkeypatch all non-special (bound and unbound) attributes of ``mixin``
 into ``class_``, then return ``class_``.
 
     :param class\_: Class to monkeypatch
