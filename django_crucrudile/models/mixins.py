@@ -84,14 +84,16 @@ def make_model_mixin(view_class,
 
     @classmethod
     def _get_url(cls, *args, **kwargs):
-        """Get %s URL"""
+        """Private function, patched as ``get_*_url`` to the model mixin.
+
+        """
         return reverse(
             cls.get_url_name(view_class, prefix=True),
             *args,
             **kwargs
         )
 
-    _get_url.__doc__ = _get_url.__doc__ % view_class.get_action_name()
+    _get_url.__doc__ = "Get %s URL" % view_class.get_action_name()
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
