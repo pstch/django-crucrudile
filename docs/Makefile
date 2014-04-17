@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/django-ciblassur.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/django-crucrudile.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/django-ciblassur.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/django-crucrudile.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/django-ciblassur"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/django-ciblassur"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/django-crucrudile"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/django-crucrudile"
 	@echo "# devhelp"
 
 epub:

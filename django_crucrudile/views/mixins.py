@@ -1,6 +1,6 @@
 """
-View mixins class
-=================
+View mixin
+==========
 
 This module contains a base view mixin to specify an interface, that
 will be used by model mixins (in ``models.mixins``) to get metadata
@@ -38,7 +38,7 @@ class ModelActionMixin(object):
     """
     url_args = None
     """
-    :attribute url_args: list of arguments (capturing groups, as used in
+    :attribute url_args: List of arguments (capturing groups, as used in
                    Django's URL regular expressions). (See examples in
                    class documentation)
     :type url_args: list
