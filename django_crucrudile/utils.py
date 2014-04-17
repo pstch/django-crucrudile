@@ -1,16 +1,14 @@
-"""Utility functions
+"""
+Utility functions
+=================
 
-Imports :
- -- re : needed by convert_camel_case
- -- django...ImproperlyConfigured : might be raised by auto_patterns_for_app
- -- itertools.chain : needed by auto_patterns_for_app (to join lists)
+This module contains 4 utility functions, used by other
+``django-crucrudile```modules. They are pretty simple, which is why
+they're just tossed in here, and not in their own modules.`
 
-Functions :
- -- auto_patterns_for_app(app_name)
- -- auto_patterns_for_model(model)
- -- try_calling(arg, *args, **kwargs)
- -- convert_camel_case(camel_cased, separator)
- -- monkeypatch_mixin(class_, mixin)
+This module is imported by ``views.mixins`` (for :func:`try_calling` and :func:`monkeypatch_mixin`)and ``models.mixins`` (for :func:`convert_camel_case`). Should it become any longer, it may be wise to split it.
+
+----------------
 
 """
 import re
@@ -27,9 +25,13 @@ def try_calling(arg, *args, **kwargs):
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
 
-    Keywords : -- camel_cased (ex:"CamelCased") -- separator (ex:"-")
+    :param camel_cased: Camel cased input string (ex: ``"Camel Cased"``)
+    :type camel_cased: str
+    :param separator: Separator to use (ex: ``"-"``)
+    :type separator: str
 
-    Above parameters will return "camel-cased"
+    :return: converted text
+    :rtype: str
 
     """
     separator_expression = r'\1%s\2' % separator
@@ -42,8 +44,16 @@ def convert_camel_case(camel_cased, separator):
 
 
 def _is_special_attribute(attr):
-    """Return True if attr is a Python special attribute, otherwise
-    False"""
+    """Return True if attr is the name of a Python special attribute,
+    otherwise False
+
+    :param attr: Name of attribute to test
+    :type attr: str
+
+    :return: True if attr is special attribute, otherwise False
+    :rtype bool:
+
+    """
     return \
         attr.startswith('__') and \
         attr.endswith('__')
