@@ -93,8 +93,8 @@ def make_model_mixin(view_class,
         )
 
     _get_url.__doc__ = "Get %s URL" % view_class.get_action_name()
-     # we make _get_url a class method only at this point to be able
-     # to change __doc__
+    # we make _get_url a class method only at this point to be able
+    # to change __doc__
     _get_url = classmethod(_get_url)
 
     setattr(ModelMixin,
