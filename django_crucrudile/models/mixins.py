@@ -28,18 +28,21 @@ def make_model_mixin(view_class,
     """Return a generated Model mixin for a given view HAHA.
 
     :param view: view to use for this mixin
-    *(this view should subclass ``ModelActionMixin``)*
+                 (this view should subclass ``ModelActionMixin``)
     :type view: django.views.generic.View
+
     :param extra_args: dict of keyword arguments for the view
-                       *(the dict value is the argument value,
+                       (the dict value is the argument value,
                        and might be a callable, and will be
-                       called with the model as argument)*
+                       called with the model as argument)
     :type extra_args: dict
+
     :param extra_funcs: dict of functions to add on the model mixin.
-                        *(the dict key is the function name, and might
+                        (the dict key is the function name, and might
                         be a callable, and will be called with view
-                        as argument)*
+                        as argument)
     :type extra_funcs: dict
+
     :param no_auto_view_mixin: disable autopatching of view with
                                ``ModelActionMixin`` *(when ``view_class``
                                is missing a method or attribute
@@ -172,7 +175,7 @@ class AutoPatternsMixin(object):
         always get the current list of views using
         ``super(...).get_views``) before appending a new view.
 
-        :return: list of views for this model
+        :return: views for this model
         :rtype: list
 
         """
@@ -250,7 +253,7 @@ class AutoPatternsMixin(object):
         """Return the URL name for a given view
 
         Compiles the URL name using ``view.get_action_name`` and
-        ``cls.get_model_name`` (and namespaces kwarg if specified)
+        ``cls.get_model_name``.
 
         ``get_model_name`` can be None, in which case the URL
         name will be compiled using the action
@@ -260,6 +263,9 @@ class AutoPatternsMixin(object):
 
         :param prefix: add namespaces prefix to URL name (by default, No)
         :type prefix: bool
+
+        :return: URL name
+        :rtype: str
 
         """
         name = '-'.join(filter(
