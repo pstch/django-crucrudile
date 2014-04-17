@@ -352,15 +352,22 @@ class AutoPatternsMixin(object):
         ]
 
     @classmethod
-    def get_url_patterns(cls):
+    def get_url_patterns(cls, views=None):
         """
         Get list of URL patterns for all views
 
-        :return: All URL patterns of this Model (for all views)
+        :param views: Get URL patterns for these views only.  Each
+                      view must be present in the list returned by
+                      :func:`get_views`
+        :type views: list
+
+        :return: All URL patterns of this Model (for all views, or for
+                 views in ``views`` argument)
         :rtype: list
+
         """
         urlpatterns = []
-        for view in cls.get_views():
+        for view in views or cls.get_views():
             for pattern in cls.get_url_patterns_by_view(view):
                 urlpatterns.append(pattern)
         return urlpatterns
