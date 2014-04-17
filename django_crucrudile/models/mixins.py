@@ -307,6 +307,9 @@ class AutoPatternsMixin(object):
         :return: URL patterns of this Model for a given view
         :rtype: list
 
+        :raise ImproperlyConfigured: If view not in :func:`get_views()`
+
+
         """
 
         def make_url(url_part):
@@ -333,6 +336,12 @@ class AutoPatternsMixin(object):
         def make_name():
             """View URL name (unprefixed, this is the name we give to url())"""
             return cls.get_url_name(view)
+
+        if view not in view.get_views():
+            raise ImproperlyConfigured(
+                "Tried to get the URL patterns for a view (%s)"
+                " that is not defined by get_views" % view
+            )
 
         return [
             url(
