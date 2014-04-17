@@ -28,12 +28,12 @@ def try_calling(arg, *args, **kwargs):
 def convert_camel_case(camel_cased, separator):
     """Convert camel cased into words separated by the given separator
 
-    :param camel_cased: Camel cased input string (ex: ``"Camel Cased"``)
+    :param camel_cased: Camel cased input string (ex: ``"CamelCased"``)
     :type camel_cased: str
     :param separator: Separator to use (ex: ``"-"``)
     :type separator: str
 
-    :return: converted text
+    :return: converted text (ex: ``"camel-cased"``)
     :rtype: str
 
     """
