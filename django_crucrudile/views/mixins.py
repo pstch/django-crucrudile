@@ -50,7 +50,7 @@ class ModelActionMixin(object):
         stripped of the tailing ``View``, and converted from ``CamelCase``
         (capitalized words) to ``words_separated_by_underscore``.
 
-        :return: fallback action name
+        :return: Fallback action name
         :rtype: str
         """
         class_name = cls.__name__
@@ -66,7 +66,7 @@ class ModelActionMixin(object):
         Action name will be cached in ``cls.action`` (only computed on
         first call)
 
-        :return: action name
+        :return: Action name
         :rtype: str
         """
         if cls.action is None:
@@ -80,7 +80,7 @@ class ModelActionMixin(object):
 
         Used in action-specific function names, and in URL paths.
 
-        :return: underscored action name
+        :return: Underscored action name
         :rtype: str
         """
         return cls.get_action_name().replace('-', '_')
@@ -105,7 +105,7 @@ class ModelActionMixin(object):
         :param args: URL argument specification to compile URL part for
         :type args: list
 
-        :return: compiled URL part
+        :return: Compiled URL part
         :rtype: str
 
         """
@@ -118,7 +118,7 @@ class ModelActionMixin(object):
 
         Examples : ``list``, ``detail/(?P<pk>\d+)``
 
-        :return: compiled URL parts
+        :return: Compiled URL parts
         :rtype: list
 
         """

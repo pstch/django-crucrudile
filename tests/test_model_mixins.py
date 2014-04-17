@@ -1,5 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+from django.views.generic import View
 from django.db import models
 
 from django_crucrudile.models.mixins import (
@@ -102,6 +103,14 @@ class AutoPatternsMixinTestCase(TestCase):
             self.model_class.get_url_name(AutoPatternsMixinTestView, prefix=True),
             "tests:autopatternsmixintestmodel-auto-patterns-mixin-test"
         )
+
+    def test_get_url_patterns_by_view_wrong_view(self):
+        raised = False
+        try:
+            self.model_class.get_url_patterns_by_view(View)
+        except ImproperlyConfigured:
+            raised = True
+        self.assertTrue(raised)
 
     def test_get_url_patterns(self):
         pattern = self.model_class.get_url_patterns()[0]

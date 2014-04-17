@@ -9,8 +9,18 @@ def auto_patterns_for_app(app_name, exclude_models=None):
     """Returns a list of URL patterns (Django URL objects) for the given
     application, using content types.
 
-    This function will try to import django.contrib.contenttypes, and
-    fail if it can't.
+    :param app_name: Application name to get URL patterns for
+    :type app_name: str
+
+    :param exclude_models: Don't get URL patterns for these models
+                           (Specify models by class name)
+    :type exclude_models: list
+
+    :raise ImproperlyConfigured: if failing to import
+                                 ``django.contrib.contenttypes``
+
+    :return: URL patterns for the given application
+    :rtype: list
 
     """
     try:
