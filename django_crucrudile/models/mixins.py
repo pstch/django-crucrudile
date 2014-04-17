@@ -130,7 +130,7 @@ def make_model_mixins(views,
                                information)
     :type no_auto_view_mixin bool:
 
-    :return: list of model action mixins for ``views``
+    :return: model action mixins for ``views``
     :rtype: list
 
     """
