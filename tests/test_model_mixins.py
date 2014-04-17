@@ -103,6 +103,14 @@ class AutoPatternsMixinTestCase(TestCase):
             "tests:autopatternsmixintestmodel-auto-patterns-mixin-test"
         )
 
+    def test_get_url_patterns_by_view_wrong_view(self):
+        raised = False
+        try:
+            self.model_class.get_url_patterns_by_view(View)
+        except ImproperlyConfigured:
+            raised = True
+        self.assertTrue(raised)
+
     def test_get_url_patterns(self):
         pattern = self.model_class.get_url_patterns()[0]
         self.assertEqual(
