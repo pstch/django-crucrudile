@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from django.generic.views import View
+from django.views.generic import View
 from django.db import models
 
 from django_crucrudile.models.mixins import (
