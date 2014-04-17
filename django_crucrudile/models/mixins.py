@@ -337,7 +337,7 @@ class AutoPatternsMixin(object):
             """View URL name (unprefixed, this is the name we give to url())"""
             return cls.get_url_name(view)
 
-        if view not in view.get_views():
+        if view not in cls.get_views():
             raise ImproperlyConfigured(
                 "Tried to get the URL patterns for a view (%s)"
                 " that is not defined by get_views" % view
