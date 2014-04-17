@@ -111,14 +111,13 @@ def make_model_mixins(views,
     """Return a list of model action mixins for
     the given list of views.
 
-    :param views: Views to make mixins for. Should
-                  contain tuples (with at least one item and at most
-                  three), themselves containing :
-                   - **view_class** (*mandatory*)
-                   - **extra_args** (*optional*)
-                   - **extra_func** (*optional*)
-                  For a definition of the above keywords, please see
-                  the documentation of ``make_model_mixin``.
+    :param views: Views to make mixins for. Should contain tuples
+                  (with at least one item and at most three),
+                  themselves containing : **view_class**,
+                  **extra_args** (*optional*), **extra_func**
+                  (*optional*).  For a definition of the above
+                  keywords, please see the documentation of
+                  ``make_model_mixin``.
 
     :type views: list
     :param no_auto_view_mixin: disable autopatching of view with
