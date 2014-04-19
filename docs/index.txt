@@ -6,4 +6,5 @@ django-crucrudile
    installation
    gettingstarted
    reference
-   modules
+
+* :ref:`modindex`
