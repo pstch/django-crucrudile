@@ -124,7 +124,7 @@ class AutoPatternsMixinTestCase(TestCase):
         )
         self.assertEqual(
             pattern.regex.pattern,
-            'autopatternsmixintestmodel/auto-patterns-mixin-test'
+            '^autopatternsmixintestmodel/auto-patterns-mixin-test$'
         )
 
 
