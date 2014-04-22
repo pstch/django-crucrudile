@@ -16,7 +16,7 @@ patterns is a 4-step process :
 the view class, in order to get informations about what kind of action
 the view is representing, and what arguments are needed. All these
 functions and attributes are defined in
-:class:``django_crucrudile.views.mixins.ModelActionMixin``.
+:class:`django_crucrudile.views.mixins.ModelActionMixin`.
 
 It is perfectly possible to use a Django generic view (or any view),
 that does not define the functions and attributes aforementionned,
