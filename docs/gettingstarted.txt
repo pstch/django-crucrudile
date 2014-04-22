@@ -31,7 +31,11 @@ there are two ways to do so:
 Either way, in case the view needs URL arguments, you will have to
 define in the ``url_args`` attribute of your view. This attribute
 should be a list of needed arguments (express the arguments as regex
-capture groups, same as in ``urls.py``)
+capture groups, same as in ``urls.py``). Example for a numeric argument::
+
+   DetailView.url_args = ['(?P<pk>\d+)',]
+
+*Note :* the ``url_args`` value can also be a list of lists, in that case ``django-crucrudile`` will create different URL arguments for the different URL arguments combinations. This can be useful to have a model view that can be accessed both by slug, and both by numeric id.
 
 Usually, the "action name" is taken from the view class name, stripped
 of the tailing "View", and converted from CamelCase to dash-separated
