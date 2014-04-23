@@ -316,7 +316,7 @@ class AutoPatternsMixin(object):
             """Make URL pattern (join prefix, model name, and view's URL part)
 
             """
-            return '/'.join(filter(
+            return '^%s$' % '/'.join(filter(
                 None,
                 [
                     cls.get_url_prefix(),

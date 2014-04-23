@@ -1,4 +1,99 @@
 Getting started
 ===============
 
-TODO
+Getting ``django-crucrudile`` to automatically generate your URL
+patterns is a 4-step process :
+
+1. Views
+--------
+
+``django-crucrudile`` needs some functions and attributes defined on
+the view class, in order to get informations about what kind of action
+the view is representing, and what arguments are needed. All these
+functions and attributes are defined in
+:class:`django_crucrudile.views.mixins.ModelActionMixin`.
+
+It is perfectly possible to use a Django generic view (or any view),
+that does not define the functions and attributes aforementionned,
+there are two ways to do so:
+
+ - Subclass a view, and make it inherit from ``ModelActionMixin``
+ - Don't do anything, and ``make_model_mixin`` will patch the given
+   view argument with the functions and attributes of
+   ``ModelActionMixin`` (this behaviour can be disabled using the
+   ``no_auto_view_mixin`` argument to ``make_model_mixin``
+
+Either way, in case the view needs URL arguments, you will have to
+define in the ``url_args`` attribute of your view. This attribute
+should be a list of needed arguments (express the arguments as regex
+capture groups, same as in ``urls.py``). Example for a numeric argument::
+
+   DetailView.url_args = ['(?P<pk>\d+)',]
+
+*Note :* the ``url_args`` value can also be a list of lists, in that case ``django-crucrudile`` will create different URL arguments for the different URL arguments combinations. This can be useful to have a model view that can be accessed both by slug, and both by numeric id.
+
+Usually, the "action name" is taken from the view class name, stripped
+of the tailing "View", and converted from CamelCase to dash-separated
+text. For example, a ``FilteredListView`` will have, as action name,
+``filtered-list``. You can override this behaviour by defining the
+``action`` attribute on your view.
+
+Personally, I define my views in a ``views.py``, using Django's
+generic views as a base, making it inherit from ``ModelActionMixin``,
+and setting the ``url_args`` and ``action`` attributes. But you can
+also just set the ``url_args`` attribute on the detail, update and
+delete Django generic views (these views require an URL argument to
+know which object it needs to handle), and use these views in
+``make_model_mixin``.
+
+2. Model mixins
+------------
+
+Once you defined your views (or the needed arguments on generic views) defining your model mixins is very
+straightforward, just use ``make_model_mixin``, with a view as
+argument, or ``make_model_mixins`` with a list of views as argument::
+
+    Listable = make_model_mixin(ListView)
+    Detailable = make_model_mixin(DetailView)
+
+Or::
+
+    Listable, Detailable = make_model_mixin([ListView, DetailView])
+
+You now have ``Listable`` and ``Detailable`` defined, and they are
+"model mixins" that can be used a base classes in your Model.
+
+``make_model_mixin`` can also take other arguments, to define view-specific functions on your Model, or to set model-specific arguments to use when calling the view. Please see the :func:`django_crucrudile.models.mixins.make_model_mixin` documentation for more information.
+
+3. Models
+------
+
+Example::
+
+    class Book(Listable, Detailable, models.Model):
+        name = models.CharField(max_length=32)
+        author = models.ForeignKey(Author)
+        ...
+
+Your ``Book`` now inherits functions from ``AutoPatternsMixin`` (the base class for model mixins), that you can use to get the model's URL patterns. See the :class:`django_crucrudile.models.mixins.AutoPatternsMixin` documentation for more information.
+
+4. ``urls.py``
+-----------
+
+To get the list of `url` objects for a specific Model (here ``Book``), you can use ``Book.get_url_patterns()``, and use the return value of this function in your ``urls.py``::
+
+    urlpatterns = [
+        Book.get_url_patterns(),
+    ]
+
+Or you could loop through your models, and append the URL patterns to ``urlpatterns``::
+
+    model_list = Book, Author
+    urlpatterns = [model.get_url_patterns() for model in model_list]
+
+Also, if you have lots of different Models that all use model mixins, you can use :func:`django_crucrudile.urls.auto_patterns_for_app`, giving it an application name as argument, and it will gather all the URL patterns for all defined models in the application (here, ``'booklist'`` is the application name)::
+
+    from django_crucrudile.urls import auto_patterns_for_app
+    urlpatterns = auto_patterns_for_app('booklist')
+
+Yes, your ``urls.py`` now contains two lines !
