@@ -136,6 +136,7 @@ class MakeModelMixinTestCase(TestCase):
 
     view_class = MakeModelMixinTestView
     url_func_name = 'get_make_model_mixin_test_url'
+    url_name_func_name = url_func_name + '_name'
 
     # data to test make_model_mixin (with extra_args argument) with
     extra_args = {'test_key' : 'test_value',
@@ -214,7 +215,7 @@ class MakeModelMixinTestCase(TestCase):
         self.assertEqual(
             getattr(
                 self.model_class,
-                self.url_func_name,
+                self.url_name_func_name,
                 lambda: None
             )(),
             'tests:makemodelmixintestmodel-make-model-mixin-test'
