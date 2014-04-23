@@ -274,6 +274,9 @@ class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
             test_callable_value = 'model_test_callable_value'
         self.extra_funcs_model_class = ExtraFuncsMakeModelMixinWithoutViewMixinTestModel
 
+    def test_make_model_mixin_url_name_func(self):
+        pass # not run without a view
+
 class MakeModelMixinsTestCase(TestCase):
     views = [MakeModelMixinsFirstTestView,
              MakeModelMixinsSecondTestView,
