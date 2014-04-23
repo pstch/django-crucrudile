@@ -214,7 +214,7 @@ class MakeModelMixinTestCase(TestCase):
         self.assertEqual(
             getattr(
                 self.model_class,
-                self.url_func_name
+                self.url_func_name,
                 lambda: None
             )(),
             'tests:makemodelmixintestmodel-make-model-mixin-test'
