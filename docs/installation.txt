@@ -9,9 +9,9 @@ As ``django-crucrudile`` is still in the initial development phase, I did not ye
 
 To install with ``pip``::
 
-  pip install -e git+https://github.com/pstch/django-crucrudile.git@v1.4#egg=django-crucrudile
+  pip install -e git+https://github.com/pstch/django-crucrudile.git@master#egg=django-crucrudile
 
-(This installs version 1.4 (1.4.0), use `@master` to install latest release (major, minor or patch), and `@develop` to install development version.
+(This installs the latest release (major, minor or patch), use `@develop` to install development version. You can also use `@tag`, replacing tag by a release name (ex: 'v1.4.1') (Git tag, see Releases tab in GitHub).
 
 To install from source ::
 

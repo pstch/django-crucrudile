@@ -12,7 +12,7 @@ Modules :
 """
 
 __title__ = 'django-crucrudile'
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 __author__ = 'Hugo Geoffroy'
 __license__ = 'GNU General Public License V3.0'
 __copyright__ = 'Copyright 2013-2014 Hugo Geoffroy'
