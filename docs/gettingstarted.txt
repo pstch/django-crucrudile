@@ -80,7 +80,7 @@ Your ``Book`` now inherits functions from ``AutoPatternsMixin`` (the base class 
 4. ``urls.py``
 -----------
 
-To get the list of `url` objects for a specific Model (here ``Book``), you can use ``Book.get_url_patterns``, and use the return value of this function in your ``urls.py``::
+To get the list of `url` objects for a specific Model (here ``Book``), you can use ``Book.get_url_patterns()``, and use the return value of this function in your ``urls.py``::
 
     urlpatterns = [
         Book.get_url_patterns(),
