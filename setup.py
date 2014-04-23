@@ -7,9 +7,11 @@
 
 from setuptools import setup, find_packages
 
+import django_crucrudile
+
 setup(
     name='django-crucrudile',
-    version='0.3',
+    version=django_crucrudile.__version__,
 
     description='Model-defined CRUD views & patterns for Django',
     long_description="views, models, auto URL patterns, ...",
@@ -28,6 +30,7 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'Framework :: Django',
     ],
     platforms=['any'],
 
