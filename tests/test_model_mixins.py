@@ -225,8 +225,6 @@ class MakeModelMixinTestCase(TestCase):
             'tests:makemodelmixintestmodel-make-model-mixin-test'
         )
 
-
-
     def test_make_model_mixin_extra_args(self):
         self.assertEqual(
             self.extra_args_model_class.get_args_by_view(
