@@ -9,5 +9,10 @@ Modules :
 -- views.mixins : view mixins
 -- urls : automatic URL patterns functions
 -- utils : utility functions
-
 """
+
+__title__ = 'django-crucrudile'
+__version__ = '1.4.0'
+__author__ = 'Hugo Geoffroy'
+__license__ = 'GNU General Public License V3.0'
+__copyright__ = 'Copyright 2013-2014 Hugo Geoffroy'
