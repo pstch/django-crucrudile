@@ -300,7 +300,8 @@ class AutoPatternsMixin(object):
 
         namespaces_list = cls.get_url_namespaces()
         if prefix and namespaces_list:
-            return ':'.join(cls.get_url_namespaces() + [name, ])
+            return ':'.join(namespaces_list + [name, ])
+        print(name)
         return name
 
     @classmethod

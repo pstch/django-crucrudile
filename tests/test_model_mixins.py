@@ -138,6 +138,7 @@ class MakeModelMixinTestCase(TestCase):
     url_func_name = 'get_make_model_mixin_test_url'
     url_name_func_name = 'get_make_model_mixin_test_url_name'
 
+
     # data to test make_model_mixin (with extra_args argument) with
     extra_args = {'test_key' : 'test_value',
                   'test_callable_key' : _value_test_func}
@@ -224,6 +225,8 @@ class MakeModelMixinTestCase(TestCase):
             'tests:makemodelmixintestmodel-make-model-mixin-test'
         )
 
+
+
     def test_make_model_mixin_extra_args(self):
         self.assertEqual(
             self.extra_args_model_class.get_args_by_view(
@@ -243,7 +246,6 @@ class MakeModelMixinTestCase(TestCase):
 
 class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
     view_class = MakeModelMixinWithoutViewMixinTestView
-    url_func_name = 'get_make_model_mixin_without_view_mixin_test_url'
 
     def setUp(self):
         class MakeModelMixinWithoutViewMixinTestModel(
