@@ -1,177 +1,94 @@
-# Makefile for Sphinx documentation
-#
-
-# You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-PAPER         =
-BUILDDIR      = _build
-
-# User-friendly check for sphinx-build
-ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
-$(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
-endif
-
-# Internal variables.
-PAPEROPT_a4     = -D latex_paper_size=a4
-PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-# the i18n builder cannot share the environment and doctrees with the others
-I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
-
-help:
-	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  html       to make standalone HTML files"
-	@echo "  dirhtml    to make HTML files named index.html in directories"
-	@echo "  singlehtml to make a single large HTML file"
-	@echo "  pickle     to make pickle files"
-	@echo "  json       to make JSON files"
-	@echo "  htmlhelp   to make HTML files and a HTML help project"
-	@echo "  qthelp     to make HTML files and a qthelp project"
-	@echo "  devhelp    to make HTML files and a Devhelp project"
-	@echo "  epub       to make an epub"
-	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
-	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
-	@echo "  latexpdfja to make LaTeX files and run them through platex/dvipdfmx"
-	@echo "  text       to make text files"
-	@echo "  man        to make manual pages"
-	@echo "  texinfo    to make Texinfo files"
-	@echo "  info       to make Texinfo files and run them through makeinfo"
-	@echo "  gettext    to make PO message catalogs"
-	@echo "  changes    to make an overview of all changed/added/deprecated items"
-	@echo "  xml        to make Docutils-native XML files"
-	@echo "  pseudoxml  to make pseudoxml-XML files for display purposes"
-	@echo "  linkcheck  to check all external links for integrity"
-	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
-
-clean:
-	rm -rf $(BUILDDIR)/*
-
-html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-
-dirhtml:
-	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
-
-singlehtml:
-	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/singlehtml
-	@echo
-	@echo "Build finished. The HTML page is in $(BUILDDIR)/singlehtml."
-
-pickle:
-	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) $(BUILDDIR)/pickle
-	@echo
-	@echo "Build finished; now you can process the pickle files."
-
-json:
-	$(SPHINXBUILD) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
-	@echo
-	@echo "Build finished; now you can process the JSON files."
-
-htmlhelp:
-	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
-	@echo
-	@echo "Build finished; now you can run HTML Help Workshop with the" \
-	      ".hhp project file in $(BUILDDIR)/htmlhelp."
-
-qthelp:
-	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
-	@echo
-	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
-	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/django-crucrudile.qhcp"
-	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/django-crucrudile.qhc"
-
-devhelp:
-	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
-	@echo
-	@echo "Build finished."
-	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/django-crucrudile"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/django-crucrudile"
-	@echo "# devhelp"
-
-epub:
-	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) $(BUILDDIR)/epub
-	@echo
-	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
-
-latex:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo
-	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
-	@echo "Run \`make' in that directory to run these through (pdf)latex" \
-	      "(use \`make latexpdf' here to do that automatically)."
-
-latexpdf:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo "Running LaTeX files through pdflatex..."
-	$(MAKE) -C $(BUILDDIR)/latex all-pdf
-	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
-
-latexpdfja:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo "Running LaTeX files through platex and dvipdfmx..."
-	$(MAKE) -C $(BUILDDIR)/latex all-pdf-ja
-	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
-
-text:
-	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) $(BUILDDIR)/text
-	@echo
-	@echo "Build finished. The text files are in $(BUILDDIR)/text."
-
-man:
-	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
-	@echo
-	@echo "Build finished. The manual pages are in $(BUILDDIR)/man."
-
-texinfo:
-	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
-	@echo
-	@echo "Build finished. The Texinfo files are in $(BUILDDIR)/texinfo."
-	@echo "Run \`make' in that directory to run these through makeinfo" \
-	      "(use \`make info' here to do that automatically)."
-
-info:
-	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
-	@echo "Running Texinfo files through makeinfo..."
-	make -C $(BUILDDIR)/texinfo info
-	@echo "makeinfo finished; the Info files are in $(BUILDDIR)/texinfo."
-
-gettext:
-	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
-	@echo
-	@echo "Build finished. The message catalogs are in $(BUILDDIR)/locale."
-
-changes:
-	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
-	@echo
-	@echo "The overview file is in $(BUILDDIR)/changes."
-
-linkcheck:
-	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
-	@echo
-	@echo "Link check complete; look for any errors in the above output " \
-	      "or in $(BUILDDIR)/linkcheck/output.txt."
-
-doctest:
-	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
-	@echo "Testing of doctests in the sources finished, look at the " \
-	      "results in $(BUILDDIR)/doctest/output.txt."
-
-xml:
-	$(SPHINXBUILD) -b xml $(ALLSPHINXOPTS) $(BUILDDIR)/xml
-	@echo
-	@echo "Build finished. The XML files are in $(BUILDDIR)/xml."
-
-pseudoxml:
-	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
-	@echo
-	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+| path | view | name |
+| ---- | ---- | ---- |
+| /metadata/agerange/create | views.CreateView | agerange-create |
+| /metadata/agerange/delete/<pk> | views.DeleteView | agerange-delete |
+| /metadata/agerange/delete/<slug> | views.DeleteView | agerange-delete |
+| /metadata/agerange/detail/<pk> | views.DetailView | agerange-detail |
+| /metadata/agerange/detail/<slug> | views.DetailView | agerange-detail |
+| /metadata/agerange/list | views.ListView | agerange-list |
+| /metadata/agerange/update/<pk> | views.UpdateView | agerange-update |
+| /metadata/agerange/update/<slug> | views.UpdateView | agerange-update |
+| /metadata/contractclass/create | views.CreateView | contractclass-create |
+| /metadata/contractclass/delete/<pk> | views.DeleteView | contractclass-delete |
+| /metadata/contractclass/delete/<slug> | views.DeleteView | contractclass-delete |
+| /metadata/contractclass/detail/<pk> | views.DetailView | contractclass-detail |
+| /metadata/contractclass/detail/<slug> | views.DetailView | contractclass-detail |
+| /metadata/contractclass/list | views.ListView | contractclass-list |
+| /metadata/contractclass/update/<pk> | views.UpdateView | contractclass-update |
+| /metadata/contractclass/update/<slug> | views.UpdateView | contractclass-update |
+| /metadata/contracttype/create | views.CreateView | contracttype-create |
+| /metadata/contracttype/delete/<pk> | views.DeleteView | contracttype-delete |
+| /metadata/contracttype/delete/<slug> | views.DeleteView | contracttype-delete |
+| /metadata/contracttype/detail/<pk> | views.DetailView | contracttype-detail |
+| /metadata/contracttype/detail/<slug> | views.DetailView | contracttype-detail |
+| /metadata/contracttype/list | views.ListView | contracttype-list |
+| /metadata/contracttype/update/<pk> | views.UpdateView | contracttype-update |
+| /metadata/contracttype/update/<slug> | views.UpdateView | contracttype-update |
+| /metadata/contractvariant/create | views.CreateView | contractvariant-create |
+| /metadata/contractvariant/delete/<pk> | views.DeleteView | contractvariant-delete |
+| /metadata/contractvariant/delete/<slug> | views.DeleteView | contractvariant-delete |
+| /metadata/contractvariant/detail/<pk> | views.DetailView | contractvariant-detail |
+| /metadata/contractvariant/detail/<slug> | views.DetailView | contractvariant-detail |
+| /metadata/contractvariant/list | views.ListView | contractvariant-list |
+| /metadata/contractvariant/update/<pk> | views.UpdateView | contractvariant-update |
+| /metadata/contractvariant/update/<slug> | views.UpdateView | contractvariant-update |
+| /metadata/country/create | views.CreateView | country-create |
+| /metadata/country/delete/<pk> | views.DeleteView | country-delete |
+| /metadata/country/delete/<slug> | views.DeleteView | country-delete |
+| /metadata/country/list | views.ListView | country-list |
+| /metadata/country/update/<pk> | views.UpdateView | country-update |
+| /metadata/country/update/<slug> | views.UpdateView | country-update |
+| /metadata/genericrepayclass/create | views.CreateView | genericrepayclass-create |
+| /metadata/genericrepayclass/delete/<pk> | views.DeleteView | genericrepayclass-delete |
+| /metadata/genericrepayclass/delete/<slug> | views.DeleteView | genericrepayclass-delete |
+| /metadata/genericrepayclass/detail/<pk> | views.DetailView | genericrepayclass-detail |
+| /metadata/genericrepayclass/detail/<slug> | views.DetailView | genericrepayclass-detail |
+| /metadata/genericrepayclass/list | views.ListView | genericrepayclass-list |
+| /metadata/genericrepayclass/update/<pk> | views.UpdateView | genericrepayclass-update |
+| /metadata/genericrepayclass/update/<slug> | views.UpdateView | genericrepayclass-update |
+| /metadata/guaranteeclass/create | views.CreateView | guaranteeclass-create |
+| /metadata/guaranteeclass/delete/<pk> | views.DeleteView | guaranteeclass-delete |
+| /metadata/guaranteeclass/delete/<slug> | views.DeleteView | guaranteeclass-delete |
+| /metadata/guaranteeclass/detail/<pk> | views.DetailView | guaranteeclass-detail |
+| /metadata/guaranteeclass/detail/<slug> | views.DetailView | guaranteeclass-detail |
+| /metadata/guaranteeclass/list | views.ListView | guaranteeclass-list |
+| /metadata/guaranteeclass/update/<pk> | views.UpdateView | guaranteeclass-update |
+| /metadata/guaranteeclass/update/<slug> | views.UpdateView | guaranteeclass-update |
+| /metadata/insurer/create | views.CreateView | insurer-create |
+| /metadata/insurer/delete/<pk> | views.DeleteView | insurer-delete |
+| /metadata/insurer/delete/<slug> | views.DeleteView | insurer-delete |
+| /metadata/insurer/list | views.ListView | insurer-list |
+| /metadata/insurer/update/<pk> | views.UpdateView | insurer-update |
+| /metadata/insurer/update/<slug> | views.UpdateView | insurer-update |
+| /metadata/originzone/create | views.CreateView | originzone-create |
+| /metadata/originzone/delete/<pk> | views.DeleteView | originzone-delete |
+| /metadata/originzone/delete/<slug> | views.DeleteView | originzone-delete |
+| /metadata/originzone/detail/<pk> | views.DetailView | originzone-detail |
+| /metadata/originzone/detail/<slug> | views.DetailView | originzone-detail |
+| /metadata/originzone/list | views.ListView | originzone-list |
+| /metadata/originzone/update/<pk> | views.UpdateView | originzone-update |
+| /metadata/originzone/update/<slug> | views.UpdateView | originzone-update |
+| /metadata/originzonepricemodifier/create | views.CreateView | originzonepricemodifier-create |
+| /metadata/originzonepricemodifier/delete/<pk> | views.DeleteView | originzonepricemodifier-delete |
+| /metadata/originzonepricemodifier/delete/<slug> | views.DeleteView | originzonepricemodifier-delete |
+| /metadata/originzonepricemodifier/detail/<pk> | views.DetailView | originzonepricemodifier-detail |
+| /metadata/originzonepricemodifier/detail/<slug> | views.DetailView | originzonepricemodifier-detail |
+| /metadata/originzonepricemodifier/list | views.ListView | originzonepricemodifier-list |
+| /metadata/originzonepricemodifier/update/<pk> | views.UpdateView | originzonepricemodifier-update |
+| /metadata/originzonepricemodifier/update/<slug> | views.UpdateView | originzonepricemodifier-update |
+| /metadata/repayclass/create | views.CreateView | repayclass-create |
+| /metadata/repayclass/delete/<pk> | views.DeleteView | repayclass-delete |
+| /metadata/repayclass/delete/<slug> | views.DeleteView | repayclass-delete |
+| /metadata/repayclass/detail/<pk> | views.DetailView | repayclass-detail |
+| /metadata/repayclass/detail/<slug> | views.DetailView | repayclass-detail |
+| /metadata/repayclass/list | views.ListView | repayclass-list |
+| /metadata/repayclass/update/<pk> | views.UpdateView | repayclass-update |
+| /metadata/repayclass/update/<slug> | views.UpdateView | repayclass-update |
+| /metadata/zone/create | views.CreateView | zone-create |
+| /metadata/zone/delete/<pk> | views.DeleteView | zone-delete |
+| /metadata/zone/delete/<slug> | views.DeleteView | zone-delete |
+| /metadata/zone/detail/<pk> | views.DetailView | zone-detail |
+| /metadata/zone/detail/<slug> | views.DetailView | zone-detail |
+| /metadata/zone/list | views.ListView | zone-list |
+| /metadata/zone/update/<pk> | views.UpdateView | zone-update |
+| /metadata/zone/update/<slug> | views.UpdateView | zone-update |
