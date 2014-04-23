@@ -207,15 +207,12 @@ class MakeModelMixinTestCase(TestCase):
         )
 
     def test_make_model_mixin_url_name_func(self):
-        try:
-            self.assertTrue(
-                hasattr(
-                    self.model_class,
-                    self.url_name_func_name
-                )
+        self.assertTrue(
+            hasattr(
+                self.model_class,
+                self.url_name_func_name
             )
-        except:
-            import ipdb; ipdb.set_trace()
+        )
         self.assertEqual(
             getattr(
                 self.model_class,
@@ -275,6 +272,8 @@ class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
         self.extra_funcs_model_class = ExtraFuncsMakeModelMixinWithoutViewMixinTestModel
 
     def test_make_model_mixin_url_name_func(self):
+        pass # not run without a view
+    def test_make_model_mixin_has_url_func(self):
         pass # not run without a view
 
 class MakeModelMixinsTestCase(TestCase):

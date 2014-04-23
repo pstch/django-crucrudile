@@ -109,7 +109,7 @@ def make_model_mixin(view_class,
         included in the return value
 
         """
-        return cls.get_url_name(view_class, prefix=True),
+        return cls.get_url_name(view_class, prefix=True)
 
     _get_url_name.__doc__ = "Get %s URL" % view_class.get_action_name()
 
@@ -301,7 +301,6 @@ class AutoPatternsMixin(object):
         namespaces_list = cls.get_url_namespaces()
         if prefix and namespaces_list:
             return ':'.join(namespaces_list + [name, ])
-        print(name)
         return name
 
     @classmethod
