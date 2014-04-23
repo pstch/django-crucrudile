@@ -4,11 +4,6 @@ Getting started
 Getting ``django-crucrudile`` to automatically generate your URL
 patterns is a 4-step process :
 
-1. Define, or extend, your views
-2. Define your model mixins
-3. Use these model mixins in your models
-4. Call automatic patterns functions in your urls.py
-
 1. Views
 --------
 
@@ -51,7 +46,7 @@ delete Django generic views (these views require an URL argument to
 know which object it needs to handle), and use these views in
 ``make_model_mixin``.
 
-Model mixins
+2. Model mixins
 ------------
 
 Once you defined your views (or the needed arguments on generic views) defining your model mixins is very
@@ -70,7 +65,7 @@ You now have ``Listable`` and ``Detailable`` defined, and they are
 
 ``make_model_mixin`` can also take other arguments, to define view-specific functions on your Model, or to set model-specific arguments to use when calling the view. Please see the :func:`django_crucrudile.models.mixins.make_model_mixin` documentation for more information.
 
-Models
+3. Models
 ------
 
 Example::
@@ -82,7 +77,7 @@ Example::
 
 Your ``Book`` now inherits functions from ``AutoPatternsMixin`` (the base class for model mixins), that you can use to get the model's URL patterns. See the :class:`django_crucrudile.models.mixins.AutoPatternsMixin` documentation for more information.
 
-``urls.py``
+4. ``urls.py``
 -----------
 
 To get the list of `url` objects for a specific Model (here ``Book``), you can use ``Book.get_url_patterns``, and use the return value of this function in your ``urls.py``::
