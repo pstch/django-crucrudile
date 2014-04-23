@@ -37,7 +37,8 @@ def auto_patterns_for_app(app_name, exclude_models=None):
     models = [content_type.model_class() for content_type in content_types]
 
     for model in models:
-        if model.__name__ not in exclude_models:
+        if model is not None and \
+           model.__name__ not in exclude_models:
             for pattern in model.get_url_patterns():
                 urlpatterns.append(pattern)
 
