@@ -111,8 +111,7 @@ def make_model_mixin(view_class,
         """
         return cls.get_url_name(view_class, prefix=True),
 
-    _get_url_name.__doc__ = "Get %s %s URL" % (cls._meta.verbose_name,
-                                          view_class.get_action_name())
+    _get_url_name.__doc__ = "Get %s URL" % view_class.get_action_name()
 
     # we make _get_url_name a class method only at this point to be able
     # to change __doc__
