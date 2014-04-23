@@ -1,15 +1,5 @@
 | path | view | name |
 | ---- | ---- | ---- |
-| / | django.views.generic.base.RedirectView | home |
-| /\_\_debug\_\_/render\_panel/ | debug\_toolbar.views.render\_panel | render\_panel |
-| /\_\_debug\_\_/sql\_explain/ | debug\_toolbar.panels.sql.views.sql\_explain | sql\_explain |
-| /\_\_debug\_\_/sql\_profile/ | debug\_toolbar.panels.sql.views.sql\_profile | sql\_profile |
-| /\_\_debug\_\_/sql\_select/ | debug\_toolbar.panels.sql.views.sql\_select | sql\_select |
-| /\_\_debug\_\_/template\_source/ | debug\_toolbar.panels.templates.views.template\_source | template\_source |
-| /accounts/login/ | django.contrib.auth.views.login | login |
-| /accounts/logout/ | django.contrib.auth.views.logout | logout |
-| /accounts/profile/ | django.views.generic.base.TemplateView | profile |
-| /dashboard/ | dashboard.views.DashboardView | home |
 | /metadata/agerange/create | views.CreateView | agerange-create |
 | /metadata/agerange/delete/\<pk\> | views.DeleteView | agerange-delete |
 | /metadata/agerange/delete/\<slug\> | views.DeleteView | agerange-delete |
