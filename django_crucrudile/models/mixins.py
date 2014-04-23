@@ -119,7 +119,7 @@ def make_model_mixin(view_class,
 
     setattr(ModelMixin,
             'get_%s_url_name' % view_class.get_underscored_action_name(),
-            _get_url)
+            _get_url_name)
 
     if extra_funcs:
         for func_name, func in extra_funcs.items():
