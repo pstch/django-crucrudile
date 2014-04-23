@@ -101,6 +101,26 @@ def make_model_mixin(view_class,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
 
+    def _get_url_name(cls):
+        """Private function, patched as ``get_*_url_name`` to the model mixin.
+
+        These functions only return an URL name, and you don't have to
+        pass an instance as argument because the instance is not
+        included in the return value
+
+        """
+        return cls.get_url_name(view_class, prefix=True)
+
+    _get_url_name.__doc__ = "Get %s URL" % view_class.get_action_name()
+
+    # we make _get_url_name a class method only at this point to be able
+    # to change __doc__
+    _get_url_name = classmethod(_get_url_name)
+
+    setattr(ModelMixin,
+            'get_%s_url_name' % view_class.get_underscored_action_name(),
+            _get_url_name)
+
     if extra_funcs:
         for func_name, func in extra_funcs.items():
             func_name = try_calling(func_name, view_class) or func_name
@@ -280,7 +300,7 @@ class AutoPatternsMixin(object):
 
         namespaces_list = cls.get_url_namespaces()
         if prefix and namespaces_list:
-            return ':'.join(cls.get_url_namespaces() + [name, ])
+            return ':'.join(namespaces_list + [name, ])
         return name
 
     @classmethod
