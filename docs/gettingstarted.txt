@@ -88,12 +88,8 @@ To get the list of `url` objects for a specific Model (here ``Book``), you can u
 
 Or you could loop through your models, and append the URL patterns to ``urlpatterns``::
 
+    from models import Book, Author
     model_list = Book, Author
     urlpatterns = [model.get_url_patterns() for model in model_list]
 
-Also, if you have lots of different Models that all use model mixins, you can use :func:`django_crucrudile.urls.auto_patterns_for_app`, giving it an application name as argument, and it will gather all the URL patterns for all defined models in the application (here, ``'booklist'`` is the application name)::
-
-    from django_crucrudile.urls import auto_patterns_for_app
-    urlpatterns = auto_patterns_for_app('booklist')
-
-Yes, your ``urls.py`` now contains two lines !
+Yes, your ``urls.py`` now contains three lines !
