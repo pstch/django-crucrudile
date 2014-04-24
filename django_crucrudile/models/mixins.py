@@ -93,7 +93,7 @@ def make_model_mixin(view_class,
 
         """
         if instance_view or view_class.instance_view:
-            kwargs['kwargs'] = kwargs.get('kwargs', [])
+            kwargs['kwargs'] = kwargs.get('kwargs', {})
             kwargs['kwargs']['id'] = obj.id
         return reverse(
             obj.get_url_name(view_class, prefix=True),
