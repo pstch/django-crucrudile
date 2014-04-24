@@ -43,6 +43,13 @@ class ModelActionMixin(object):
                    class documentation)
     :type url_args: list
     """
+    instance_view = False
+    """
+    :attribute url_args: Set to true if the view show an instance
+                         (detail, update, delete) rather than a model
+                         (list, create)
+    :type url_args: bool
+    """
 
     @classmethod
     def get_fallback_action_name(cls):
