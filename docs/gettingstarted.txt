@@ -88,8 +88,10 @@ To get the list of `url` objects for a specific Model (here ``Book``), you can u
 
 Or you could loop through your models, and append the URL patterns to ``urlpatterns``::
 
+    from itertools import chain
     from models import Book, Author
+
     model_list = Book, Author
     urlpatterns = [model.get_url_patterns() for model in model_list]
 
-Yes, your ``urls.py`` now contains three lines !
+Yes, your ``urls.py`` now contains four lines !
