@@ -92,7 +92,7 @@ def make_model_mixin(view_class,
         """Private function, patched as ``get_*_url`` to the model mixin.
 
         """
-        if instance_view or view.instance_view:
+        if instance_view or view_class.instance_view:
             kwargs['args'].append(obj.id)
         return reverse(
             obj.get_url_name(view_class, prefix=True),
@@ -103,7 +103,7 @@ def make_model_mixin(view_class,
     _get_url.__doc__ = "Get %s URL" % view_class.get_action_name()
     # we make _get_url a class method only at this point to be able
     # to change __doc__
-    if not instance_view:
+    if not (instance_view or view_class.instance_view):
         _get_url = classmethod(_get_url)
 
     setattr(ModelMixin,
