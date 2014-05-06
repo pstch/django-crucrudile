@@ -17,7 +17,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.conf.urls import url
 
-from django_crucrudile.utils import try_calling, monkeypatch_mixin
+from django_crucrudile.utils import call_if, monkeypatch_mixin
 from django_crucrudile.views.mixins import ModelActionMixin
 
 
@@ -83,7 +83,7 @@ def make_model_mixin(view_class,
             args = super(ModelMixin, cls).get_args_by_view(view)
             if view is view_class and extra_args is not None:
                 args.update({
-                    arg_key: try_calling(arg_value, cls) or arg_value
+                    arg_key: call_if(arg_value, cls)
                     for (arg_key, arg_value) in extra_args.items()
                 })
             return args
@@ -134,7 +134,7 @@ def make_model_mixin(view_class,
 
     if extra_funcs:
         for func_name, func in extra_funcs.items():
-            func_name = try_calling(func_name, view_class) or func_name
+            func_name = call_if(func_name, view_class)
             setattr(ModelMixin,
                     func_name,
                     func)
