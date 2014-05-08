@@ -6,23 +6,21 @@ This module contains four utility functions, used by other
 ``django-crucrudile`` modules. They are pretty simple, which is why
 they're just tossed in here, and not in their own modules.`
 
-This module is imported by ``views.mixins`` (for :func:`try_calling`
-and :func:`monkeypatch_mixin`)and ``models.mixins`` (for
-:func:`convert_camel_case`). Should it become any longer, it may be
-wise to split it.
-
 ----------------
 
 """
 import re
 
 
-def try_calling(arg, *args, **kwargs):
+def call_if(arg, *args, **kwargs):
     """Evaluate and return arg (with given args and kwargs) if it's a
-    callable, otherwise return None
+    callable, otherwise return arg.
 
     """
-    return arg(*args, **kwargs) if callable(arg) else None
+    try:
+        return arg(*args, **kwargs)
+    except TypeError:
+        return arg
 
 
 def convert_camel_case(camel_cased, separator):

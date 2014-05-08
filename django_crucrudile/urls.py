@@ -9,6 +9,14 @@ def auto_patterns_for_app(app_name, exclude_models=None):
     """Returns a list of URL patterns (Django URL objects) for the given
     application, using content types.
 
+    Warning : auto_patterns_for_app will run ContentType queries. For
+    this reason, the database must be in a clean state when
+    calling. If you call this function from ``urls.py``, be sure to
+    catch exceptions caused by the incoherent state, otherwise you
+    won't be able to migrate.**This is why it is not recommended to
+    use auto_patterns_for_app, and recommended to set yourself the
+    Model list.**
+
     :param app_name: Application name to get URL patterns for
     :type app_name: str
 
@@ -18,7 +26,7 @@ def auto_patterns_for_app(app_name, exclude_models=None):
 
     :raise ImproperlyConfigured: if failing to import
                                  ``django.contrib.contenttypes``
-
+    :raise ProgrammingError: Database in incoherent state
     :return: URL patterns for the given application
     :rtype: list
 
@@ -37,7 +45,8 @@ def auto_patterns_for_app(app_name, exclude_models=None):
     models = [content_type.model_class() for content_type in content_types]
 
     for model in models:
-        if model.__name__ not in exclude_models:
+        if model is not None and \
+           model.__name__ not in exclude_models:
             for pattern in model.get_url_patterns():
                 urlpatterns.append(pattern)
 

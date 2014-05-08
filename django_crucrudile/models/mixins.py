@@ -17,13 +17,14 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.conf.urls import url
 
-from django_crucrudile.utils import try_calling, monkeypatch_mixin
+from django_crucrudile.utils import call_if, monkeypatch_mixin
 from django_crucrudile.views.mixins import ModelActionMixin
 
 
 def make_model_mixin(view_class,
                      extra_args=None,
                      extra_funcs=None,
+                     instance_view=False,
                      no_auto_view_mixin=False):
     """Return a generated Model mixin for a given view HAHA.
 
@@ -42,6 +43,11 @@ def make_model_mixin(view_class,
                         be a callable, and will be called with view
                         as argument)
     :type extra_funcs: dict
+
+    :param instance_view: Does the view return a Model (List, Create)
+                          or an instance of this Model (Detail,
+                          Update, Delete) ? If instance, set to True.
+    :type instance_view: bool
 
     :param no_auto_view_mixin: Disable autopatching of view with
                                ``ModelActionMixin``. (When ``view_class``
@@ -77,17 +83,21 @@ def make_model_mixin(view_class,
             args = super(ModelMixin, cls).get_args_by_view(view)
             if view is view_class and extra_args is not None:
                 args.update({
-                    arg_key: try_calling(arg_value, cls) or arg_value
+                    arg_key: call_if(arg_value, cls)
                     for (arg_key, arg_value) in extra_args.items()
                 })
             return args
 
-    def _get_url(cls, *args, **kwargs):
+    def _get_url(obj, *args, **kwargs):
         """Private function, patched as ``get_*_url`` to the model mixin.
 
         """
+        if instance_view or view_class.instance_view:
+            kwargs['kwargs'] = kwargs.get('kwargs', {})
+            kwargs['kwargs']['pk'] = obj.id
+
         return reverse(
-            cls.get_url_name(view_class, prefix=True),
+            obj.get_url_name(view_class, prefix=True),
             *args,
             **kwargs
         )
@@ -95,15 +105,36 @@ def make_model_mixin(view_class,
     _get_url.__doc__ = "Get %s URL" % view_class.get_action_name()
     # we make _get_url a class method only at this point to be able
     # to change __doc__
-    _get_url = classmethod(_get_url)
+    if not (instance_view or view_class.instance_view):
+        _get_url = classmethod(_get_url)
 
     setattr(ModelMixin,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
 
+    def _get_url_name(cls):
+        """Private function, patched as ``get_*_url_name`` to the model mixin.
+
+        These functions only return an URL name, and you don't have to
+        pass an instance as argument because the instance is not
+        included in the return value
+
+        """
+        return cls.get_url_name(view_class, prefix=True)
+
+    _get_url_name.__doc__ = "Get %s URL" % view_class.get_action_name()
+
+    # we make _get_url_name a class method only at this point to be able
+    # to change __doc__
+    _get_url_name = classmethod(_get_url_name)
+
+    setattr(ModelMixin,
+            'get_%s_url_name' % view_class.get_underscored_action_name(),
+            _get_url_name)
+
     if extra_funcs:
         for func_name, func in extra_funcs.items():
-            func_name = try_calling(func_name, view_class) or func_name
+            func_name = call_if(func_name, view_class)
             setattr(ModelMixin,
                     func_name,
                     func)
@@ -280,7 +311,7 @@ class AutoPatternsMixin(object):
 
         namespaces_list = cls.get_url_namespaces()
         if prefix and namespaces_list:
-            return ':'.join(cls.get_url_namespaces() + [name, ])
+            return ':'.join(namespaces_list + [name, ])
         return name
 
     @classmethod

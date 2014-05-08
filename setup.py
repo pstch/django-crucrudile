@@ -9,30 +9,36 @@ from setuptools import setup, find_packages
 
 import django_crucrudile
 
+CLASSIFIERS = [
+    'Framework :: Django',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+    'Operating System :: OS Independent',
+    'Topic :: Software Development',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 3',
+]
+
 setup(
-    name='django-crucrudile',
+    name=django_crucrudile.__title__,
     version=django_crucrudile.__version__,
 
-    description='Model-defined CRUD views & patterns for Django',
-    long_description="views, models, auto URL patterns, ...",
 
-    url='https://github.com/pstch/django-crucrudile',
+    url=django_crucrudile.__url__,
 
-    author='Hugo Geoffroy',
-    author_email='hugo@pstch.net',
+    author=django_crucrudile.__author__,
+    author_email=django_crucrudile.__author_email__,
+
+    license=django_crucrudile.__license__,
 
     packages=find_packages(exclude=['tests']),
+
     install_requires=[
         'Django == 1.6'
     ],
 
-    classifiers=[
-        'Intended Audience :: Developers',
-        'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Framework :: Django',
-    ],
-    platforms=['any'],
+    classifiers=CLASSIFIERS,
 
     test_suite='runtests.runtests',
 )

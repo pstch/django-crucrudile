@@ -136,6 +136,8 @@ class MakeModelMixinTestCase(TestCase):
 
     view_class = MakeModelMixinTestView
     url_func_name = 'get_make_model_mixin_test_url'
+    url_name_func_name = 'get_make_model_mixin_test_url_name'
+
 
     # data to test make_model_mixin (with extra_args argument) with
     extra_args = {'test_key' : 'test_value',
@@ -194,16 +196,31 @@ class MakeModelMixinTestCase(TestCase):
     def test_make_model_mixin_has_url_func(self):
         self.assertTrue(
             hasattr(self.model_class,
-                    self.url_func_name)
+                    self.url_name_func_name)
         )
         self.assertTrue(
             callable(
                 getattr(self.model_class,
-                        self.url_func_name,
+                        self.url_name_func_name,
                         None)
             )
         )
 
+    def test_make_model_mixin_url_name_func(self):
+        self.assertTrue(
+            hasattr(
+                self.model_class,
+                self.url_name_func_name
+            )
+        )
+        self.assertEqual(
+            getattr(
+                self.model_class,
+                self.url_name_func_name,
+                lambda: None
+            )(),
+            'tests:makemodelmixintestmodel-make-model-mixin-test'
+        )
 
     def test_make_model_mixin_extra_args(self):
         self.assertEqual(
@@ -224,7 +241,6 @@ class MakeModelMixinTestCase(TestCase):
 
 class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
     view_class = MakeModelMixinWithoutViewMixinTestView
-    url_func_name = 'get_make_model_mixin_without_view_mixin_test_url'
 
     def setUp(self):
         class MakeModelMixinWithoutViewMixinTestModel(
@@ -254,6 +270,11 @@ class MakeModelMixinWithoutViewMixinTestCase(MakeModelMixinTestCase):
                 models.Model):
             test_callable_value = 'model_test_callable_value'
         self.extra_funcs_model_class = ExtraFuncsMakeModelMixinWithoutViewMixinTestModel
+
+    def test_make_model_mixin_url_name_func(self):
+        pass # not run without a view
+    def test_make_model_mixin_has_url_func(self):
+        pass # not run without a view
 
 class MakeModelMixinsTestCase(TestCase):
     views = [MakeModelMixinsFirstTestView,
