@@ -21,15 +21,18 @@ from django_crucrudile.utils import call_if, monkeypatch_mixin
 from django_crucrudile.views.mixins import ModelActionMixin
 
 
-def make_model_mixin(view_class,
+def make_viewset_mixin(view_class,
                      extra_args=None,
                      extra_funcs=None,
                      instance_view=False,
                      no_auto_view_mixin=False):
-    """Return a generated Model mixin for a given view HAHA.
+    """Return a generated Viewset mixin for a given view.
 
-    :param view: View to use for this mixin
-                 (this view should subclass ``ModelActionMixin``)
+    :param view: View to use for this mixin (this view should subclass
+                 ``ModelActionMixin``, if not, and if
+                 ``no_auto_view_mixin`` is not set to True,
+                 ``ModelActionMixin`` will be monkepatched to the
+                 view)
     :type view: django.views.generic.View
 
     :param extra_args: Dictionary of keyword arguments for the view
@@ -37,12 +40,6 @@ def make_model_mixin(view_class,
                        and might be a callable, and will be
                        called with the model as argument)
     :type extra_args: dict
-
-    :param extra_funcs: Dictionary of functions to add on the model mixin.
-                        (the dict key is the function name, and might
-                        be a callable, and will be called with view
-                        as argument)
-    :type extra_funcs: dict
 
     :param instance_view: Does the view return a Model (List, Create)
                           or an instance of this Model (Detail,
@@ -58,8 +55,8 @@ def make_model_mixin(view_class,
                                this behaviour.)
     :type no_auto_view_mixin: bool
 
-    :return: Model mixin for ``view_class``
-    :rtype: subclass of ``AutoPatternsMixin``
+    :return: Viewset mixin for ``view_class``
+    :rtype: subclass of ``ViewsetMixin``
 
     """
     if not no_auto_view_mixin:
@@ -67,20 +64,20 @@ def make_model_mixin(view_class,
         # functionality
         view_class = monkeypatch_mixin(view_class, ModelActionMixin)
 
-    class ModelMixin(AutoPatternsMixin):
+    class Viewset(AutoPatternsMixin):
         """Class mixin created by make_model_mixin, in order to dynamically
         define the needed functions based on the arguments.
 
         """
         @classmethod
         def get_views(cls):
-            views = super(ModelMixin, cls).get_views()
+            views = super(Viewset, cls).get_views()
             views.append(view_class)
             return views
 
         @classmethod
         def get_args_by_view(cls, view):
-            args = super(ModelMixin, cls).get_args_by_view(view)
+            args = super(Viewset, cls).get_args_by_view(view)
             if view is view_class and extra_args is not None:
                 args.update({
                     arg_key: call_if(arg_value, cls)
@@ -108,7 +105,7 @@ def make_model_mixin(view_class,
     if not (instance_view or view_class.instance_view):
         _get_url = classmethod(_get_url)
 
-    setattr(ModelMixin,
+    setattr(Viewset,
             'get_%s_url' % view_class.get_underscored_action_name(),
             _get_url)
 
@@ -128,18 +125,18 @@ def make_model_mixin(view_class,
     # to change __doc__
     _get_url_name = classmethod(_get_url_name)
 
-    setattr(ModelMixin,
+    setattr(Viewset,
             'get_%s_url_name' % view_class.get_underscored_action_name(),
             _get_url_name)
 
     if extra_funcs:
         for func_name, func in extra_funcs.items():
             func_name = call_if(func_name, view_class)
-            setattr(ModelMixin,
+            setattr(Viewset,
                     func_name,
                     func)
 
-    return ModelMixin
+    return Viewset
 
 
 def make_model_mixins(views,
@@ -187,67 +184,6 @@ class AutoPatternsMixin(object):
     :attribute url_namespaces: List of URL namespaces
     :type url_namespaces: list
     """
-    @classmethod
-    def get_model_name(cls):
-        """Get the model name
-        (example for ``FooBarTestModel`` : 'foobartestmodel')
-
-        :return: Model name
-        :rtype: str
-        """
-        return cls.__name__.lower()
-
-    @classmethod
-    def get_views(cls):
-        """Return list of views for this model
-
-        This class method is overriden by model mixin classes, so that the
-        resulting Model object (which subclasses model mixins classes)
-        can get the list of the views used for this Model with
-        ``get_views()``.
-
-        When overriden in a model mixin class, ``get_views()`` should
-        always get the current list of views using
-        ``super(...).get_views``) before appending a new view.
-
-        :return: Views for this model
-        :rtype: list
-
-        """
-        return []
-
-    @classmethod
-    def get_args_by_view(cls, view):
-        """Return dict of keyword arguments for a view
-
-        This class method is overriden by model mixin classes, so that the
-        resulting Model object (which subclasses model mixin classes)
-        can get the dictionary of view arguments for each view used in
-        this Model, with ``get_args_by_view(view)``.
-
-        When overriden in a ModelMixin class or by the user,
-        get_args_by_view should always get the current list of views
-        using ``super(...).get_views``) before appending a new
-        View. Usually, args are tretrieved using super, then if the
-        'view' kwarg is the view on which we want to set arguments, we
-        update the args dictionary with another dictionary.
-
-        :param view: View to get the args for
-        :type view: view class
-
-        :return: Arguments for view given in ``view``, or empty dict
-        :rtype: dict
-
-        :raise ImproperlyConfigured: ``view`` not in ``cls.get_views()``
-
-        """
-        # pylint: disable=W0613
-        if view not in cls.get_views():
-            raise ImproperlyConfigured(
-                "Tried to get the view arguments for a view that is not"
-                " defined by get_views"
-            )
-        return {}
 
     @classmethod
     def get_url_namespaces(cls, no_content_types=False):
@@ -266,22 +202,6 @@ class AutoPatternsMixin(object):
         :rtype: list
 
         """
-        if cls.url_namespaces is None:
-            try:
-                if no_content_types is True:
-                    # force fallback to _meta.app_label
-                    raise ImportError(
-                        "django.contrib.contenttypes import "
-                        "explicitly disabled"
-                    )
-                from django.contrib.contenttypes.models import ContentType
-            except ImportError:
-                cls.url_namespaces = [cls._meta.app_label, ]
-            else:
-                cls.url_namespaces = [
-                    ContentType.objects.get_for_model(cls).app_label,
-                ]
-        return cls.url_namespaces
 
     @classmethod
     def get_url_name(cls, view, prefix=False):
