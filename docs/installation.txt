@@ -18,7 +18,7 @@ To install from source ::
   git clone https://github.com/pstch/django-crucrudile.git
   cd django-crucrudile
   python setup.py install
-  
+
 If you want the development version (default branch is `master`, containing latest release), run `git checkout develop` before `python setup.py install`
 
 
