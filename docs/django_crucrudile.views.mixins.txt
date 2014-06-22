@@ -1,7 +1,0 @@
-django_crucrudile.views.mixins module
-=====================================
-
-.. automodule:: django_crucrudile.views.mixins
-    :members:
-    :undoc-members:
-    :show-inheritance:

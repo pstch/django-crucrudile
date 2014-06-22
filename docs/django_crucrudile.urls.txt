@@ -1,7 +1,0 @@
-django_crucrudile.urls module
-=============================
-
-.. automodule:: django_crucrudile.urls
-    :members:
-    :undoc-members:
-    :show-inheritance:
