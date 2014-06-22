@@ -32,10 +32,11 @@ class RouterTestCase(TestCase):
         self.base_router = Router()
 
         self.documents_router = Router(
-            namespace="documents", label="documents"
+            namespace="documents", label="documents", name="documents"
         )
 
-        self.dashboard_route = Route(redirect="test")
+        self.dashboard_route = Route(name="dashboard")
+        self.test_route = Route(name="test")
 
         self.documents_router.register(
             self.dashboard_route, index=True
@@ -57,7 +58,7 @@ class RouterTestCase(TestCase):
     def test_redirect_url_name(self):
         self.assertEqual(
             self.base_router.get_redirect_url_name(),
-            'documents:test'
+            'documents:dashboard'
         )
 
     def test_redirect_pattern(self):
@@ -67,3 +68,6 @@ class RouterTestCase(TestCase):
                 RegexURLPattern
             )
         )
+
+    def test_pattern_generator(self):
+        list(self.base_router.patterns())

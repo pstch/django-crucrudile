@@ -1,73 +1,16 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
-
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
 
 from django.views.generic import RedirectView
 
-
 from django_crucrudile.exceptions import (
     NoRedirectDefinedException, NoRedirectReturnedException
 )
 
-
-class RoutedEntity(metaclass=ABCMeta):
-    url_next_sep = ':'
-    namespace = None
-
-    def __init__(self, label=None, namespace=None, redirect=None):
-        self.label = label
-        self.namespace = namespace
-        self.redirect = redirect
-
-    @abstractmethod
-    def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
-        pass
-
-    def get_redirect_url_name(self, parents=None, strict=None):
-        if self.redirect:
-            def _url_full_name():
-                for parent in parents + [self]:
-                    if parent.namespace is not None:
-                        yield parent.namespace
-                        yield parent.url_next_sep
-                yield self.redirect
-
-            return ''.join(_url_full_name())
-        else:
-            raise NoRedirectDefinedException(
-                "Redirect URL resolution failed. Current path '{}', "
-                "no redirect is registered on {}".format(
-                    ' > '.join(str(parent) for parent in parents + [self]),
-                    self
-                )
-            )
-
-    @abstractproperty
-    def name(self):
-        pass
-
-    @abstractproperty
-    def url_part(self):
-        pass
-
-    @property
-    def redirect(self):
-        return self._redirect
-
-    @redirect.setter
-    def redirect(self, value):
-        self._redirect = value
-
-
-class BaseRoute(RoutedEntity):
-    pass
-
-
-class BaseModelRoute(BaseRoute):
-    pass
+from .base import (
+    BaseRoute, BaseModelRoute,
+    BaseRouter, BaseModelRouter,
+)
 
 
 class Route(BaseRoute):
@@ -84,40 +27,32 @@ class Route(BaseRoute):
         )
 
     @property
-    def name(self):
-        print(
-            "name getter called on Route"
-        )
-
-    @property
     def url_part(self):
         print(
             "url_part getter called on Route"
         )
 
+
 class ModelRoute(BaseModelRoute):
-    pass
-
-
-class BaseRouter(RoutedEntity):
-    pass
-
-
-class BaseModelRouter(BaseRouter):
     pass
 
 
 class Router(BaseRouter):
     register_transform_map = None
     strict_redirect = True
+    auto_label = False
+    auto_namespace = False
 
-    def __init__(self, label=None, namespace=None, redirect=None):
-        super().__init__(label, namespace, redirect)
+    def __init__(self, name=None, label=None, namespace=None):
+        if label is None and self.auto_label:
+            # todo: translate name
+            label = name
+        if namespace is None and self.auto_namespace:
+            # todo: translate name
+            namespace = name
+
+        super().__init__(name, label, namespace)
         self._store = []
-
-    @property
-    def name(self):
-        return self.namespace
 
     @property
     def url_part(self):
@@ -235,7 +170,7 @@ class Router(BaseRouter):
 
         # check if we need to group (by url_part and/or namespace)
         # the patterns using include
-        if self.url_part is not None or self.namespace is not None:
+        if url_part is not None or namespace is not None:
             yield url(
                 r'^{}$'.format(url_part or ''),
                 include(
