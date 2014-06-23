@@ -21,27 +21,19 @@ class RoutedEntity(metaclass=ABCMeta):
         pass
 
     def get_redirect_url_name(self, parents=None, strict=None):
-        def _url_full_name():
-            for parent in parents + [self]:
-                if parent.namespace is not None:
-                    yield parent.namespace
-                    yield parent.url_next_sep
-
-            yield self.redirect or self.name
-
-        return ''.join(_url_full_name())
+        return ''.join(
+            [
+                ''.join([parent.namespace, parent.url_next_sep])
+                for parent in parents + [self]
+                if parent.namespace is not None
+            ] + [
+                self.redirect or self.name
+            ]
+        )
 
     @abstractproperty
     def url_part(self):
         pass
-
-    @property
-    def redirect(self):
-        return self._redirect
-
-    @redirect.setter
-    def redirect(self, value):
-        self._redirect = value
 
 
 class BaseRoute(RoutedEntity):
