@@ -21,3 +21,5 @@ pycallgraph.png
 docs/_*
 /.project
 /.pydevproject
+
+drafts/
