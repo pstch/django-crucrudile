@@ -15,22 +15,11 @@ from .base import (
 
 class Route(BaseRoute):
     def patterns(self, *args, **kwargs):
-        print(
-            "patterns() called on Route {} {}".format(args, kwargs)
-        )
         yield
-
-    def get2_redirect_url_name(self, *args, **kwargs):
-        print(
-            "get_redirect_url_name() called on Route "
-            "{} {}".format(args, kwargs)
-        )
 
     @property
     def url_part(self):
-        print(
-            "url_part getter called on Route"
-        )
+        pass
 
 
 class ModelRoute(BaseModelRoute):
