@@ -5,6 +5,9 @@ class RoutedEntity(metaclass=ABCMeta):
     url_next_sep = ':'
     namespace = None
 
+    def __str__(self):
+        return "{}>{}".format(type(self).__name__, self.name)
+
     def __init__(self, name=None, label=None, namespace=None):
         self.redirect = None
         self.name = name
