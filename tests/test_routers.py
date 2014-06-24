@@ -16,8 +16,11 @@ from django_crucrudile.routers import (
     provides
 )
 
-
-DRAW_GRAPH = True
+try:
+    import pydot
+    DRAW_GRAPH = True
+except ImportError:
+    DRAW_GRAPH = False
 
 class EmptyRouterTestCase(TestCase):
     """#TODO"""
