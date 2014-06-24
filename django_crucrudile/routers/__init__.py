@@ -14,6 +14,9 @@ __all__ = ["Route", "ModelRoute", "Router", "ModelRouter", "provides"]
 
 
 class Route(BaseRoute):
+    """
+    .. inheritance-diagram:: Route
+    """
     def __init__(self, name=None, url_part=None):
         if name is not None:
             self.name = name
@@ -34,17 +37,18 @@ class Route(BaseRoute):
         yield url("^{}$".format(self.url_part), None, name=self.name)
 
 
-class ModelRoute(BaseModelRoute):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
+class ModelRoute(Route, BaseModelRoute):
+    """
+    .. inheritance-diagram:: ModelRoute
+    """
+    pass
 
 class Router(BaseRouter):
     """RoutedEntity that yields an URL group containing URL patterns from
     the entities in the entity store. The URL group can be set have an URL
     part, a namespace,
 
+    .. inheritance-diagram:: Router
     """
     strict_redirect = True
 
@@ -145,4 +149,7 @@ class Router(BaseRouter):
 
 
 class ModelRouter(BaseModelRouter, Router):
+    """
+    .. inheritance-diagram:: ModelRouter
+    """
     pass

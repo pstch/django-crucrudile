@@ -8,6 +8,8 @@ class RoutedEntity(metaclass=ABCMeta):
     return a generator yielding Django URL objects (RegexURLPattern or
     RegexURLResolver).
 
+
+    .. inheritance-diagram:: RoutedEntity
     """
     index = False
     """
@@ -32,7 +34,9 @@ class BaseRoute(RoutedEntity):
 
 
 class BaseModelRoute(BaseRoute):
-    pass
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
 
 
 class BaseRouterMetaclass(ABCMeta):
@@ -40,6 +44,7 @@ class BaseRouterMetaclass(ABCMeta):
     ``cls._base_store`` store (list instance) for each class definitions
     (``cls`` instantiation)
 
+    .. inheritance-diagram:: BaseRouterMetaclass
     """
     _base_store = []
     """:attribute _base_store: Routed entity class store, instantiated
@@ -69,6 +74,7 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
     The subclass implementation of ``patterns()`` should iterate over
     the entity store.
 
+    .. inheritance-diagram:: BaseRouter
     """
     register_map = None
     """
@@ -146,6 +152,9 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
 
 
 class BaseModelRouter(BaseRouter):
+    """.. inheritance-diagram:: BaseModelRouter
+    """
+
     def __init__(self, *args, **kwargs):
         model = kwargs['model']
         self.model = model
