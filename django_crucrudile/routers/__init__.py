@@ -1,18 +1,16 @@
-from abc import ABCMeta
-
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
 
 from django.views.generic import RedirectView
 
-from django_crucrudile.exceptions import (
-    NoRedirectDefinedException, NoRedirectReturnedException
-)
 
 from .base import (
     BaseRoute, BaseModelRoute,
     BaseRouter, BaseModelRouter,
+    provides
 )
+
+__all__ = ["Route", "ModelRoute", "Router", "ModelRouter", "provides"]
 
 
 class Route(BaseRoute):
@@ -42,54 +40,18 @@ class ModelRoute(BaseModelRoute):
         self.model = model
 
 
-class RouterMetaclass(ABCMeta):
-    """RouterMetaclass allows Router to use a different
-    ``cls._base_store`` store (list instance) for each class definitions
-    (``cls`` instantiation)
+class Router(BaseRouter):
+    """RoutedEntity that yields an URL group containing URL patterns from
+    the entities in the entity store. The URL group can be set have an URL
+    part, a namespace,
 
     """
-    _base_store = []
-    """:attribute _base_store: Routed entity class store, instantiated
-                               upon Router instantiation.
-    :type _base_store: list
-    """
-    def __init__(cls, name, bases, attrs):
-        """Replace ``cls._base_store`` by a copy of itself"""
-        super().__init__(name, bases, attrs)
-        cls._base_store = list(cls._base_store)
-
-
-def provides(provided):
-    def patch_router(router):
-        router.register_class(provided)
-        return router
-    return patch_router
-
-
-class Router(BaseRouter, metaclass=RouterMetaclass):
-    _base_store = []
-    register_transform_map = None
     strict_redirect = True
 
-    name = None
     label = None
     namespace = None
     url_part = None
     redirect = None
-
-    auto_label = False
-    auto_namespace = False
-    auto_url_part = True
-
-    @classmethod
-    def register_class(self, cls):
-        """Add a route class to _base_store. This route class will be
-        instantiated (with kwargs from get_auto_register_kwargs())
-        when the Router is itself instiated, using
-        register_base_store()
-
-        """
-        self._base_store.append(cls)
 
     def __init__(self, name=None, label=None,
                  namespace=None, url_part=None,
@@ -98,31 +60,6 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
         and instantiate entities from entity classes in _base_store
 
         """
-        if (
-                label is None and
-                name is not None and
-                self.auto_label
-        ):
-            # todo: translate name
-            label = name
-        if (
-                namespace is None and
-                name is not None and
-                self.auto_namespace
-        ):
-            # todo: translate name
-            namespace = name
-        if (
-                url_part is None and
-                name is not None and
-                self.auto_url_part
-        ):
-            url_part = name
-
-        super().__init__()
-
-        if name is not None:
-            self.name = name
         if label is not None:
             self.label = label
         if namespace is not None:
@@ -131,49 +68,7 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
             self.url_part = url_part
         if redirect is not None:
             self.redirect = redirect
-
-        self._store = []
-        self.register_base_store()
-
-    def get_auto_register_kwargs(self):
-        """Arguments passed when instantiating entity classes in
-        _base_store
-
-        """
-        return {}
-
-    def register_base_store(self):
-        """Instantiate entity classes in _base_store, using arguments from
-        get_auto_register_kwargs()
-
-        """
-        kwargs = self.get_auto_register_kwargs()
-        for item in self._base_store:
-            self.register(
-                item(**kwargs),
-            )
-
-    def register_apply_map(self, entity, transform_kwargs=None):
-        if self.register_transform_map:
-            transform_kwargs = transform_kwargs or {}
-            for base, func in self.register_transform:
-                if (base is None or
-                    isinstance(entity, base) or
-                    (isinstance(entity, type) and
-                     issubclass(entity, base))):
-                    return func(entity, **transform_kwargs)
-            else:
-                raise TypeError(
-                    "A register transform mapping is defined, but could "
-                    "not find a correspondant mapping for {}".format(entity)
-                )
-        else:
-            return entity
-
-    def register(self, entity, index=False):
-        self._store.append(entity)
-        if index or entity.index:
-            self.redirect = entity
+        super().__init__()
 
     def get_redirect_pattern(self, parents=None):
         if self.redirect:
@@ -186,7 +81,8 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
                 if type(redirect) is str:
                     url_name += str(self.redirect) + "HAA"
                     break
-                elif redirect and redirect.namespace is not None:
+                elif (redirect and
+                      getattr(redirect, 'namespace', None) is not None):
                     url_name += redirect.namespace + ':'
                 redirect = getattr(redirect, 'redirect', None)
 
@@ -198,7 +94,7 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
             url_pattern._redirect_url_name = url_name
             return url_pattern
 
-    def pattern_reader(self, parents=None, name=None,
+    def pattern_reader(self, parents=None,
                        entity=None, add_redirect=False):
         """Read self._store and yield patterns.
         `name` can be used to filter using `entity.name`.
@@ -210,18 +106,17 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
             for _entity in entity.get_pattern(parents + [self]):
                 yield _entity
         else:
-            if add_redirect and name is None and self.redirect is not None:
+            if add_redirect and self.redirect is not None:
                 yield self.get_redirect_pattern(parents)
             for _entity in self._store:
                 # loop through store
-                if name is None or _entity.name == name:
-                    # if name is given, filter by entity name
-                    for _pattern in _entity.patterns(parents + [self]):
-                        yield _pattern
+                # if name is given, filter by entity name
+                for _pattern in _entity.patterns(parents + [self]):
+                    yield _pattern
 
     def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
+                 namespace=None, entity=None,
+                 add_redirect=True):
         if url_part is None:
             url_part = self.url_part
 
@@ -230,7 +125,6 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
 
         pattern_reader = self.pattern_reader(
             parents,
-            name,
             entity,
             add_redirect
         )
@@ -250,14 +144,5 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
         yield ret
 
 
-class ModelRouter(Router):
-    def __init__(self, *args, **kwargs):
-        model = kwargs['model']
-        self.model = model
-        super().__init__(args, kwargs)
-        self.name = model
-
-    def get_auto_register_kwargs(self):
-        kwargs = super().get_auto_register_kwargs()
-        kwargs['model'] = self.model
-        return kwargs
+class ModelRouter(BaseModelRouter, Router):
+    pass

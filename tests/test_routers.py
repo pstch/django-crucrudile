@@ -17,7 +17,7 @@ from django_crucrudile.routers import (
 )
 
 
-DRAW_GRAPH = False
+DRAW_GRAPH = True
 
 class EmptyRouterTestCase(TestCase):
     """#TODO"""
