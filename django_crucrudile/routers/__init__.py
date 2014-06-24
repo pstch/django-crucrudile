@@ -1,3 +1,5 @@
+from abc import ABCMeta
+
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
 
@@ -17,35 +19,95 @@ class Route(BaseRoute):
     def patterns(self, *args, **kwargs):
         yield
 
-    @property
-    def url_part(self):
-        pass
-
 
 class ModelRoute(BaseModelRoute):
-    pass
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+        self.name = "{}-{}".format(self.model, self.name)
 
 
-class Router(BaseRouter):
+class RouterMetaclass(ABCMeta):
+    _base_store = []
+
+    def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+        cls._base_store = list(cls._base_store)
+
+
+def provides(provided):
+    def patch_router(router):
+        router.register_class(provided)
+        return router
+    return patch_router
+
+
+class Router(BaseRouter, metaclass=RouterMetaclass):
+    _base_store = []
     register_transform_map = None
     strict_redirect = True
     auto_label = False
     auto_namespace = False
+    auto_url_part = True
 
-    def __init__(self, name=None, label=None, namespace=None):
-        if label is None and self.auto_label:
+    @classmethod
+    def register_class(self, cls):
+        """Add a route class to _base_store. This route class will be
+        instantiated (with kwargs from get_auto_register_kwargs())
+        when the Router is itself instiated, using
+        register_base_store()
+
+        """
+        self._base_store.append(cls)
+
+    def __init__(self, name=None, label=None,
+                 namespace=None, url_part=None):
+        """Initialize Router base attributes, initialize entity store _store,
+        and instantiate entities from entity classes in _base_store
+
+        """
+        if (
+                label is None and
+                name is not None and
+                self.auto_label
+        ):
             # todo: translate name
             label = name
-        if namespace is None and self.auto_namespace:
+        if (
+                namespace is None and
+                name is not None and
+                self.auto_namespace
+        ):
             # todo: translate name
             namespace = name
+        if (
+                url_part is None and
+                name is not None and
+                self.auto_url_part
+        ):
+            url_part = name
 
-        super().__init__(name, label, namespace)
+        super().__init__(name, label, namespace, url_part)
         self._store = []
+        self.register_base_store()
 
-    @property
-    def url_part(self):
-        return self.namespace
+    def get_auto_register_kwargs(self):
+        """Arguments passed when instantiating entity classes in
+        _base_store
+
+        """
+        return {}
+
+    def register_base_store(self):
+        """Instantiate entity classes in _base_store, using arguments from
+        get_auto_register_kwargs()
+
+        """
+        kwargs = self.get_auto_register_kwargs()
+        for item in self._base_store:
+            self.register(
+                item(**kwargs),
+            )
 
     def register_apply_map(self, entity, transform_kwargs=None):
         if self.register_transform_map:
@@ -66,59 +128,31 @@ class Router(BaseRouter):
 
     def register(self, entity, index=False):
         self._store.append(entity)
-        if index:
+        if index or entity.index:
             self.redirect = entity
-
-    def get_redirect_url_name(self, parents=None, strict=None):
-        if parents is None:
-            parents = []
-
-        if strict is None:
-            strict = self.strict_redirect
-
-        if type(self.redirect) is str:
-            return super().get_redirect_url_name(parents, strict)
-
-        elif self.redirect is not None:
-            name = self.redirect.get_redirect_url_name(
-                parents + [self], strict
-            )
-            if name is not None:
-                return name
-            else:
-                raise NoRedirectReturnedException(
-                    "Redirect URL resolution failed. Current path '{}', "
-                    "registered redirect ({} on {}) did not return an URL "
-                    "name".format(
-                        ' > '.join(str(parent) for parent in parents + [self]),
-                        self.redirect,
-                        self
-                    )
-                )
-        elif strict:
-                raise NoRedirectDefinedException(
-                    "Redirect URL resolution failed. Current path '{}', "
-                    "no redirect is registered on {}".format(
-                        ' > '.join(str(parent) for parent in parents + [self]),
-                        self
-                    )
-                )
 
     def get_redirect_pattern(self, parents=None):
         if self.redirect:
-            if type(self.redirect) is str:
-                url_name = self.redirect
-            else:
-                url_name = self.get_redirect_url_name(parents)
-            return url(
+            url_name = ""
+            for parent in parents:
+                if parent.namespace:
+                    url_name += parent.namespace + ':'
+            redirect = self.redirect
+            while redirect:
+                if type(redirect) is str:
+                    url_name += str(self.redirect) + "HAA"
+                    break
+                elif redirect and redirect.namespace is not None:
+                    url_name += redirect.namespace + ':'
+                redirect = getattr(redirect, 'redirect', None)
+
+            url_pattern = url(
                 r'^$',
                 RedirectView.as_view(url=reverse_lazy(url_name))
                 # TODO: Url name ?
             )
-        else:
-            raise NoRedirectDefinedException(
-                "Cannot get redirect pattern, `redirect` attribute is None."
-            )
+            url_pattern._redirect_url_name = url_name
+            return url_pattern
 
     def pattern_reader(self, parents=None, name=None,
                        entity=None, add_redirect=False):
@@ -129,8 +163,8 @@ class Router(BaseRouter):
         if parents is None:
             parents = []
         if entity is not None:
-            for pattern in entity.patterns(parents + [self]):
-                yield pattern
+            for _entity in entity.get_pattern(parents + [self]):
+                yield _entity
         else:
             if add_redirect and name is None and self.redirect is not None:
                 yield self.get_redirect_pattern(parents)
@@ -138,8 +172,8 @@ class Router(BaseRouter):
                 # loop through store
                 if name is None or _entity.name == name:
                     # if name is given, filter by entity name
-                    for pattern in _entity.patterns(parents + [self]):
-                        yield pattern
+                    for _pattern in _entity.patterns(parents + [self]):
+                        yield _pattern
 
     def patterns(self, parents=None, url_part=None,
                  namespace=None, name=None,
@@ -159,20 +193,27 @@ class Router(BaseRouter):
 
         # check if we need to group (by url_part and/or namespace)
         # the patterns using include
-        if url_part is not None or namespace is not None:
-            yield url(
-                r'^{}$'.format(url_part or ''),
-                include(
-                    list(pattern_reader),
-                    namespace=namespace,
-                    app_name=namespace
-                )
+        ret = url(
+            url_part or '^',
+            include(
+                list(pattern_reader),
+                namespace=namespace,
+                app_name=namespace
             )
-        else:
-            # no need to group, yield patterns
-            for pattern in pattern_reader:
-                yield pattern
+        )
+        ret.router = self
+
+        yield ret
 
 
-class ModelRouter(BaseModelRouter):
-    pass
+class ModelRouter(Router):
+    def __init__(self, *args, **kwargs):
+        model = kwargs['model']
+        self.model = model
+        super().__init__(args, kwargs)
+        self.name = model
+
+    def get_auto_register_kwargs(self):
+        kwargs = super().get_auto_register_kwargs()
+        kwargs['model'] = self.model
+        return kwargs

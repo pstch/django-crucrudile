@@ -2,39 +2,42 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class RoutedEntity(metaclass=ABCMeta):
-    url_next_sep = ':'
+    index = False
+    name = None
     namespace = None
+    label = None
+    url_part = None
 
-    def __str__(self):
-        return "{}>{}".format(type(self).__name__, self.name)
-
-    def __init__(self, name=None, label=None, namespace=None):
+    def __init__(self, name=None, label=None,
+                 namespace=None, url_part=None):
         self.redirect = None
-        self.name = name
-        self.label = label
-        self.namespace = namespace
+        if name is not None:
+            self.name = name
+        if label is not None:
+            self.label = label
+        if namespace is not None:
+            self.namespace = namespace
+        if url_part is not None:
+            self.url_part = url_part
+        elif self.url_part is None:
+            self.url_part = ''
 
     @abstractmethod
     def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
+                    namespace=None, name=None,
+                    entity=None, add_redirect=True):
         pass
 
     def get_redirect_url_name(self, parents=None, strict=None):
         return ''.join(
             [
-                ''.join([parent.namespace, parent.url_next_sep])
+                ''.join([parent.namespace, ':'])
                 for parent in parents + [self]
                 if parent.namespace is not None
             ] + [
                 self.redirect or self.name
             ]
         )
-
-    @abstractproperty
-    def url_part(self):
-        pass
-
 
 class BaseRoute(RoutedEntity):
     pass
