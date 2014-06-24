@@ -39,6 +39,10 @@ class ModelRoute(ModelRoute):
             name="{}-{}".format(self.model, self.name)
         )
 
+    def __init__(self, *args, **kwargs):
+        self.url_part = self.name
+        super().__init__(*args, **kwargs)
+
 
 class ListRoute(ModelRoute):
     name = "list"
@@ -214,3 +218,6 @@ class RouterTestCase(TestCase):
 
         _graph.write_png("/home/pistache/example.png")
         _graph.write_dot("/home/pistache/example.dot")
+
+    def test_get_str_tree(self):
+        self.base_router.get_str_tree()

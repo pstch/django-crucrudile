@@ -37,7 +37,7 @@ class Route(BaseRoute):
         yield url("^{}$".format(self.url_part), None, name=self.name)
 
 
-class ModelRoute(Route, BaseModelRoute):
+class ModelRoute(BaseModelRoute, Route):
     """
     .. inheritance-diagram:: ModelRoute
     """

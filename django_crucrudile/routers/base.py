@@ -28,6 +28,52 @@ class RoutedEntity(metaclass=ABCMeta):
         """
         pass
 
+    def get_str_tree(self):
+        def _walk_tree(patterns, level=0):
+            for pattern in patterns:
+                callback = None
+                try:
+                    callback = pattern.callback.__name__
+                except:
+                    pass
+
+                if hasattr(pattern, 'url_patterns'):
+                    # Resolver
+                    yield (
+                        level,
+                        pattern.namespace or
+                        "{} {}".format(
+                            pattern.router.__class__.__name__ or '',
+                            getattr(pattern.router, 'model', None) or ''
+                        ),
+                        pattern.regex.pattern,
+                        callback
+                    )
+                    for line_tuple in _walk_tree(
+                            pattern.url_patterns, level+1):
+                        yield line_tuple
+                else:
+                    yield (
+                        level,
+                        pattern.name,
+                        pattern.regex.pattern,
+                        callback
+                    )
+
+        def _str_tree(lines):
+            for _level, _name, _pattern, _callback in lines:
+                yield "{} - {} @ {} {}".format(
+                    '  '*_level,
+                    _name or '',
+                    _pattern or '',
+                    _callback or '',
+                )
+
+        return '\n'.join(
+            _str_tree(_walk_tree(
+                self.patterns()
+            ))
+        )
 
 class BaseRoute(RoutedEntity):
     pass
