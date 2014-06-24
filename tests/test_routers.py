@@ -5,6 +5,8 @@ from functools import partial
 from django.test import TestCase
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
 
+from django.conf.urls import url
+
 from django_crucrudile.exceptions import (
     NoRedirectDefinedException
 )
@@ -14,6 +16,8 @@ from django_crucrudile.routers import (
     provides
 )
 
+
+DRAW_GRAPH = False
 
 class EmptyRouterTestCase(TestCase):
     """#TODO"""
@@ -26,7 +30,11 @@ class EmptyRouterTestCase(TestCase):
 
 class ModelRoute(ModelRoute):
     def patterns(self, *args, **kwargs):
-        yield
+        yield url(
+            "^{}/{}$".format(self.model, self.name),
+            None,
+            name="{}-{}".format(self.model, self.name)
+        )
 
 
 class ListRoute(ModelRoute):
@@ -111,7 +119,8 @@ class RouterTestCase(TestCase):
         )
 
     def test_pattern_tree(self):
-        return
+        if not DRAW_GRAPH:
+            return
 
         import pydot
         _graph = pydot.Dot(graph_type='graph')
@@ -143,6 +152,7 @@ class RouterTestCase(TestCase):
                 )
 
                 namespace = getattr(_pattern, 'namespace', None)
+                name = getattr(_pattern, 'name', None)
                 callback = getattr(_pattern, 'callback', None)
                 redirect_url = getattr(_pattern, '_redirect_url_name', None)
                 router = getattr(_pattern, 'router', None)
@@ -164,6 +174,8 @@ class RouterTestCase(TestCase):
                         if model else None,
                         'URL part is {}'.format(regex_pattern)
                         if regex_pattern else None,
+                        'URL name is {}'.format(name)
+                        if name else None,
                     ]))
                 )
 

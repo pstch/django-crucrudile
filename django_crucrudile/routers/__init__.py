@@ -16,21 +16,45 @@ from .base import (
 
 
 class Route(BaseRoute):
+    def __init__(self, name=None, url_part=None):
+        if name is not None:
+            self.name = name
+        elif self.name is None:
+            raise Exception(
+                "Route name must either be set on "
+                "class or passed to __init__"
+            )
+        if url_part is not None:
+            self.url_part = url_part
+        elif self.url_part is None:
+            raise Exception(
+                "Route url_part must either be set on "
+                "class or passed to __init__"
+            )
+
     def patterns(self, *args, **kwargs):
-        yield
+        yield url("^{}$".format(self.url_part), None, name=self.name)
 
 
 class ModelRoute(BaseModelRoute):
     def __init__(self, model):
         super().__init__()
         self.model = model
-        self.name = "{}-{}".format(self.model, self.name)
 
 
 class RouterMetaclass(ABCMeta):
-    _base_store = []
+    """RouterMetaclass allows Router to use a different
+    ``cls._base_store`` store (list instance) for each class definitions
+    (``cls`` instantiation)
 
+    """
+    _base_store = []
+    """:attribute _base_store: Routed entity class store, instantiated
+                               upon Router instantiation.
+    :type _base_store: list
+    """
     def __init__(cls, name, bases, attrs):
+        """Replace ``cls._base_store`` by a copy of itself"""
         super().__init__(name, bases, attrs)
         cls._base_store = list(cls._base_store)
 
@@ -46,6 +70,13 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
     _base_store = []
     register_transform_map = None
     strict_redirect = True
+
+    name = None
+    label = None
+    namespace = None
+    url_part = None
+    redirect = None
+
     auto_label = False
     auto_namespace = False
     auto_url_part = True
@@ -61,7 +92,8 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
         self._base_store.append(cls)
 
     def __init__(self, name=None, label=None,
-                 namespace=None, url_part=None):
+                 namespace=None, url_part=None,
+                 redirect=None):
         """Initialize Router base attributes, initialize entity store _store,
         and instantiate entities from entity classes in _base_store
 
@@ -87,7 +119,19 @@ class Router(BaseRouter, metaclass=RouterMetaclass):
         ):
             url_part = name
 
-        super().__init__(name, label, namespace, url_part)
+        super().__init__()
+
+        if name is not None:
+            self.name = name
+        if label is not None:
+            self.label = label
+        if namespace is not None:
+            self.namespace = namespace
+        if url_part is not None:
+            self.url_part = url_part
+        if redirect is not None:
+            self.redirect = redirect
+
         self._store = []
         self.register_base_store()
 
