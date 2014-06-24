@@ -3,6 +3,7 @@ django-crucrudile
 
 .. toctree::
 
+   django_crucrudile
    installation
    gettingstarted
    reference
