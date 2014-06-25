@@ -7,9 +7,18 @@ Subpackages
 .. toctree::
 
     django_crucrudile.routers
+    django_crucrudile.routes
 
 Submodules
 ----------
+
+django_crucrudile.entity module
+-------------------------------
+
+.. automodule:: django_crucrudile.entity
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 django_crucrudile.exceptions module
 -----------------------------------

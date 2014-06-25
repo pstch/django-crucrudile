@@ -1,21 +1,11 @@
-import random
 import hashlib
-
-from functools import partial
 
 from django.test import TestCase
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
 from django.db import models
 
-from django.conf.urls import url
-
-from django_crucrudile.exceptions import (
-    NoRedirectDefinedException
-)
-
 from django_crucrudile.routers import (
-    Router, ModelRoute, Route, ModelRouter,
-    provides
+    Router,
 )
 
 try:
@@ -175,7 +165,7 @@ class RouterTestCase(TestCase):
                         if redirect_url else None,
                         'router is {}'.format(router.__class__.__name__)
                         if router else None,
-                        'model is {}'.format(model)
+                        'model is {}'.format(model._meta.model_name)
                         if model else None,
                         'URL part is {}'.format(regex_pattern)
                         if regex_pattern else None,
@@ -230,5 +220,5 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "b86275bd4113715fadfd24e2b7ac477dd4692c92e21c3bd748a6d0e3e8a53065"
+            "04f09956418c7a4d796ec8452849eeb48d7c77fe9e8ab853eef2eed191a8f6ac"
         )

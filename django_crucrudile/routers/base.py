@@ -1,105 +1,6 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
-
-class RoutedEntity(metaclass=ABCMeta):
-    """Abstract class for routed entities
-
-    Subclasses should define the ``patterns()`` method, that should
-    return a generator yielding Django URL objects (RegexURLPattern or
-    RegexURLResolver).
-
-
-    .. inheritance-diagram:: RoutedEntity
-    """
-    index = False
-    """
-    :attribute index: Used when routed entity is registered, to know if
-                      it should be registered as index.
-    :type index: bool
-    """
-    @abstractmethod
-    def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
-        """This abstract method should be defined by subclasses, as a
-        generator that yields Django URL objects (RegexURLPattern or
-        RegexURLResolver)
-
-        """
-        pass
-
-    def get_str_tree(self, indent_char=' ', indent_size=2):
-        """Return the representation of a Router's patterns structure"""
-        def _walk_tree(patterns, level=0):
-            """Walk the tree, yielding at tuple of form :
-
-            ``(level, namespace|router_class|model, callback)``
-
-            """
-            for pattern in patterns:
-                try:
-                    callback = (
-                        pattern.callback.__name__
-                        if pattern.callback else None
-                    )
-                except AttributeError:
-                    callback = None
-
-                if hasattr(pattern, 'url_patterns'):
-                    # Resolver
-                    # Yield a line with the resolver metadata
-                    yield (
-                        level,
-                        pattern.namespace or
-                        "{} {}".format(
-                            pattern.router.__class__.__name__ or '',
-                            getattr(pattern.router, 'model', None) or ''
-                        ),
-                        pattern.regex.pattern,
-                        callback
-                    )
-                    # Then, yield lines with the pattern subpatterns
-                    # (incrementing level)
-                    for line_tuple in _walk_tree(
-                            pattern.url_patterns, level+1):
-                        yield line_tuple
-                else:
-                    # Pattern
-                    # Yield a line with the pattern metadata
-                    yield (
-                        level,
-                        pattern.name,
-                        pattern.regex.pattern,
-                        callback
-                    )
-
-        def _str_tree(lines):
-            """Iterate over the tuple returned by _walk_tree, formatting it."""
-            for _level, _name, _pattern, _callback in lines:
-                yield "{} - {} @ {} {}".format(
-                    indent_char*indent_size*_level,
-                    _name or '',
-                    _pattern or '',
-                    _callback or '',
-                )
-
-        patterns = self.patterns()
-        pattern_tuples = _walk_tree(patterns)
-        pattern_lines = _str_tree(pattern_tuples)
-
-        return '\n'.join(
-            pattern_lines
-        )
-
-
-class BaseRoute(RoutedEntity):
-    pass
-
-
-class BaseModelRoute(BaseRoute):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
+from django_crucrudile.entity import RoutedEntity
 
 
 class BaseRouterMetaclass(ABCMeta):
@@ -253,12 +154,28 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
 class BaseModelRouter(BaseRouter):
     """.. inheritance-diagram:: BaseModelRouter
     """
-
-    def __init__(self, model):
-        self.model = model
-        super().__init__()
+    model = None
 
     def get_auto_register_kwargs(self):
+        """Add ModelRouter model to upstream auto register kwargs, so that the
+        route classes in the base store will get the model as a kwarg when
+        being instantiated.
+
+        """
         kwargs = super().get_auto_register_kwargs()
         kwargs['model'] = self.model
         return kwargs
+
+    def __init__(self, model=None):
+        # we need to set self.model before calling the superclass
+        # __init__, because it will call
+        # self.get_auto_register_kwargs() which needs self.model
+        if model is not None:
+            self.model = model
+        elif self.model is None:
+            raise Exception(
+                "No ``model`` argument provided to __init__"
+                ", and no model defined as class attribute (in {})"
+                "".format(self)
+            )
+        super().__init__()

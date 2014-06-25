@@ -3,58 +3,25 @@ from itertools import chain
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
 
-from django.db import models
-
+from django.db.models import Model
+from django.views.generic import View
 from django.views.generic import RedirectView
 
+from django_crucrudile.routes import (
+    ViewRoute,
+    ListRoute,
+    DetailRoute,
+    CreateRoute,
+    UpdateRoute,
+    DeleteRoute
+)
 
 from .base import (
-    BaseRoute, BaseModelRoute,
     BaseRouter, BaseModelRouter,
     provides
 )
 
-__all__ = ["Route", "ModelRoute", "Router", "ModelRouter", "provides"]
-
-
-class Route(BaseRoute):
-    """
-    .. inheritance-diagram:: Route
-    """
-    def __init__(self, name=None, url_part=None):
-        if name is not None:
-            self.name = name
-        elif self.name is None:
-            raise Exception(
-                "Route name must either be set on "
-                "class or passed to __init__"
-            )
-        if url_part is not None:
-            self.url_part = url_part
-        elif self.url_part is None:
-            raise Exception(
-                "Route url_part must either be set on "
-                "class or passed to __init__"
-            )
-
-    def patterns(self, *args, **kwargs):
-        yield url("^{}$".format(self.url_part), None, name=self.name)
-
-
-class ModelRoute(BaseModelRoute, Route):
-    """
-    .. inheritance-diagram:: ModelRoute
-    """
-    def patterns(self, *args, **kwargs):
-        yield url(
-            "^{}/{}$".format(self.model, self.name),
-            None,
-            name="{}-{}".format(self.model, self.name)
-        )
-
-    def __init__(self, *args, **kwargs):
-        self.url_part = self.name
-        super().__init__(*args, **kwargs)
+__all__ = ["Router", "ModelRouter", "provides"]
 
 
 class Router(BaseRouter):
@@ -67,9 +34,9 @@ class Router(BaseRouter):
     @property
     def register_map(self):
         return {
-            models.Model: ModelRouter,
+            Model: ModelRouter,
+            View: ViewRoute,
         }
-
 
     strict_redirect = True
 
@@ -174,7 +141,7 @@ lazy RedirectView that redirects to this URL name
 
         # check if we need to group (by url_part and/or namespace)
         # the patterns using include
-        ret = url(
+        pattern = url(
             url_part or '^',
             include(
                 list(pattern_reader),
@@ -182,30 +149,9 @@ lazy RedirectView that redirects to this URL name
                 app_name=namespace
             )
         )
-        ret.router = self
+        pattern.router = self
 
-        yield ret
-
-
-class ListRoute(ModelRoute):
-    name = "list"
-    index = True
-
-
-class DetailRoute(ModelRoute):
-    name = "detail"
-
-
-class CreateRoute(ModelRoute):
-    name = "create"
-
-
-class UpdateRoute(ModelRoute):
-    name = "update"
-
-
-class DeleteRoute(ModelRoute):
-    name = "delete"
+        yield pattern
 
 
 @provides(ListRoute)
