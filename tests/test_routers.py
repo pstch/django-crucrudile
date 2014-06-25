@@ -1,9 +1,11 @@
 import random
+import hashlib
 
 from functools import partial
 
 from django.test import TestCase
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
+from django.db import models
 
 from django.conf.urls import url
 
@@ -12,7 +14,7 @@ from django_crucrudile.exceptions import (
 )
 
 from django_crucrudile.routers import (
-    Router, ModelRoute, Route, ModelRouter as BaseModelRouter,
+    Router, ModelRoute, Route, ModelRouter,
     provides
 )
 
@@ -21,6 +23,7 @@ try:
     DRAW_GRAPH = True
 except ImportError:
     DRAW_GRAPH = False
+
 
 class EmptyRouterTestCase(TestCase):
     """#TODO"""
@@ -31,55 +34,40 @@ class EmptyRouterTestCase(TestCase):
         list(self.base_router.patterns())
 
 
-class ModelRoute(ModelRoute):
-    def patterns(self, *args, **kwargs):
-        yield url(
-            "^{}/{}$".format(self.model, self.name),
-            None,
-            name="{}-{}".format(self.model, self.name)
-        )
-
-    def __init__(self, *args, **kwargs):
-        self.url_part = self.name
-        super().__init__(*args, **kwargs)
-
-
-class ListRoute(ModelRoute):
-    name = "list"
-    index = True
-
-
-class DetailRoute(ModelRoute):
-    name = "detail"
-
-
-class CreateRoute(ModelRoute):
-    name = "create"
-
-
-class UpdateRoute(ModelRoute):
-    name = "update"
-
-
-class DeleteRoute(ModelRoute):
-    name = "delete"
-
-
-@provides(ListRoute)
-@provides(DetailRoute)
-@provides(CreateRoute)
-@provides(UpdateRoute)
-@provides(DeleteRoute)
-class ModelRouter(BaseModelRouter):
+class TestDocumentModel(models.Model):
     pass
+
+
+class TestGroupModel(models.Model):
+    pass
+
+
+class TestPhaseModel(models.Model):
+    pass
+
+
+class TestEntityModel(models.Model):
+    pass
+
+
+class TestInterfaceModel(models.Model):
+    pass
+
+
+class TestCommentModel(models.Model):
+    pass
+
+
+class TestTaskModel(models.Model):
+    pass
+
 
 class RouterTestCase(TestCase):
     """#TODO"""
     def setUp(self):
         def add_model_routers(base_router, models):
             for model, index in models.items():
-                model_router = ModelRouter(model=model)
-                base_router.register(model_router, index=index)
+                base_router.register(model, index=index)
 
         self.base_router = Router()
         self.base_router.base = True
@@ -90,7 +78,11 @@ class RouterTestCase(TestCase):
         )
         add_model_routers(
             self.documents_router,
-            {'document': True, 'group': False, 'phase': False}
+            {
+                TestDocumentModel: True,
+                TestGroupModel: False,
+                TestPhaseModel: False
+            }
         )
         self.base_router.register(
             self.documents_router,
@@ -104,7 +96,10 @@ class RouterTestCase(TestCase):
 
         add_model_routers(
             self.entities_router,
-            {'entity': True, 'interface': False}
+            {
+                TestEntityModel: True,
+                TestInterfaceModel: False
+            }
         )
         self.base_router.register(
             self.entities_router
@@ -112,7 +107,10 @@ class RouterTestCase(TestCase):
 
         add_model_routers(
             self.base_router,
-            {'comment': False, 'task': False}
+            {
+                TestCommentModel: False,
+                TestTaskModel: False
+            }
         )
 
     def _test_stores(self):
@@ -220,4 +218,17 @@ class RouterTestCase(TestCase):
         _graph.write_dot("/home/pistache/example.dot")
 
     def test_get_str_tree(self):
-        self.base_router.get_str_tree()
+        tree = self.base_router.get_str_tree()
+
+        def _hash(text):
+            return hashlib.sha256(text.encode()).hexdigest()
+
+        sorted_tree = '\n'.join(sorted(tree.splitlines()))
+
+        tree_hash = _hash(sorted_tree)
+
+        # compare to reference hash
+        self.assertEqual(
+            tree_hash,
+            "b86275bd4113715fadfd24e2b7ac477dd4692c92e21c3bd748a6d0e3e8a53065"
+        )
