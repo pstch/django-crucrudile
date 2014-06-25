@@ -48,12 +48,13 @@ class RoutedEntity(metaclass=ABCMeta):
                 if hasattr(pattern, 'url_patterns'):
                     # Resolver
                     # Yield a line with the resolver metadata
+                    _model = getattr(pattern.router, 'model', None)
                     yield (
                         level,
                         pattern.namespace or
                         "{} {}".format(
                             pattern.router.__class__.__name__ or '',
-                            getattr(pattern.router, 'model', None) or ''
+                            _model._meta.model_name if _model else ''
                         ),
                         pattern.regex.pattern,
                         callback
