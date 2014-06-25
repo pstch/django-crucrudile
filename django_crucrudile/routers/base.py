@@ -1,98 +1,6 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
-from django.conf.urls import url, include
-
-
-class RoutedEntity(metaclass=ABCMeta):
-    """Abstract class for routed entities
-
-    Subclasses should define the ``patterns()`` method, that should
-    return a generator yielding Django URL objects (RegexURLPattern or
-    RegexURLResolver).
-
-
-    .. inheritance-diagram:: RoutedEntity
-    """
-    index = False
-    """
-    :attribute index: Used when routed entity is registered, to know if
-                      it should be registered as index.
-    :type index: bool
-    """
-    @abstractmethod
-    def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
-        """This abstract method should be defined by subclasses, as a
-        generator that yields Django URL objects (RegexURLPattern or
-        RegexURLResolver)
-
-        """
-        pass
-
-    def get_str_tree(self, indent_char=' ', indent_size=2):
-        """Return the representation of a Router's patterns structure"""
-        def _walk_tree(patterns, level=0):
-            """Walk the tree, yielding at tuple of form :
-
-            ``(level, namespace|router_class|model, callback)``
-
-            """
-            for pattern in patterns:
-                try:
-                    callback = (
-                        pattern.callback.__name__
-                        if pattern.callback else None
-                    )
-                except AttributeError:
-                    callback = None
-
-                if hasattr(pattern, 'url_patterns'):
-                    # Resolver
-                    # Yield a line with the resolver metadata
-                    _model = getattr(pattern.router, 'model', None)
-                    yield (
-                        level,
-                        pattern.namespace or
-                        "{} {}".format(
-                            pattern.router.__class__.__name__ or '',
-                            _model._meta.model_name if _model else ''
-                        ),
-                        pattern.regex.pattern,
-                        callback
-                    )
-                    # Then, yield lines with the pattern subpatterns
-                    # (incrementing level)
-                    for line_tuple in _walk_tree(
-                            pattern.url_patterns, level+1):
-                        yield line_tuple
-                else:
-                    # Pattern
-                    # Yield a line with the pattern metadata
-                    yield (
-                        level,
-                        pattern.name,
-                        pattern.regex.pattern,
-                        callback
-                    )
-
-        def _str_tree(lines):
-            """Iterate over the tuple returned by _walk_tree, formatting it."""
-            for _level, _name, _pattern, _callback in lines:
-                yield "{} - {} @ {} {}".format(
-                    indent_char*indent_size*_level,
-                    _name or '',
-                    _pattern or '',
-                    _callback or '',
-                )
-
-        patterns = self.patterns()
-        pattern_tuples = _walk_tree(patterns)
-        pattern_lines = _str_tree(pattern_tuples)
-
-        return '\n'.join(
-            pattern_lines
-        )
+from django_crucrudile.entity import RoutedEntity
 
 
 class BaseRouterMetaclass(ABCMeta):
@@ -242,82 +150,12 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
         if index or entity.index:
             self.redirect = entity
 
-class BaseRoute(RoutedEntity):
-    name = None
-    url_part = None
-    auto_url_part = True
-
-    def __init__(self, name=None, url_part=None):
-        if name is not None:
-            self.name = name
-        elif self.name is None:
-            raise Exception(
-                "No ``name`` argument provided to __init__"
-                ", and no name defined as class attribute."
-                " (in {})".format(self)
-            )
-        if url_part is not None:
-            self.url_part = url_part
-        elif self.url_part is None:
-            if self.auto_url_part:
-                self.url_part = self.name
-            else:
-                raise Exception(
-                    "No ``url_part`` argument provided to __init__"
-                    ", and no url_part defined as class attribute."
-                    " (in {})".format(self)
-                )
-
-    def patterns(self, *args, **kwargs):
-        callback = self.get_callback()
-        url_name = self.get_url_name()
-        for url_part in self.get_url_parts():
-            yield url(
-                url_part,
-                callback,
-                url_name
-            )
-
-    @abstractmethod
-    def get_callback(self):
-        pass
-
-    def get_url_parts(self):
-        yield self.url_part
-
-    def get_url_name(self):
-        return self.name
-
-class BaseViewRoute(BaseRoute):
-    def __init__(self, view_class=None, name=None):
-        super().__init__(name)
-        if view_class is not None:
-            self.view_class = view_class
-        elif self.view_class is None:
-            raise Exception(
-                "No ``view_class`` argument provided to __init__"
-                ", and no view_class defined as class attribute (in {})"
-                "".format(self)
-            )
-
-class BaseModelRoute(BaseRoute):
-    def __init__(self, model=None,
-                 view_class=None, name=None):
-        if model is not None:
-            self.model = model
-        elif self.model is None:
-            raise Exception(
-                "No ``model`` argument provided to __init__"
-                ", and no model defined as class attribute (in {})"
-                "".format(self)
-            )
-        super().__init__(view_class, name)
-
 
 class BaseModelRouter(BaseRouter):
     """.. inheritance-diagram:: BaseModelRouter
     """
     model = None
+
     def get_auto_register_kwargs(self):
         """Add ModelRouter model to upstream auto register kwargs, so that the
         route classes in the base store will get the model as a kwarg when

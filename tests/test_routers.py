@@ -1,21 +1,11 @@
-import random
 import hashlib
-
-from functools import partial
 
 from django.test import TestCase
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
 from django.db import models
 
-from django.conf.urls import url
-
-from django_crucrudile.exceptions import (
-    NoRedirectDefinedException
-)
-
 from django_crucrudile.routers import (
-    Router, ModelRoute, ModelRouter,
-    provides
+    Router,
 )
 
 try:
