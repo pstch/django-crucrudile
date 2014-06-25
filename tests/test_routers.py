@@ -14,7 +14,7 @@ from django_crucrudile.exceptions import (
 )
 
 from django_crucrudile.routers import (
-    Router, ModelRoute, Route, ModelRouter,
+    Router, ModelRoute, ModelRouter,
     provides
 )
 
