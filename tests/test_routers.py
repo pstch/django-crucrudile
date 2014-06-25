@@ -175,7 +175,7 @@ class RouterTestCase(TestCase):
                         if redirect_url else None,
                         'router is {}'.format(router.__class__.__name__)
                         if router else None,
-                        'model is {}'.format(model)
+                        'model is {}'.format(model._meta.model_name)
                         if model else None,
                         'URL part is {}'.format(regex_pattern)
                         if regex_pattern else None,
