@@ -3,13 +3,18 @@ from itertools import chain
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
 
-from django.db import models
+from django.db.models import Model
+from django.views.generic import (
+    View,
+    ListView, DetailView,
+    CreateView, UpdateView, DeleteView
+)
 
 from django.views.generic import RedirectView
 
 
 from .base import (
-    BaseRoute, BaseModelRoute,
+    BaseRoute, BaseViewRoute, BaseModelRoute,
     BaseRouter, BaseModelRouter,
     provides
 )
@@ -17,44 +22,41 @@ from .base import (
 __all__ = ["Route", "ModelRoute", "Router", "ModelRouter", "provides"]
 
 
-class Route(BaseRoute):
+class ViewRoute(BaseViewRoute):
     """
-    .. inheritance-diagram:: Route
+    .. inheritance-diagram:: ViewRoute
     """
-    def __init__(self, name=None, url_part=None):
-        if name is not None:
-            self.name = name
-        elif self.name is None:
-            raise Exception(
-                "Route name must either be set on "
-                "class or passed to __init__"
-            )
-        if url_part is not None:
-            self.url_part = url_part
-        elif self.url_part is None:
-            raise Exception(
-                "Route url_part must either be set on "
-                "class or passed to __init__"
-            )
+    view_class = None
 
-    def patterns(self, *args, **kwargs):
-        yield url("^{}$".format(self.url_part), None, name=self.name)
+    def get_callback(self):
+        return self.view_class.as_view(
+            **self.get_view_kwargs()
+        )
 
+    def get_view_kwargs(self):
+        return {}
 
-class ModelRoute(BaseModelRoute, Route):
+class ModelRoute(BaseModelRoute, ViewRoute):
     """
     .. inheritance-diagram:: ModelRoute
     """
-    def patterns(self, *args, **kwargs):
-        yield url(
-            "^{}/{}$".format(self.model, self.name),
-            None,
-            name="{}-{}".format(self.model, self.name)
-        )
+    def get_view_kwargs(self):
+        return {'model': self.model}
 
-    def __init__(self, *args, **kwargs):
-        self.url_part = self.name
-        super().__init__(*args, **kwargs)
+    @property
+    def model_url_part(self):
+        return self.model._meta.model_name
+
+    @property
+    def model_url_name(self):
+        return self.model._meta.model_name
+
+    def get_url_parts(self):
+        yield "^{}/{}$".format(self.model_url_part, self.url_part)
+
+    def get_url_name(self):
+        return "{}-{}".format(self.model_url_name, self.name)
+
 
 
 class Router(BaseRouter):
@@ -189,23 +191,28 @@ lazy RedirectView that redirects to this URL name
 
 class ListRoute(ModelRoute):
     name = "list"
+    view_class = ListView
     index = True
 
 
 class DetailRoute(ModelRoute):
     name = "detail"
+    view_class = DetailView
 
 
 class CreateRoute(ModelRoute):
     name = "create"
+    view_class = CreateView
 
 
 class UpdateRoute(ModelRoute):
     name = "update"
+    view_class = UpdateView
 
 
 class DeleteRoute(ModelRoute):
     name = "delete"
+    view_class = DeleteView
 
 
 @provides(ListRoute)
