@@ -3,7 +3,3 @@ Reference
 
 .. toctree::
 
-   django_crucrudile.models.mixins
-   django_crucrudile.views.mixins
-   django_crucrudile.urls
-   django_crucrudile.utils

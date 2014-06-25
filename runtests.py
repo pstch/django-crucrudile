@@ -9,7 +9,7 @@ import os
 from django.core.management import execute_from_command_line
 
 def runtests():
-    argv = ['runtests.py', 'test',]
+    argv = ['runtests.py', 'test'] + sys.argv[1:]
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
     execute_from_command_line(argv)
     sys.exit(0)
