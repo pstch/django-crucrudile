@@ -1,13 +1,19 @@
 from django.views.generic import (
-    View,
     ListView, DetailView,
     CreateView, UpdateView, DeleteView
 )
 
 
 from .base import (
-    BaseRoute, BaseViewRoute, BaseModelRoute,
+    BaseViewRoute, BaseModelRoute,
 )
+
+__all__ = [
+    "ViewRoute", "ModelRoute",
+    "ListRoute", "DetailRoute",
+    "CreateRoute", "UpdateRoute",
+    "DeleteRoute"
+]
 
 
 class ViewRoute(BaseViewRoute):
@@ -23,6 +29,7 @@ class ViewRoute(BaseViewRoute):
 
     def get_view_kwargs(self):
         return {}
+
 
 class ModelRoute(BaseModelRoute, ViewRoute):
     """

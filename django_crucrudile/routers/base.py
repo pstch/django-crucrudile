@@ -1,14 +1,20 @@
+from itertools import chain
+
 from abc import ABCMeta
+
+from django.core.urlresolvers import reverse_lazy
+from django.conf.urls import url, include
+from django.views.generic import RedirectView
 
 from django_crucrudile.entity import RoutedEntity
 
 
-class BaseRouterMetaclass(ABCMeta):
-    """RouterMetaclass allows Router to use a different
+class EntityStoreMetaclass(ABCMeta):
+    """EntityStoreMetaclass allows Router to use a different
     ``cls._base_store`` store (list instance) for each class definitions
     (``cls`` instantiation)
 
-    .. inheritance-diagram:: BaseRouterMetaclass
+    .. inheritance-diagram:: EntityStoreMetaclass
     """
     _base_store = []
     """:attribute _base_store: Routed entity class store, instantiated
@@ -28,7 +34,7 @@ def provides(provided):
     return patch_router
 
 
-class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
+class EntityStore(metaclass=EntityStoreMetaclass):
     _base_store = []
     """Base class for Routers
 
@@ -38,7 +44,7 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
     The subclass implementation of ``patterns()`` should iterate over
     the entity store.
 
-    .. inheritance-diagram:: BaseRouter
+    .. inheritance-diagram:: EntityStore
     """
     @property
     def register_map(self):
@@ -138,17 +144,139 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
             # entity is not a class, test with isinstance
             return _find_entity(isinstance)
 
-    def register(self, entity, index=False):
+    def register(self, entity):
         """Register routed entity, applying mapping in ``register_map`` where
-        required, and setting as index if ``index`` or ``entity.index`` is
-        True.
+        required.
 
         """
         if self.register_map:
             entity = self.register_apply_map(entity)
         self._store.append(entity)
+        return entity
+
+
+class BaseRouter(EntityStore, RoutedEntity):
+    label = None
+    namespace = None
+    url_part = None
+    redirect = None
+
+    def __init__(self, name=None, label=None,
+                 namespace=None, url_part=None,
+                 redirect=None):
+        """Initialize Router base attributes, initialize entity store _store,
+        and instantiate entities from entity classes in _base_store
+
+        """
+        # initialize base attributes
+        if label is not None:
+            self.label = label
+        if namespace is not None:
+            self.namespace = namespace
+        if url_part is not None:
+            self.url_part = url_part
+        if redirect is not None:
+            self.redirect = redirect
+
+        # call superclass implementation of __init__
+        super().__init__()
+
+    def register(self, entity, index=False):
+        """Register routed entity, setting as index if ``index`` or ``entity.index`` is
+        True.
+
+        """
+        entity = super().register(entity)
         if index or entity.index:
             self.redirect = entity
+
+    def get_redirect_pattern(self, parents=None):
+        """Compile the URL name to this router's redirect path, and return an
+lazy RedirectView that redirects to this URL name
+
+        """
+        # this is a dirty implementation, but it works
+
+        # we'll build the URL
+        def _url_parents_ns():
+            for parent in parents:
+                if parent.namespace:
+                    yield parent.namespace + ':'
+
+        def _redirect():
+            redirect = self.redirect
+            while redirect:
+                if type(redirect) is str:
+                    yield self.redirect
+                    break
+                elif (redirect and
+                      getattr(redirect, 'namespace', None) is not None):
+                    yield redirect.namespace + ':'
+                redirect = getattr(redirect, 'redirect', None)
+
+        url_name = ''.join(
+            chain(
+                _url_parents_ns(), _redirect()
+            )
+        )
+
+        url_pattern = url(
+            r'^$',
+            RedirectView.as_view(url=reverse_lazy(url_name))
+            # TODO: Url name ?
+        )
+
+        url_pattern._redirect_url_name = url_name
+        return url_pattern
+
+    def pattern_reader(self, parents=None,
+                       entity=None, add_redirect=False):
+        """Read self._store and yield patterns.
+        `name` can be used to filter using `entity.name`.
+
+        """
+        if parents is None:
+            parents = []
+        if entity is not None:
+            for _entity in entity.get_pattern(parents + [self]):
+                yield _entity
+        else:
+            if add_redirect and self.redirect is not None:
+                yield self.get_redirect_pattern(parents)
+            for _entity in self._store:
+                # loop through store
+                # if name is given, filter by entity name
+                for _pattern in _entity.patterns(parents + [self]):
+                    yield _pattern
+
+    def patterns(self, parents=None, url_part=None,
+                 namespace=None, entity=None,
+                 add_redirect=True):
+        if url_part is None:
+            url_part = self.url_part
+
+        if namespace is None:
+            namespace = self.namespace
+
+        pattern_reader = self.pattern_reader(
+            parents,
+            entity,
+            add_redirect
+        )
+
+        # check if we need to group (by url_part and/or namespace)
+        # the patterns using include
+        pattern = url(
+            url_part or '^',
+            include(
+                list(pattern_reader),
+                namespace=namespace,
+                app_name=namespace
+            )
+        )
+        pattern.router = self
+
+        yield pattern
 
 
 class BaseModelRouter(BaseRouter):
