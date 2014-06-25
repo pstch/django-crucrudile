@@ -1,5 +1,9 @@
+from itertools import chain
+
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import url, include
+
+from django.db import models
 
 from django.views.generic import RedirectView
 
@@ -41,7 +45,17 @@ class ModelRoute(BaseModelRoute, Route):
     """
     .. inheritance-diagram:: ModelRoute
     """
-    pass
+    def patterns(self, *args, **kwargs):
+        yield url(
+            "^{}/{}$".format(self.model, self.name),
+            None,
+            name="{}-{}".format(self.model, self.name)
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.url_part = self.name
+        super().__init__(*args, **kwargs)
+
 
 class Router(BaseRouter):
     """RoutedEntity that yields an URL group containing URL patterns from
@@ -50,6 +64,13 @@ class Router(BaseRouter):
 
     .. inheritance-diagram:: Router
     """
+    @property
+    def register_map(self):
+        return {
+            models.Model: ModelRouter,
+        }
+
+
     strict_redirect = True
 
     label = None
@@ -64,6 +85,7 @@ class Router(BaseRouter):
         and instantiate entities from entity classes in _base_store
 
         """
+        # initialize base attributes
         if label is not None:
             self.label = label
         if namespace is not None:
@@ -72,31 +94,48 @@ class Router(BaseRouter):
             self.url_part = url_part
         if redirect is not None:
             self.redirect = redirect
+
+        # call superclass implementation of __init__
         super().__init__()
 
     def get_redirect_pattern(self, parents=None):
-        if self.redirect:
-            url_name = ""
+        """Compile the URL name to this router's redirect path, and return an
+lazy RedirectView that redirects to this URL name
+
+        """
+        # this is a dirty implementation, but it works
+
+        # we'll build the URL
+        def _url_parents_ns():
             for parent in parents:
                 if parent.namespace:
-                    url_name += parent.namespace + ':'
+                    yield parent.namespace + ':'
+
+        def _redirect():
             redirect = self.redirect
             while redirect:
                 if type(redirect) is str:
-                    url_name += str(self.redirect) + "HAA"
+                    yield self.redirect
                     break
                 elif (redirect and
                       getattr(redirect, 'namespace', None) is not None):
-                    url_name += redirect.namespace + ':'
+                    yield redirect.namespace + ':'
                 redirect = getattr(redirect, 'redirect', None)
 
-            url_pattern = url(
-                r'^$',
-                RedirectView.as_view(url=reverse_lazy(url_name))
-                # TODO: Url name ?
+        url_name = ''.join(
+            chain(
+                _url_parents_ns(), _redirect()
             )
-            url_pattern._redirect_url_name = url_name
-            return url_pattern
+        )
+
+        url_pattern = url(
+            r'^$',
+            RedirectView.as_view(url=reverse_lazy(url_name))
+            # TODO: Url name ?
+        )
+
+        url_pattern._redirect_url_name = url_name
+        return url_pattern
 
     def pattern_reader(self, parents=None,
                        entity=None, add_redirect=False):
@@ -148,6 +187,32 @@ class Router(BaseRouter):
         yield ret
 
 
+class ListRoute(ModelRoute):
+    name = "list"
+    index = True
+
+
+class DetailRoute(ModelRoute):
+    name = "detail"
+
+
+class CreateRoute(ModelRoute):
+    name = "create"
+
+
+class UpdateRoute(ModelRoute):
+    name = "update"
+
+
+class DeleteRoute(ModelRoute):
+    name = "delete"
+
+
+@provides(ListRoute)
+@provides(DetailRoute)
+@provides(CreateRoute)
+@provides(UpdateRoute)
+@provides(DeleteRoute)
 class ModelRouter(BaseModelRouter, Router):
     """
     .. inheritance-diagram:: ModelRouter

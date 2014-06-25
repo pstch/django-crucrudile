@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 
 class RoutedEntity(metaclass=ABCMeta):
@@ -28,17 +28,26 @@ class RoutedEntity(metaclass=ABCMeta):
         """
         pass
 
-    def get_str_tree(self):
+    def get_str_tree(self, indent_char=' ', indent_size=2):
+        """Return the representation of a Router's patterns structure"""
         def _walk_tree(patterns, level=0):
+            """Walk the tree, yielding at tuple of form :
+
+            ``(level, namespace|router_class|model, callback)``
+
+            """
             for pattern in patterns:
-                callback = None
                 try:
-                    callback = pattern.callback.__name__
-                except:
-                    pass
+                    callback = (
+                        pattern.callback.__name__
+                        if pattern.callback else None
+                    )
+                except AttributeError:
+                    callback = None
 
                 if hasattr(pattern, 'url_patterns'):
                     # Resolver
+                    # Yield a line with the resolver metadata
                     yield (
                         level,
                         pattern.namespace or
@@ -49,10 +58,14 @@ class RoutedEntity(metaclass=ABCMeta):
                         pattern.regex.pattern,
                         callback
                     )
+                    # Then, yield lines with the pattern subpatterns
+                    # (incrementing level)
                     for line_tuple in _walk_tree(
                             pattern.url_patterns, level+1):
                         yield line_tuple
                 else:
+                    # Pattern
+                    # Yield a line with the pattern metadata
                     yield (
                         level,
                         pattern.name,
@@ -61,19 +74,23 @@ class RoutedEntity(metaclass=ABCMeta):
                     )
 
         def _str_tree(lines):
+            """Iterate over the tuple returned by _walk_tree, formatting it."""
             for _level, _name, _pattern, _callback in lines:
                 yield "{} - {} @ {} {}".format(
-                    '  '*_level,
+                    indent_char*indent_size*_level,
                     _name or '',
                     _pattern or '',
                     _callback or '',
                 )
 
+        patterns = self.patterns()
+        pattern_tuples = _walk_tree(patterns)
+        pattern_lines = _str_tree(pattern_tuples)
+
         return '\n'.join(
-            _str_tree(_walk_tree(
-                self.patterns()
-            ))
+            pattern_lines
         )
+
 
 class BaseRoute(RoutedEntity):
     pass
@@ -122,13 +139,14 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
 
     .. inheritance-diagram:: BaseRouter
     """
-    register_map = None
-    """
-    :attribute register_map: Mapping of type to function that will be
-                             evaluated (with entity) when calling
-                             register. See ``register_apply_map()``
-    :type register_map: dict
-    """
+    @property
+    def register_map(self):
+        """Mapping of type to function that will be evaluated (with entity)
+        when calling register. See ``register_apply_map()``
+
+        """
+        return None
+
     def __init__(self):
         """Initialize router (create empty store and register base store)"""
         super().__init__()
@@ -165,24 +183,59 @@ class BaseRouter(RoutedEntity, metaclass=BaseRouterMetaclass):
 
     def register_apply_map(self, entity, transform_kwargs=None):
         """Apply mapping of value in ``self.register_map`` if entity is
-        instance or subclass of key
+        subclass (issubclass) or instance (isinstance) of key.
 
         """
-        if self.register_map:
-            transform_kwargs = transform_kwargs or {}
+        if transform_kwargs is None:
+            transform_kwargs = {}
+
+        def _match_entity(base, test):
+            """Match the current entity against a given base,
+            with a given test.
+
+            """
+            return base is None or test(entity, base)
+
+        def _make_entity(func):
+            """Make the new entity using the given function"""
+            return func(
+                entity,
+                **transform_kwargs
+            )
+
+        def _find_entity(test, silent=True):
+            """Find an entity matching the given test in register_map keys, then,
+            with the matching value, return _make_entity(value).
+
+            If no key matches, return original entity or fail with a
+            LookupError if silent is False.
+
+            """
             for base, func in self.register_map.items():
-                if (base is None or  # None matches all keys
-                    isinstance(entity, base) or  # is instance of key
-                    (isinstance(entity, type) and  # is class
-                     issubclass(entity, base))):  # is subclass of key
-                    return func(entity, **transform_kwargs)
+                if _match_entity(base, test):
+                    # matching key, use value to make entity
+                    return _make_entity(func)
             else:
-                raise TypeError(
-                    "A register transform mapping is defined, but could "
-                    "not find a matching mapping for {}".format(entity)
-                )
+                # not returned, so no match found
+                if silent:
+                    return entity
+                else:
+                    raise LookupError(
+                        "Could not find matching key in register mapping. "
+                        "Used test '{}', register mapping bases are '{}', "
+                        "tested against '{}'".format(
+                            test,
+                            ', '.join(self.register_map.keys()),
+                            entity
+                        )
+                    )
+
+        if isinstance(entity, type):
+            # entity is a class, test with issubclass
+            return _find_entity(issubclass)
         else:
-            return entity
+            # entity is not a class, test with isinstance
+            return _find_entity(isinstance)
 
     def register(self, entity, index=False):
         """Register routed entity, applying mapping in ``register_map`` where
@@ -201,10 +254,9 @@ class BaseModelRouter(BaseRouter):
     """.. inheritance-diagram:: BaseModelRouter
     """
 
-    def __init__(self, *args, **kwargs):
-        model = kwargs['model']
+    def __init__(self, model):
         self.model = model
-        super().__init__(args, kwargs)
+        super().__init__()
 
     def get_auto_register_kwargs(self):
         kwargs = super().get_auto_register_kwargs()
