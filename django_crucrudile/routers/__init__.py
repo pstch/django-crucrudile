@@ -69,7 +69,8 @@ class Router(BaseRouter):
     @property
     def register_map(self):
         return {
-            models.Model: ModelRouter,
+            Model: ModelRouter,
+            View: ViewRoute,
         }
 
 
