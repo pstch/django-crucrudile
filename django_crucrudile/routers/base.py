@@ -102,6 +102,14 @@ class BaseModelRoute(BaseRoute):
         super().__init__()
         self.model = model
 
+    @property
+    def model_url_part(self):
+        return self.model._meta.model_name
+
+    @property
+    def model_url_name(self):
+        return self.model._meta.model_name
+
 
 class BaseRouterMetaclass(ABCMeta):
     """RouterMetaclass allows Router to use a different
