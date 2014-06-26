@@ -50,7 +50,7 @@ class Router(EntityStore, Entity):
                          entities.
     :type redirect: Router:
     """
-    def __init__(self, *args,
+    def __init__(self,
                  label=None, namespace=None,
                  url_part=None, redirect=None,
                  **kwargs):
@@ -68,7 +68,7 @@ class Router(EntityStore, Entity):
             self.redirect = redirect
 
         # call superclass implementation of __init__
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_register_map(self):
         """Basic register map, passes models to a ModelRouter, Django views to
@@ -217,7 +217,7 @@ class BaseModelRouter(Router):
         kwargs['model'] = self.model
         return kwargs
 
-    def __init__(self, *args, model=None, **kwargs):
+    def __init__(self, model=None, **kwargs):
         """Check for model in kwargs, if None and not defined at class-level,
         fail.
 
@@ -236,7 +236,7 @@ class BaseModelRouter(Router):
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_register_map(self):
         """Override to append mapping of SingleObjectMixin and
