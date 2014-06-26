@@ -1,9 +1,9 @@
 from abc import ABCMeta
 
 
-def provides(provided):
+def provides(provided, **kwargs):
     def patch_router(router):
-        router.register_class(provided)
+        router.register_class(provided, **kwargs)
         return router
     return patch_router
 
@@ -133,8 +133,8 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         register_base_store()
 
         """
-        if cls.register_class_map:
-            register_class_map = cls.get_register_class_map()
+        register_class_map = cls.get_register_class_map()
+        if register_class_map:
             register_kwargs = cls.get_register_class_map_kwargs()
             register_kwargs.update(kwargs)
 
@@ -143,7 +143,7 @@ class EntityStore(metaclass=EntityStoreMetaclass):
                 register_class_map,
                 register_kwargs
             )
-        self._base_store.append(cls)
+        cls._base_store.append(register_cls)
 
     def register(self, entity):
         """Register routed entity, applying mapping in ``register_map`` where

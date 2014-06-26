@@ -5,14 +5,17 @@ from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
 from django.db.models import Model
-from django.views.generic import View, RedirectView
+from django.views.generic import (
+    View, RedirectView,
+    ListView, DetailView,
+    CreateView, UpdateView, DeleteView
+)
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 
 from django_crucrudile.routes import ViewRoute, ModelViewRoute
 from django_crucrudile.entity import Entity
 from django_crucrudile.entity.store import EntityStore, provides
-
 
 __all__ = ["Router", "ModelRouter", "provides"]
 
@@ -162,7 +165,7 @@ lazy RedirectView that redirects to this URL name
         yield pattern
 
 
-class ModelRouter(Router):
+class BaseModelRouter(Router):
     """
     .. inheritance-diagram:: ModelRouter
 
@@ -211,11 +214,19 @@ MultipleObjectMixin to ModelViewRoute.
         })
         return mapping
 
-    @property
-    def get_register_class_map(self):
-        mapping = super().register_class_map()
+    @classmethod
+    def get_register_class_map(cls):
+        mapping = super().get_register_class_map()
         mapping.update({
             (SingleObjectMixin, MultipleObjectMixin):
             ModelViewRoute.make_for_view
         })
         return mapping
+
+@provides(ListView, index=True)
+@provides(DetailView)
+@provides(CreateView)
+@provides(UpdateView)
+@provides(DeleteView)
+class ModelRouter(BaseModelRouter):
+    pass

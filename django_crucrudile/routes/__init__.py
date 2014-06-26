@@ -29,8 +29,9 @@ class Route(Entity):
             else:
                 raise Exception(
                     "No ``url_part`` argument provided to __init__"
-                    ", and no url_part defined as class attribute."
-                    " (in {})".format(self)
+                    ", no url_part defined as class attribute."
+                    " (in {}), and auto_url_part is set to False."
+                    "".format(self)
                 )
         super().__init__(*args, **kwargs)
 
@@ -132,16 +133,16 @@ class ModelRoute(Route):
 class ModelViewRoute(ViewRoute, ModelRoute):
     @classmethod
     def make_for_view(cls, view_class, **kwargs):
-        def make_class_name():
-            name = view_class.__name__
-            if name.endswith('View'):
-                name = name[:-4]
-            return "{}Route".format(name)
+        view_name = view_class.__name__
+        if view_name.endswith('View'):
+            view_name = view_name[:-4]
+        route_name = "{}Route".format(view_name)
 
         kwargs['view_class'] = view_class
+        kwargs['name'] = view_name.lower()
 
         return type(
-            make_class_name(),
+            route_name,
             (cls,),
             kwargs
         )
