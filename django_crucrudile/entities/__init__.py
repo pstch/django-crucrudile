@@ -4,9 +4,10 @@ from abc import ABCMeta, abstractmethod
 class Entity(metaclass=ABCMeta):
     """Abstract class for routed entities
 
-    Subclasses should define the abstract :func:`patterns` method, that should
-    return a generator yielding Django URL objects (``RegexURLPattern`` or
-    ``RegexURLResolver``).
+    .. warning:: Abstract class ! Subclasses should define the
+                 abstract :func:`patterns` method, that should return
+                 a generator yielding Django URL objects
+                 (``RegexURLPattern`` or ``RegexURLResolver``).
 
 
     .. inheritance-diagram:: Entity
@@ -23,9 +24,12 @@ class Entity(metaclass=ABCMeta):
 
     @abstractmethod
     def patterns(self, parents=None, add_redirect=True):
-        """This abstract method should be defined by subclasses, as a
-        generator that yields Django URL objects (``RegexURLPattern`` or
-        ``RegexURLResolver``)
+        """Yield URL patterns
+
+        .. warning:: This abstract method should be defined by
+                     subclasses, and should return a generator
+                     yielding Django URL objects (``RegexURLPattern``
+                     or ``RegexURLResolver``)
 
         """
         pass
