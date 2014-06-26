@@ -63,8 +63,8 @@ class RouterTestCase(TestCase):
         self.base_router.base = True
 
         self.documents_router = Router(
-            namespace="documents", label="documents",
-            name="documents", url_part="^documents/"
+            namespace="documents",
+            url_part="^documents/"
         )
         add_model_routers(
             self.documents_router,
@@ -80,8 +80,8 @@ class RouterTestCase(TestCase):
         )
 
         self.entities_router = Router(
-            namespace="entities", label="entities",
-            name="entities", url_part="^entities/"
+            namespace="entities",
+            url_part="^entities/"
         )
 
         add_model_routers(
@@ -217,6 +217,7 @@ class RouterTestCase(TestCase):
 
         tree_hash = _hash(sorted_tree)
 
+        print(tree)
         # compare to reference hash
         self.assertEqual(
             tree_hash,

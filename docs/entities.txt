@@ -4,29 +4,36 @@ Entities
 .. graphviz::
 
    digraph foo {
-      "entity" -> "base route";
+      "Entity" -> "Route";
 
-      "base route" -> "base view route"
-      "base route" -> "base model route"
-      "base route" -> "route"
-      "route" -> "view route"
-      "route" -> "model route"
-      "base view route" -> "view route"
-      "base model route" -> "model route"
+      "Route" -> "Callback route"
+      "Route" -> "View route"
+      "Route" -> "Model route"
 
-      "model" -> "base model route"
+      "Model" -> "Model route"
 
-      "view route" -> "model view route"
-      "model route" -> "model view route"
+      "View route" -> "Model view route"
+      "Model route" -> "Model view route"
 
-      "store" -> "base router";
-      "entity" -> "base router";
+      "EntityStore" -> "Router";
+      "Entity" -> "Router";
 
-      "base router" -> "base model router"
+      "Router" -> "Model router"
 
-      "base router" -> "model router"
-      "base model router" -> "model router"
-      "base router" -> "router"
+      "Model" -> "Model router"
+   }
 
-      "model" -> "base model router"
+.. graphviz::
+
+   digraph foo2 {
+      "Base router" -> "Documents router"
+      "Documents router" -> "Document model"
+      "Documents router" -> "Phase model"
+      "Documents router" -> "Group model"
+      "Base router" -> "Entities router"
+      "Entities router" -> "Interface model"
+      "Entities router" -> "Entity model"
+      "Base router" -> "Comment model"
+      "Base router" -> "Task model"
+      "Base router" -> "Dashboard view"
    }
