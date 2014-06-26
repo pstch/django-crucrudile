@@ -10,7 +10,7 @@ class Route(Entity):
     url_part = None
     auto_url_part = True
 
-    def __init__(self, *args,
+    def __init__(self,
                  name=None, url_part=None,
                  **kwargs):
         if name is not None:
@@ -33,7 +33,7 @@ class Route(Entity):
                     " (in {}), and auto_url_part is set to False."
                     "".format(self)
                 )
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def patterns(self, *args, **kwargs):
         callback = self.get_callback()
@@ -59,7 +59,7 @@ class Route(Entity):
 class CallbackRoute(Route):
     callback = None
 
-    def __init__(self, *args,
+    def __init__(self,
                  callback=None,
                  **kwargs):
         if callback is not None:
@@ -70,7 +70,7 @@ class CallbackRoute(Route):
                     ", and no callback defined as class attribute."
                     " (in {})".format(self)
                 )
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_callback(self):
         return self.callback
@@ -79,7 +79,7 @@ class CallbackRoute(Route):
 class ViewRoute(Route):
     view_class = None
 
-    def __init__(self, *args,
+    def __init__(self,
                  view_class=None,
                  **kwargs):
         if view_class is not None:
@@ -90,7 +90,7 @@ class ViewRoute(Route):
                 ", and no view_class defined as class attribute (in {})"
                 "".format(self)
             )
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_callback(self):
         return self.view_class.as_view(
@@ -102,7 +102,7 @@ class ViewRoute(Route):
 
 
 class ModelRoute(Route):
-    def __init__(self, *args,
+    def __init__(self,
                  model=None,
                  **kwargs):
         if model is not None:
@@ -113,7 +113,7 @@ class ModelRoute(Route):
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     @property
     def model_url_part(self):

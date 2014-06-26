@@ -2,10 +2,13 @@ from abc import ABCMeta
 
 
 def provides(provided, **kwargs):
-    def patch_router(router):
+    """Return a decorator that uses register_class to register a class in
+the base store"""
+    def register_class(router):
+        """Register the provided class"""
         router.register_class(provided, **kwargs)
         return router
-    return patch_router
+    return register_class
 
 
 class EntityStoreMetaclass(ABCMeta):

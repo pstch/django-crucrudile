@@ -55,10 +55,6 @@ class TestTaskModel(models.Model):
 class RouterTestCase(TestCase):
     """#TODO"""
     def setUp(self):
-        def add_model_routers(base_router, models):
-            for model, index in models.items():
-                base_router.register(model, index=index)
-
         self.base_router = Router()
         self.base_router.base = True
 
@@ -66,14 +62,10 @@ class RouterTestCase(TestCase):
             namespace="documents",
             url_part="^documents/"
         )
-        add_model_routers(
-            self.documents_router,
-            {
-                TestDocumentModel: True,
-                TestGroupModel: False,
-                TestPhaseModel: False
-            }
-        )
+        self.documents_router.register(TestDocumentModel, index=True)
+        self.documents_router.register(TestGroupModel)
+        self.documents_router.register(TestPhaseModel)
+
         self.base_router.register(
             self.documents_router,
             index=True
@@ -84,24 +76,15 @@ class RouterTestCase(TestCase):
             url_part="^entities/"
         )
 
-        add_model_routers(
-            self.entities_router,
-            {
-                TestEntityModel: True,
-                TestInterfaceModel: False
-            }
-        )
+        self.entities_router.register(TestEntityModel, index=True)
+        self.entities_router.register(TestInterfaceModel)
+
         self.base_router.register(
             self.entities_router
         )
 
-        add_model_routers(
-            self.base_router,
-            {
-                TestCommentModel: False,
-                TestTaskModel: False
-            }
-        )
+        self.base_router.register(TestCommentModel)
+        self.base_router.register(TestTaskModel)
 
     def _test_stores(self):
         self.assertEqual(
@@ -217,7 +200,6 @@ class RouterTestCase(TestCase):
 
         tree_hash = _hash(sorted_tree)
 
-        print(tree)
         # compare to reference hash
         self.assertEqual(
             tree_hash,

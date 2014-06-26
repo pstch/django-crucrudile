@@ -1,4 +1,3 @@
-from functools import partial
 from itertools import chain
 
 from django.conf.urls import url, include
@@ -17,7 +16,10 @@ from django_crucrudile.routes import ViewRoute, ModelViewRoute
 from django_crucrudile.entity import Entity
 from django_crucrudile.entity.store import EntityStore, provides
 
-__all__ = ["Router", "ModelRouter", "provides"]
+__all__ = [
+    "Router", "BaseModelRouter",
+    "ModelRouter"
+]
 
 
 class Router(EntityStore, Entity):
@@ -28,15 +30,31 @@ class Router(EntityStore, Entity):
     .. inheritance-diagram:: Router
     """
     namespace = None
+    """
+    :attribute namespace: If defined, group this router's patterns in
+                          an URL namespace
+    :type namespace: str
+    """
     url_part = None
+    """
+    :attribute url_part: If defined, add to router URL (use when as
+                         regex when building URL group)
+    :type url_part: str
+    """
     redirect = None
-
-    def __init__(self, *args,
+    """
+    :attribute redirect: If defined, Router will add a redirect view
+                         to the returned patterns. To get the redirect
+                         target, ``get_redirect_pattern()`` will
+                         follow ``redirect`` attributes in the stored
+                         entities.
+    :type redirect: Router:
+    """
+    def __init__(self,
                  label=None, namespace=None,
                  url_part=None, redirect=None,
                  **kwargs):
-        """Initialize Router base attributes, initialize entity store _store,
-        and instantiate entities from entity classes in _base_store
+        """Initialize Router base attributes
 
         """
         # initialize base attributes
@@ -50,12 +68,11 @@ class Router(EntityStore, Entity):
             self.redirect = redirect
 
         # call superclass implementation of __init__
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_register_map(self):
         """Basic register map, passes models to a ModelRouter, Django views to
-a ViewRoute, SingleObjectMixin and MultipleObjectMixin to a
-ModelViewRoute.
+        a ViewRoute.
 
         """
         mapping = super().get_register_map()
@@ -138,6 +155,11 @@ lazy RedirectView that redirects to this URL name
     def patterns(self, parents=None, url_part=None,
                  namespace=None, entity=None,
                  add_redirect=True):
+        """Read self._store and yield a pattern of an URL group (with url part
+        and namespace) containing entities's patterns (obtained using
+        ``pattern_reader``), also yield redirect patterns where defined.
+
+        """
         if url_part is None:
             url_part = self.url_part
 
@@ -166,13 +188,21 @@ lazy RedirectView that redirects to this URL name
 
 
 class BaseModelRouter(Router):
-    """
-    .. inheritance-diagram:: ModelRouter
+    """ModelRouter with no views. Give ``model`` kwarg where needed, ask
+    it in ``__init__``, and map SingleObjectMixin and
+    MultipleObjectMixin to ModelViewRoute in register functions.
+
+    .. inheritance-diagram:: BaseModelRouter
 
     """
     model = None
-
+    """
+    :attribute model: Model used when building router URL name and URL
+                      part, and passed to registered routes.
+    :type model: model
+    """
     def register_map_kwargs(self):
+        """Give model as kwarg when applying register_map. """
         kwargs = super().get_register_map_kwargs()
         kwargs['model'] = self.model
         return kwargs
@@ -187,19 +217,26 @@ class BaseModelRouter(Router):
         kwargs['model'] = self.model
         return kwargs
 
-    def __init__(self, model=None):
+    def __init__(self, model=None, **kwargs):
+        """Check for model in kwargs, if None and not defined at class-level,
+        fail.
+
+        :raises ValueError: if model not passed an argument and not
+                            defined on class
+
+        """
         # we need to set self.model before calling the superclass
         # __init__, because it will call
         # self.get_auto_register_kwargs() which needs self.model
         if model is not None:
             self.model = model
         elif self.model is None:
-            raise Exception(
+            raise ValueError(
                 "No ``model`` argument provided to __init__"
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
-        super().__init__()
+        super().__init__(**kwargs)
 
     def get_register_map(self):
         """Override to append mapping of SingleObjectMixin and
@@ -216,6 +253,22 @@ MultipleObjectMixin to ModelViewRoute.
 
     @classmethod
     def get_register_class_map(cls):
+        """Override to append mapping of ``SingleObjectMixin`` and
+        ``MultipleObjectMixin`` to ``ModelViewRoute.make_for_view`` .
+
+        We use ``make_for_view`` because we are here registering the
+        class map (base store), whose values are themselves classes
+        (Entity classes), that will be called the get the registered
+        entity instance.
+
+        ``make_for_view`` creates a new ModelViewRoute class, and uses
+        its argument as the ``view_class`` class attribute.
+
+        (if we returned directly ``ModelViewRoute`` in the mapping,
+        the registered entity **class** would be an entity
+        **instance**).
+
+        """
         mapping = super().get_register_class_map()
         mapping.update({
             (SingleObjectMixin, MultipleObjectMixin):
@@ -223,10 +276,14 @@ MultipleObjectMixin to ModelViewRoute.
         })
         return mapping
 
+
 @provides(ListView, index=True)
 @provides(DetailView)
 @provides(CreateView)
 @provides(UpdateView)
 @provides(DeleteView)
 class ModelRouter(BaseModelRouter):
-    pass
+    """Routes Django generic views with the model given in instantiation.
+
+    .. inheritance-diagram:: ModelRouter
+    """
