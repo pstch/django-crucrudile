@@ -11,3 +11,7 @@ django-crucrudile
    reference
 
 * :ref:`modindex`
+
+
+.. inheritance-diagram:: django_crucrudile.entity.Entity django_crucrudile.routers.ModelRouter django_crucrudile.routes.ModelViewRoute
+   :parts: 1
