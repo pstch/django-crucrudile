@@ -12,8 +12,6 @@ Entities
       "Route" -> "View route"
       "Route" -> "Model route"
 
-      "Model" -> "Model route"
-
       "View route" -> "Model view route"
       "Model route" -> "Model view route"
 
@@ -22,7 +20,6 @@ Entities
 
       "Router" -> "Model router"
 
-      "Model" -> "Base model router"
       "Base model router" -> "Model router"
    }
 
