@@ -1,4 +1,3 @@
-from functools import partial
 from itertools import chain
 
 from django.conf.urls import url, include
@@ -17,7 +16,10 @@ from django_crucrudile.routes import ViewRoute, ModelViewRoute
 from django_crucrudile.entity import Entity
 from django_crucrudile.entity.store import EntityStore, provides
 
-__all__ = ["Router", "ModelRouter", "provides"]
+__all__ = [
+    "Router", "BaseModelRouter",
+    "ModelRouter"
+]
 
 
 class Router(EntityStore, Entity):
