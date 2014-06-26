@@ -200,7 +200,6 @@ class RouterTestCase(TestCase):
 
         tree_hash = _hash(sorted_tree)
 
-        print(tree)
         # compare to reference hash
         self.assertEqual(
             tree_hash,
