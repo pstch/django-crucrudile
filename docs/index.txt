@@ -2,6 +2,7 @@ django-crucrudile
 =================
 
 .. toctree::
+   :titlesonly:
 
    django_crucrudile
    installation

@@ -1,18 +1,6 @@
 django_crucrudile.routes package
 ================================
 
-Submodules
-----------
-
-django_crucrudile.routes.base module
-------------------------------------
-
-.. automodule:: django_crucrudile.routes.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 
