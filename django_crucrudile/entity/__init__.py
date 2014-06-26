@@ -4,12 +4,12 @@ from abc import ABCMeta, abstractmethod
 class Entity(metaclass=ABCMeta):
     """Abstract class for routed entities
 
-    Subclasses should define the ``patterns()`` method, that should
-    return a generator yielding Django URL objects (RegexURLPattern or
-    RegexURLResolver).
+    Subclasses should define the abstract :func:`patterns` method, that should
+    return a generator yielding Django URL objects (``RegexURLPattern`` or
+    ``RegexURLResolver``).
 
 
-    .. inheritance-diagram:: RoutedEntity
+    .. inheritance-diagram:: Entity
     """
     index = False
     """
@@ -22,18 +22,16 @@ class Entity(metaclass=ABCMeta):
             self.index = index
 
     @abstractmethod
-    def patterns(self, parents=None, url_part=None,
-                 namespace=None, name=None,
-                 entity=None, add_redirect=True):
+    def patterns(self, parents=None, add_redirect=True):
         """This abstract method should be defined by subclasses, as a
-        generator that yields Django URL objects (RegexURLPattern or
-        RegexURLResolver)
+        generator that yields Django URL objects (``RegexURLPattern`` or
+        ``RegexURLResolver``)
 
         """
         pass
 
     def get_str_tree(self, indent_char=' ', indent_size=2):
-        """Return the representation of a Router's patterns structure"""
+        """Return the representation of a entity patterns structure"""
         def _walk_tree(patterns, level=0):
             """Walk the tree, yielding at tuple of form :
 

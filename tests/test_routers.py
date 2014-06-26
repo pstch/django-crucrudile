@@ -203,5 +203,5 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "04f09956418c7a4d796ec8452849eeb48d7c77fe9e8ab853eef2eed191a8f6ac"
+            "e063a1ffa2c3e6a8db25ade8a17523aa951c07dd09d59931ae454771a5794dd5"
         )

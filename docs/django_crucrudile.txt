@@ -10,18 +10,6 @@ Subpackages
     django_crucrudile.routers
     django_crucrudile.routes
 
-Submodules
-----------
-
-django_crucrudile.exceptions module
------------------------------------
-
-.. automodule:: django_crucrudile.exceptions
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 

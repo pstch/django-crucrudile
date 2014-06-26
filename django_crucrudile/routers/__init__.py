@@ -43,23 +43,25 @@ class Router(EntityStore, Entity):
     """
     redirect = None
     """
-    :attribute redirect: If defined, Router will add a redirect view
+    :attribute redirect: If defined, :class:`Router` will add a redirect view
                          to the returned patterns. To get the redirect
-                         target, ``get_redirect_pattern()`` will
+                         target, :func:`get_redirect_pattern` will
                          follow ``redirect`` attributes in the stored
                          entities.
-    :type redirect: Router:
+    :type redirect: :class:`django_crucrudile.entity.Entity`
     """
     def __init__(self,
-                 label=None, namespace=None,
-                 url_part=None, redirect=None,
+                 namespace=None,
+                 url_part=None,
+                 redirect=None,
                  **kwargs):
         """Initialize Router base attributes
 
+        :argument namespace: see :attr:`url_part`
+        :argument url_part: see :attr:`redirect`
+        :argument redirect: see :attr:`redirect`
         """
         # initialize base attributes
-        if label is not None:
-            self.label = label
         if namespace is not None:
             self.namespace = namespace
         if url_part is not None:
@@ -71,8 +73,9 @@ class Router(EntityStore, Entity):
         super().__init__(**kwargs)
 
     def get_register_map(self):
-        """Basic register map, passes models to a ModelRouter, Django views to
-        a ViewRoute.
+        """Basic register map, passes models to a
+        :class:`django_crucrudile.routers.ModelRouter`, Django views
+        to a :class:`django_crucrudile.routes.ViewRoute`
 
         """
         mapping = super().get_register_map()
@@ -85,18 +88,26 @@ class Router(EntityStore, Entity):
     def register(self, entity, index=False):
         """Register routed entity
 
-        Override to allow setting as index when
-        ``index`` or ``entity.index`` is True.
+        Set as index when ``entity``
+        or :attr:`django_crucrudile.entity.Entity.index`` is True.
 
+        :argument entity: Entity to register
+        :type entity: :class:`django_crucrudile.entity.Entity`
+        :argument index: Register as index
+        :type index: bool
         """
         entity = super().register(entity)
         if index or entity.index:
             self.redirect = entity
 
     def get_redirect_pattern(self, parents=None):
-        """Compile the URL name to this router's redirect path, and return an
-lazy RedirectView that redirects to this URL name
+        """Compile the URL name to this router's redirect path, and return a
+lazy ``RedirectView`` that redirects to this URL name
 
+        :argument parents: The list of parent routers will be used to
+                           get the current namespaces when building
+                           the redirect URL name
+        :type parents: list of :class:`django_crucrudile.routers.Router`
         """
         # this is a dirty implementation, but it works
 
@@ -132,52 +143,50 @@ lazy RedirectView that redirects to this URL name
         url_pattern._redirect_url_name = url_name
         return url_pattern
 
-    def pattern_reader(self, parents=None,
-                       entity=None, add_redirect=False):
-        """Read self._store and yield patterns.
-        `name` can be used to filter using `entity.name`.
+    def patterns(self, parents=None, add_redirect=True):
+        """Read :attr:`_store` and yield a pattern of an URL group (with url part
+        and namespace) containing entities's patterns (obtained from
+        the entity store), also yield redirect patterns where defined.
 
+        :argument parents: We need :func:`patterns` to pass
+                           ``parents`` recursively, because it
+                           may be needed to make redirect URL patterns
+        :type parents: list of :class:`django_crucrudile.routers.Router`
+        :argument add_redirect: Add a redirect pattern if there is one
+                                defined
+        :type add_redirect: bool
         """
+        # get url_part and namespace (needed when building
+        # RegexURLResolver)
+        url_part = self.url_part
+        namespace = self.namespace
+
+        # initialize default arguments
         if parents is None:
             parents = []
-        if entity is not None:
-            for _entity in entity.get_pattern(parents + [self]):
-                yield _entity
-        else:
-            if add_redirect and self.redirect is not None:
-                yield self.get_redirect_pattern(parents)
-            for _entity in self._store:
-                # loop through store
-                # if name is given, filter by entity name
-                for _pattern in _entity.patterns(parents + [self]):
-                    yield _pattern
 
-    def patterns(self, parents=None, url_part=None,
-                 namespace=None, entity=None,
-                 add_redirect=True):
-        """Read self._store and yield a pattern of an URL group (with url part
-        and namespace) containing entities's patterns (obtained using
-        ``pattern_reader``), also yield redirect patterns where defined.
+        # yield redirect pattern if there is one defined (and
+        # add_redirect is True)
+        if add_redirect and self.redirect is not None:
+            yield self.get_redirect_pattern(parents)
 
-        """
-        if url_part is None:
-            url_part = self.url_part
+        # define a pattern reader generator, yielding patterns from the
+        # store entities
+        def _pattern_reader():
+            for entity in self._store:
+                for pattern in entity.patterns(
+                    parents + [self], add_redirect
+                ):
+                    yield pattern
 
-        if namespace is None:
-            namespace = self.namespace
+        # consume the generator
+        pattern_list = list(_pattern_reader())
 
-        pattern_reader = self.pattern_reader(
-            parents,
-            entity,
-            add_redirect
-        )
-
-        # check if we need to group (by url_part and/or namespace)
-        # the patterns using include
+        # make a RegexURLResolver
         pattern = url(
             url_part or '^',
             include(
-                list(pattern_reader),
+                pattern_list,
                 namespace=namespace,
                 app_name=namespace
             )
@@ -188,9 +197,11 @@ lazy RedirectView that redirects to this URL name
 
 
 class BaseModelRouter(Router):
-    """ModelRouter with no views. Give ``model`` kwarg where needed, ask
-    it in ``__init__``, and map SingleObjectMixin and
-    MultipleObjectMixin to ModelViewRoute in register functions.
+    """ModelRouter with no views. Give :attr:`model` kwarg where needed,
+    ask it in :func:`__init__`, and map ``SingleObjectMixin`` and
+    ``MultipleObjectMixin`` to
+    :class:`django_crucrudile.routes.ModelViewRoute` in register
+    functions.
 
     .. inheritance-diagram:: BaseModelRouter
 
@@ -198,17 +209,19 @@ class BaseModelRouter(Router):
     model = None
     """
     :attribute model: Model used when building router URL name and URL
-                      part, and passed to registered routes.
+                      part, and passed to registered routes. Must be
+                      defined at class-level or passed to
+                      :func:`__init__`.
     :type model: model
     """
     def register_map_kwargs(self):
-        """Give model as kwarg when applying register_map. """
+        """Give :attr:`model` as kwarg when applying register map. """
         kwargs = super().get_register_map_kwargs()
         kwargs['model'] = self.model
         return kwargs
 
     def get_base_store_kwargs(self):
-        """Add ModelRouter model to upstream auto register kwargs, so that the
+        """Add :attr:`model` to upstream auto register kwargs, so that the
         route classes in the base store will get the model as a kwarg when
         being instantiated.
 
@@ -218,8 +231,11 @@ class BaseModelRouter(Router):
         return kwargs
 
     def __init__(self, model=None, **kwargs):
-        """Check for model in kwargs, if None and not defined at class-level,
-        fail.
+        """Check for :argument:`model` in kwargs, if None and not defined at
+        class-level, fail.
+
+        :argument model: see :attr:`model`
+        :type model: :class:`django.db.Models`
 
         :raises ValueError: if model not passed an argument and not
                             defined on class
@@ -239,8 +255,9 @@ class BaseModelRouter(Router):
         super().__init__(**kwargs)
 
     def get_register_map(self):
-        """Override to append mapping of SingleObjectMixin and
-MultipleObjectMixin to ModelViewRoute.
+        """Override to append mapping of ``SingleObjectMixin`` and
+        ``MultipleObjectMixin`` to
+        :class:`django_crucrudile.routes.ModelViewRoute`.
 
         """
         mapping = super().get_register_map()
@@ -254,18 +271,25 @@ MultipleObjectMixin to ModelViewRoute.
     @classmethod
     def get_register_class_map(cls):
         """Override to append mapping of ``SingleObjectMixin`` and
-        ``MultipleObjectMixin`` to ``ModelViewRoute.make_for_view`` .
+        ``MultipleObjectMixin`` to
+        :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
+        .
 
-        We use ``make_for_view`` because we are here registering the
-        class map (base store), whose values are themselves classes
-        (Entity classes), that will be called the get the registered
-        entity instance.
+        We use
+        :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
+        because we are here registering the class map (base store),
+        whose values are themselves classes (Entity classes), that
+        will be called the get the registered entity instance.
 
-        ``make_for_view`` creates a new ModelViewRoute class, and uses
-        its argument as the ``view_class`` class attribute.
+        :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
+        creates a new :class:`django_crucrudile.routes.ModelViewRoute`
+        class, and uses its argument as the
+        :attr:`django_crucrudile.routes.ViewRoute.view_class` class
+        attribute.
 
-        (if we returned directly ``ModelViewRoute`` in the mapping,
-        the registered entity **class** would be an entity
+        (if we returned directly a
+        :class:`django_crucrudile.routes.ModelViewRoute` in the
+        mapping, the registered entity "class" would be an entity
         **instance**).
 
         """
