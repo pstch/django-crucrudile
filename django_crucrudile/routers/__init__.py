@@ -180,7 +180,7 @@ lazy ``RedirectView`` that redirects to this URL name
                     yield pattern
 
         # consume the generator
-        pattern_list = list(_pattern_reader)
+        pattern_list = list(_pattern_reader())
 
         # make a RegexURLResolver
         pattern = url(
