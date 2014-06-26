@@ -1,0 +1,32 @@
+Entities
+========
+
+.. graphviz::
+
+   digraph foo {
+      "entity" -> "base route";
+
+      "base route" -> "base view route"
+      "base route" -> "base model route"
+      "base route" -> "route"
+      "route" -> "view route"
+      "route" -> "model route"
+      "base view route" -> "view route"
+      "base model route" -> "model route"
+
+      "model" -> "base model route"
+
+      "view route" -> "model view route"
+      "model route" -> "model view route"
+
+      "store" -> "base router";
+      "entity" -> "base router";
+
+      "base router" -> "base model router"
+
+      "base router" -> "model router"
+      "base model router" -> "model router"
+      "base router" -> "router"
+
+      "model" -> "base model router"
+   }
