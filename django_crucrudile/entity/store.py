@@ -2,18 +2,18 @@ from abc import ABCMeta
 
 
 def provides(provided, **kwargs):
-    """Return a decorator that uses register_class to register a class in
+    """Return a decorator that uses :func:`EntityStore.register_class` to register a class in
 the base store"""
-    def register_class(router):
+    def register_class_to_router(router):
         """Register the provided class"""
         router.register_class(provided, **kwargs)
         return router
-    return register_class
+    return register_class_to_router
 
 
 class EntityStoreMetaclass(ABCMeta):
-    """EntityStoreMetaclass allows Router to use a different
-    ``cls._base_store`` store (list instance) for each class definitions
+    """EntityStoreMetaclass allows :class:`EntityStore` to use a different
+    :attr:`_base_store` store (list instance) for each class definitions
     (``cls`` instantiation)
 
     .. inheritance-diagram:: EntityStoreMetaclass
@@ -24,25 +24,31 @@ class EntityStoreMetaclass(ABCMeta):
     :type _base_store: list
     """
     def __init__(cls, name, bases, attrs):
-        """Replace ``cls._base_store`` by a copy of itself"""
+        """Replace :attr:`_base_store` by a copy of itself"""
         super().__init__(name, bases, attrs)
         cls._base_store = list(cls._base_store)
 
 
 class EntityStore(metaclass=EntityStoreMetaclass):
-    _base_store = []
-    """Provides an entity store, and a ``register()`` method that
+    """Provides an entity store, and a :func:`register` method that
     registers entities in the entity store.
 
-    The subclass implementation of ``patterns()`` should iterate over
+    The subclass implementation of :func:`patterns` should iterate over
     the entity store.
 
     .. inheritance-diagram:: EntityStore
     """
+    _base_store = []
+    """
+    :attribute _base_store: Empty store, mutable list, but will be
+                            copied for each type instance by
+                            :class:`EntityStoreMetaclass`
+    :type _base_store: list
+    """
     def get_register_map(self):
         """Mapping of type to function that will be evaluated (with entity)
-        when calling register. See ``register()`` and
-        ``register_apply_map()``.
+        when calling register. See :func:`register` and
+        :func:`register_apply_map`
 
         """
         return {}
@@ -50,8 +56,8 @@ class EntityStore(metaclass=EntityStoreMetaclass):
     @classmethod
     def get_register_class_map(self):
         """Mapping of type to function that will be evaluated (with entity)
-        when calling register. See ``register_class()`` and
-        ``register_apply_map()``
+        when calling register. See :func:`register_class` and
+        :func:`register_apply_map`
 
         """
         return {}
@@ -64,8 +70,8 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
     @staticmethod
     def register_apply_map(entity, mapping, transform_kwargs=None):
-        """Apply mapping of value in ``self.register_map`` if entity is
-        subclass (issubclass) or instance (isinstance) of key.
+        """Apply mapping of value in ``mapping`` if ``entity`` is
+        subclass (``issubclass``) or instance (``isinstance``) of key
 
         """
         if transform_kwargs is None:
@@ -73,7 +79,7 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
         def _match_entity(base, test):
             """Match the current entity against a given base,
-            with a given test.
+            with a given test
 
             """
             if base is None:
@@ -95,10 +101,10 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
         def _find_entity(test, silent=True):
             """Find an entity matching the given test in register_map keys, then,
-            with the matching value, return _make_entity(value).
+            with the matching value, return :func:`_make_entity(value)`.
 
             If no key matches, return original entity or fail with a
-            LookupError if silent is False.
+            ``LookupError`` if silent is False.
 
             """
             for base, func in mapping.items():
@@ -129,11 +135,11 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
     @classmethod
     def register_class(cls, register_cls, **kwargs):
-        """Add a route class to _base_store, appling mappying
-        ``register_class_map`` where required. This route class will
-        be instantiated (with kwargs from get_auto_register_kwargs())
+        """Add a route class to :attr:`_base_store`, appling mapping from
+        :func:`get_register_class_map` where required. This route class will
+        be instantiated (with kwargs from :func:`get_base_store_kwargs`)
         when the Router is itself instiated, using
-        register_base_store()
+        :func:`register_base_store`.
 
         """
         register_class_map = cls.get_register_class_map()
@@ -149,8 +155,8 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         cls._base_store.append(register_cls)
 
     def register(self, entity):
-        """Register routed entity, applying mapping in ``register_map`` where
-        required.
+        """Register routed entity, applying mapping from :func:`get_register_map` where
+        required
 
         """
         register_map = self.get_register_map()
@@ -166,21 +172,23 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
     @classmethod
     def get_register_class_map_kwargs(cls):
+        """Arguments passed when applying register map, in :func:`register_class`"""
         return {}
 
     def get_register_map_kwargs(self):
+        """Arguments passed when applying register map, in :func:`register`"""
         return self.get_register_class_map_kwargs()
 
     def get_base_store_kwargs(self):
         """Arguments passed when instantiating entity classes in
-        _base_store
+        :attr:`_base_store`
 
         """
         return {}
 
     def register_base_store(self):
         """Instantiate entity classes in _base_store, using arguments from
-        get_auto_register_kwargs()
+        :func:`get_base_store_kwargs`
 
         """
         kwargs = self.get_base_store_kwargs()

@@ -35,7 +35,7 @@ class Route(Entity):
                 )
         super().__init__(**kwargs)
 
-    def patterns(self, *args, **kwargs):
+    def patterns(self, parents=None, add_redirect=None):
         callback = self.get_callback()
         url_name = self.get_url_name()
         for url_part in self.get_url_parts():
