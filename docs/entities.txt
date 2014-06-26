@@ -1,0 +1,85 @@
+Entities
+========
+
+# Hierarchy of the primary classes
+
+.. graphviz::
+
+   digraph hierarchy {
+      "Entity" -> "Route";
+
+      "Route" -> "Callback route"
+      "Route" -> "View route"
+      "Route" -> "Model route"
+
+      "Model" -> "Model route"
+
+      "View route" -> "Model view route"
+      "Model route" -> "Model view route"
+
+      "EntityStore" -> "Router"
+      "Entity" -> "Router"
+
+      "Router" -> "Model router"
+
+      "Model" -> "Base model router"
+      "Base model router" -> "Model router"
+   }
+
+# Hierarchy with ModelRoute routes
+
+.. graphviz::
+
+   digraph hierarchy_full {
+      "Entity" -> "Route";
+
+      "Route" -> "Callback route"
+      "Route" -> "View route"
+      "Route" -> "Model route"
+
+      "Model" -> "Model route"
+
+      "View route" -> "Model view route"
+      "Model route" -> "Model view route"
+
+      "EntityStore" -> "Router";
+      "Entity" -> "Router";
+
+      "Router" -> "Model router"
+
+      "Model" -> "Base model router"
+
+      "List view" -> "List route"
+      "Detail view" -> "Detail route"
+      "Create view" -> "Create route"
+      "Update view" -> "Update route"
+      "Delete view" -> "Delete route"
+
+      "Model view route" -> "List route"
+      "Model view route" -> "Detail route"
+      "Model view route" -> "Create route"
+      "Model view route" -> "Update route"
+      "Model view route" -> "Delete route"
+
+      "List route" -> "Model router"
+      "Detail route" -> "Model router"
+      "Create route" -> "Model router"
+      "Update route" -> "Model router"
+      "Delete route" -> "Model router"
+      "Base model router" -> "Model router"
+   }
+
+.. graphviz::
+
+   digraph foo2 {
+      "Base router" -> "Documents router"
+      "Documents router" -> "Document model"
+      "Documents router" -> "Phase model"
+      "Documents router" -> "Group model"
+      "Base router" -> "Entities router"
+      "Entities router" -> "Interface model"
+      "Entities router" -> "Entity model"
+      "Base router" -> "Comment model"
+      "Base router" -> "Task model"
+      "Base router" -> "Dashboard view"
+   }
