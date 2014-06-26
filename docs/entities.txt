@@ -37,23 +37,15 @@ Entities
       "Route" -> "View route"
       "Route" -> "Model route"
 
-      "Model" -> "Model route"
-
       "View route" -> "Model view route"
       "Model route" -> "Model view route"
 
-      "EntityStore" -> "Router";
       "Entity" -> "Router";
 
-      "Router" -> "Model router"
+      "Router" -> "Base model router"
 
-      "Model" -> "Base model router"
-
-      "List view" -> "List route"
-      "Detail view" -> "Detail route"
-      "Create view" -> "Create route"
-      "Update view" -> "Update route"
-      "Delete view" -> "Delete route"
+      "Entity" -> "## entity store ##"
+      "## entity store ##" -> "Router"
 
       "Model view route" -> "List route"
       "Model view route" -> "Detail route"
@@ -61,11 +53,14 @@ Entities
       "Model view route" -> "Update route"
       "Model view route" -> "Delete route"
 
-      "List route" -> "Model router"
-      "Detail route" -> "Model router"
-      "Create route" -> "Model router"
-      "Update route" -> "Model router"
-      "Delete route" -> "Model router"
+      "List route" -> "## base store ##"
+      "Detail route" -> "## base store ##"
+      "Create route" -> "## base store ##"
+      "Update route" -> "## base store ##"
+      "Delete route" -> "## base store ##"
+
+      "## base store ##" -> "Model router"
+
       "Base model router" -> "Model router"
    }
 
