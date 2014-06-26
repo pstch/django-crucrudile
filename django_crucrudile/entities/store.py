@@ -2,8 +2,10 @@ from abc import ABCMeta
 
 
 def provides(provided, **kwargs):
-    """Return a decorator that uses :func:`EntityStore.register_class` to register a class in
-the base store"""
+    """Return a decorator that uses :func:`EntityStore.register_class` to
+    register a class in the base store
+    """
+
     def register_class_to_router(router):
         """Register the provided class"""
         router.register_class(provided, **kwargs)

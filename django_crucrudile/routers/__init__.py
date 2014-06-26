@@ -13,8 +13,8 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 
 from django_crucrudile.routes import ViewRoute, ModelViewRoute
-from django_crucrudile.entity import Entity
-from django_crucrudile.entity.store import EntityStore, provides
+from django_crucrudile.entities import Entity
+from django_crucrudile.entities.store import EntityStore, provides
 
 __all__ = [
     "Router", "BaseModelRouter",

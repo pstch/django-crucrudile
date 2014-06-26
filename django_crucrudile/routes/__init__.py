@@ -2,13 +2,15 @@ from abc import abstractmethod
 
 from django.conf.urls import url
 
-from django_crucrudile.entity import Entity
+from django_crucrudile.entities import Entity
 
 
 class Route(Entity):
     """Abstract class for a :class:`django_crucrudile.entity.Entity` that
-    yields URL patterns. Subclasses should define the
-    :func:`get_callback` function.
+    yields URL patterns.
+
+    .. warning:: Abstract class ! Subclasses should define the
+                 :func:`get_callback` function.
 
     The URL part and URL name must be either set on class, or given at
     :func:`__init__`.
