@@ -13,6 +13,7 @@ class Route(Entity):
     The URL part and URL name must be either set on class, or given at
     :func:`__init__`.
 
+    .. inheritance-diagram:: Route
     """
     name = None
     """
@@ -113,6 +114,7 @@ class CallbackRoute(Route):
     on the class (:attr:`callback` attribute), or to be passed in
     :func:`__init__`.
 
+    .. inheritance-diagram:: CallbackRoute
     """
     callback = None
     """
@@ -149,6 +151,7 @@ class ViewRoute(Route):
     The view class will be used to get the callback to give to the URL
     pattern.
 
+    .. inheritance-diagram:: ViewRoute
     """
 
     view_class = None
@@ -191,6 +194,7 @@ class ModelRoute(Route):
     on the class (:attr:`model` attribute), or to be passed in
     :func:`__init__`.
 
+    .. inheritance-diagram:: ModelRoute
     """
     model = None
     """
@@ -248,6 +252,7 @@ class ModelViewRoute(ViewRoute, ModelRoute):
     Also provide :func:`make_for_view`, that helpes building
     subclasses of this class for a given view class.
 
+    .. inheritance-diagram:: ModelViewRoute
     """
     @classmethod
     def make_for_view(cls, view_class, **kwargs):

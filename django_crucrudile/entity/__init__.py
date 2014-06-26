@@ -9,7 +9,7 @@ class Entity(metaclass=ABCMeta):
     ``RegexURLResolver``).
 
 
-    .. inheritance-diagram:: RoutedEntity
+    .. inheritance-diagram:: Entity
     """
     index = False
     """
