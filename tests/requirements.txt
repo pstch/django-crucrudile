@@ -1,1 +1,2 @@
 coverage
+pydot==1.0.15
