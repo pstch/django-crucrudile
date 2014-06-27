@@ -1,207 +1,110 @@
 import hashlib
+import mock
 
 from django.test import TestCase
 from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
-from django.db import models
+from django.db.models import Model
+from django.views.generic import View
+
+from django_crucrudile.entities import Entity
+from django_crucrudile.entities.store import EntityStore
+
 
 from django_crucrudile.routers import (
-    Router,
+    Router, BaseModelRouter, ModelRouter,
 )
 
-try:
-    import pydot
-    DRAW_GRAPH = True
-except ImportError:
-    DRAW_GRAPH = False
-
-
-class EmptyRouterTestCase(TestCase):
-    """#TODO"""
-    def setUp(self):
-        self.base_router = Router()
-
-    def test_patterns_empty(self):
-        list(self.base_router.patterns())
-
-
-class TestDocumentModel(models.Model):
-    pass
-
-
-class TestGroupModel(models.Model):
-    pass
-
-
-class TestPhaseModel(models.Model):
-    pass
-
-
-class TestEntityModel(models.Model):
-    pass
-
-
-class TestInterfaceModel(models.Model):
-    pass
-
-
-class TestCommentModel(models.Model):
-    pass
-
-
-class TestTaskModel(models.Model):
-    pass
+from django_crucrudile.routes import ViewRoute
 
 
 class RouterTestCase(TestCase):
-    """#TODO"""
+    router_class = Router
+
     def setUp(self):
-        self.base_router = Router()
-        self.base_router.base = True
+        self.router = self.router_class()
 
-        self.documents_router = Router(
-            namespace="documents",
-            url_part="^documents/"
-        )
-        self.documents_router.register(TestDocumentModel, index=True)
-        self.documents_router.register(TestGroupModel)
-        self.documents_router.register(TestPhaseModel)
-
-        self.base_router.register(
-            self.documents_router,
-            index=True
+    def test_subclasses_entity(self):
+        self.assertTrue(
+            issubclass(self.router_class, Entity)
         )
 
-        self.entities_router = Router(
-            namespace="entities",
-            url_part="^entities/"
+    def test_subclasses_entity_store(self):
+        self.assertTrue(
+            issubclass(self.router_class, EntityStore)
         )
 
-        self.entities_router.register(TestEntityModel, index=True)
-        self.entities_router.register(TestInterfaceModel)
+    def test_namespace_attr(self):
+        self.assertEqual(self.router.namespace, None)
 
-        self.base_router.register(
-            self.entities_router
+    def test_url_part_attr(self):
+        self.assertEqual(self.router.url_part, None)
+
+    def test_redirect_attr(self):
+        self.assertEqual(self.router.redirect, None)
+
+    def test_init(self):
+        self.assertEqual(self.router.namespace, None)
+        self.assertEqual(self.router.url_part, None)
+        self.assertEqual(self.router.redirect, None)
+
+        namespace = mock.Mock()
+        url_part = mock.Mock()
+        redirect = mock.Mock()
+
+        router = self.router_class(
+            namespace,
+            url_part,
+            redirect
         )
 
-        self.base_router.register(TestCommentModel)
-        self.base_router.register(TestTaskModel)
+        self.assertEqual(router.namespace, namespace)
+        self.assertEqual(router.url_part, url_part)
+        self.assertEqual(router.redirect, redirect)
 
-    def _test_stores(self):
+    def test_get_register_map(self):
         self.assertEqual(
-            self.base_router._store,
-            [self.documents_router]
+            self.router.get_register_map(),
+            {
+                Model: ModelRouter,
+                View: ViewRoute
+            }
+        )
+
+    def test_register_entity(self):
+        entity = mock.Mock()
+
+        self.router.register(entity)
+
+        self.assertEqual(
+            self.router._store,
+            [entity, ]
+        )
+
+    def test_register_index_entity(self):
+        entity = mock.Mock()
+        entity.index = True
+
+        self.router.register(entity)
+
+        self.assertEqual(
+            self.router._store,
+            [entity, ]
         )
         self.assertEqual(
-            self.documents_router._store,
-            [self.dashboard_route]
+            self.router.redirect,
+            entity
         )
 
-    def test_pattern_tree(self):
-        if not DRAW_GRAPH:
-            return
+    def test_register_as_index(self):
+        entity = mock.Mock()
 
-        import pydot
-        _graph = pydot.Dot(graph_type='graph')
+        self.router.register(entity, index=True)
 
-        def pattern_add_edges(graph, pattern,
-                              recursive=False, recurse_limit=None):
-            def get_node(_pattern):
-                if _pattern is None:
-                    node = pydot.Node(
-                        str(hash(id(pattern)
-                             ))[-6:]
-                    )
-                    node.set_label("None")
-                    graph.add_node(node)
-                    return node
-                if getattr(_pattern, 'namespace', None) is not None:
-                    color = 'green'
-                elif isinstance(_pattern, RegexURLPattern):
-                    color = 'red'
-                elif isinstance(_pattern, RegexURLResolver):
-                    color = 'blue'
-                else:
-                    color = 'white'
-
-                node = pydot.Node(
-                    str(id(_pattern)),
-                    style="filled",
-                    fillcolor=color
-                )
-
-                namespace = getattr(_pattern, 'namespace', None)
-                name = getattr(_pattern, 'name', None)
-                callback = getattr(_pattern, 'callback', None)
-                redirect_url = getattr(_pattern, '_redirect_url_name', None)
-                router = getattr(_pattern, 'router', None)
-                model = getattr(router, 'model', None)
-                regex = getattr(_pattern, 'regex', None)
-                regex_pattern = regex.pattern if regex else None
-
-                node.set_label(
-                    '\n'.join(filter(None, [
-                        'namespace is {}'.format(namespace)
-                        if namespace else None,
-                        'callback is {}'.format(callback.__name__)
-                        if callback else None,
-                        'redirect_url is {}'.format(redirect_url)
-                        if redirect_url else None,
-                        'router is {}'.format(router.__class__.__name__)
-                        if router else None,
-                        'model is {}'.format(model._meta.model_name)
-                        if model else None,
-                        'URL part is {}'.format(regex_pattern)
-                        if regex_pattern else None,
-                        'URL name is {}'.format(name)
-                        if name else None,
-                    ]))
-                )
-
-                return node
-
-            pattern_node = get_node(pattern)
-            graph.add_node(pattern_node)
-
-            for sub_pattern in getattr(pattern, 'url_patterns', []):
-                node = get_node(sub_pattern)
-                #graph.add_node(node)
-
-                edge = pydot.Edge(
-                    pattern_node,
-                    node,
-                )
-
-                graph.add_edge(edge)
-
-                if recursive and recurse_limit != 0:
-                    if recurse_limit is not None:
-                        recurse_limit -= 1
-                    pattern_add_edges(
-                        graph,
-                        sub_pattern,
-                        recursive, recurse_limit
-                    )
-
-        pattern_add_edges(
-            _graph, next(self.base_router.patterns()),
-            True, None
-        )
-
-        _graph.write_png("/home/pistache/example.png")
-        _graph.write_dot("/home/pistache/example.dot")
-
-    def test_get_str_tree(self):
-        tree = self.base_router.get_str_tree()
-
-        def _hash(text):
-            return hashlib.sha256(text.encode()).hexdigest()
-
-        sorted_tree = '\n'.join(sorted(tree.splitlines()))
-
-        tree_hash = _hash(sorted_tree)
-
-        # compare to reference hash
         self.assertEqual(
-            tree_hash,
-            "e063a1ffa2c3e6a8db25ade8a17523aa951c07dd09d59931ae454771a5794dd5"
+            self.router._store,
+            [entity, ]
+        )
+        self.assertEqual(
+            self.router.redirect,
+            entity
         )
