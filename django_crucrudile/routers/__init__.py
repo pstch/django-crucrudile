@@ -406,7 +406,7 @@ class ModelRouter(BaseModelRouter):
                "ViewRoute" -> "ModelViewRoute"
 
                "ModelViewRoute" -> "ListViewRoute"
-v               "ModelViewRoute" -> "DetailViewRoute"
+               "ModelViewRoute" -> "DetailViewRoute"
                "ModelViewRoute" -> "CreateViewRoute"
                "ModelViewRoute" -> "UpdateViewRoute"
                "ModelViewRoute" -> "DeleteViewRoute"
