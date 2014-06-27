@@ -100,7 +100,7 @@ class Router(EntityStore, Entity):
         if index or entity.index:
             self.redirect = entity
 
-    def get_redirect_pattern(self, parents=None):
+    def get_redirect_pattern(self, parents=None, silent=False):
         """Compile the URL name to this router's redirect path, and return a
 lazy ``RedirectView`` that redirects to this URL name
 
@@ -108,40 +108,63 @@ lazy ``RedirectView`` that redirects to this URL name
                            get the current namespaces when building
                            the redirect URL name
         :type parents: list of :class:`django_crucrudile.routers.Router`
+        :argument silent: Do not fail if no redirect found, just
+                          return None.
+        :type silent: bool
+
+        :raise ValueError: If no redirect found when following
+                           ``redirect`` attributes, and
+                           :argument:`silent` is not explicitly set to
+                           ``True``.
         """
+        if parents is None:
+            parents = []
         # this is a dirty implementation, but it works
 
         # we'll build the URL
-        def _url_parents_ns():
+        def _namespaces():
             for parent in parents:
                 if parent.namespace:
                     yield parent.namespace + ':'
 
-        def _redirect():
+        redirect = self.redirect
+
+        def _follow_redirect():
             redirect = self.redirect
             while redirect:
                 if type(redirect) is str:
-                    yield self.redirect
+                    yield redirect
                     break
                 elif (redirect and
                       getattr(redirect, 'namespace', None) is not None):
                     yield redirect.namespace + ':'
                 redirect = getattr(redirect, 'redirect', None)
 
-        url_name = ''.join(
-            chain(
-                _url_parents_ns(), _redirect()
+        namespaces = ''.join(_namespaces())
+        url_name = ''.join(_follow_redirect())
+
+        if url_name:
+            url_name = ''.join([namespaces, url_name])
+
+            url_pattern = url(
+                r'^$',
+                RedirectView.as_view(url=reverse_lazy(url_name))
+                # TODO: Url name ?
             )
-        )
 
-        url_pattern = url(
-            r'^$',
-            RedirectView.as_view(url=reverse_lazy(url_name))
-            # TODO: Url name ?
-        )
-
-        url_pattern._redirect_url_name = url_name
-        return url_pattern
+            url_pattern._redirect_url_name = url_name
+            return url_pattern
+        else:
+            if not silent:
+                raise ValueError(
+                    "Failed following redirect attribute {} "
+                    "(last redirect found {}) in {}"
+                    "".format(
+                        self.redirect,
+                        redirect,
+                        self
+                    )
+                )
 
     def patterns(self, parents=None, add_redirect=True):
         """Read :attr:`_store` and yield a pattern of an URL group (with url part
@@ -214,7 +237,7 @@ class BaseModelRouter(Router):
                       :func:`__init__`.
     :type model: model
     """
-    def register_map_kwargs(self):
+    def get_register_map_kwargs(self):
         """Give :attr:`model` as kwarg when applying register map. """
         kwargs = super().get_register_map_kwargs()
         kwargs['model'] = self.model
@@ -264,7 +287,6 @@ class BaseModelRouter(Router):
         mapping.update({
             (SingleObjectMixin, MultipleObjectMixin):
             ModelViewRoute,
-            View: ViewRoute,
         })
         return mapping
 
