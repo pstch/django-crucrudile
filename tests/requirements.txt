@@ -1,2 +1,2 @@
 coverage
-pydot==1.0.15
+-e hg+https://bitbucket.org/prologic/pydot#egg=pydot
