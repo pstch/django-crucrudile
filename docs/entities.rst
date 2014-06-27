@@ -1,7 +1,9 @@
 Entity (``Entity``)
 ===================
 
-.. automodule:: django_crucrudile.entities
+.. module:: django_crucrudile.entities
+
+.. autoclass:: Entity
     :members:
     :undoc-members:
     :show-inheritance:

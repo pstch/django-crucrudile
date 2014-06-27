@@ -196,6 +196,9 @@ class ModelRoute(Route):
     on the class (:attr:`model` attribute), or to be passed in
     :func:`__init__`.
 
+    .. warning:: Abstract class ! Subclasses should define the
+                 :func:`get_callback` function.
+
     .. inheritance-diagram:: ModelRoute
     """
     model = None

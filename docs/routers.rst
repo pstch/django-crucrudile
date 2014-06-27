@@ -1,7 +1,25 @@
 Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``)
 =============================================================
 
-.. automodule:: django_crucrudile.routers
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. module:: django_crucrudile.routers
+
+Base router
+-----------
+
+.. autoclass:: Router
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Model router
+------------
+
+.. autoclass:: BaseModelRouter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: ModelRouter
+   :members:
+   :undoc-members:
+   :show-inheritance:

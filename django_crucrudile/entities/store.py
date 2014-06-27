@@ -1,5 +1,7 @@
 from abc import ABCMeta
 
+__all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
+
 
 def provides(provided, **kwargs):
     """Return a decorator that uses :func:`EntityStore.register_class` to
