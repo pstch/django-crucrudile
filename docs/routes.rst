@@ -3,6 +3,9 @@ Routes (``Route``, ``ModelRoute``, ``ViewRoute`` and ``ModelViewRoute``)
 
 .. module:: django_crucrudile.routes
 
+.. automodule:: django_crucrudile.routes
+   :noindex:
+
 Abstract routes
 ---------------
 

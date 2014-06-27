@@ -3,6 +3,10 @@ Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``)
 
 .. module:: django_crucrudile.routers
 
+
+.. automodule:: django_crucrudile.routers
+   :noindex:
+
 Base router
 -----------
 

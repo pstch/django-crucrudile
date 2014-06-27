@@ -1,5 +1,27 @@
-from itertools import chain
+"""A router is an implementation of the abstract class Entity, that
+uses an entity store to allow routing other entities. In the code,
+this is represented by subclassing
+:class:`django_crucrudile.entity.store.EntityStore` and
+:class:`django_crucrudile.entity.Entity`, and providing a generator in
+``patterns()``, yielding URL patterns made from the entity
+store. Providing :func:`django_crucrudile.entities.Entity.patterns`
+makes router classes concrete implementations of the Entity abstract
+class, which allows them to be used in entity stores.
 
+This module contains three implementations of routers, a simple one,
+and two implementations adapted to Django models :
+
+ - :class:`Router` : implements the abstract class Entity, and
+   subclassing EntityStore to implement :func:`Router.patterns`
+ - :class:`BaseModelRouter` : subclasses :class:`Router`,
+   instantiate with a model as argument, adapted to pass that
+   model as argument to registered entity classes
+ - :class:`ModelRouter` : that subclasses :class:`BaseModelRouter`
+   along with a set of default
+   :class:`django_crucrudile.routes.ModelViewRoute` for the five
+   default Django generic views.
+
+"""
 from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
@@ -114,7 +136,7 @@ lazy ``RedirectView`` that redirects to this URL name
 
         :raise ValueError: If no redirect found when following
                            ``redirect`` attributes, and
-                           :argument:`silent` is not explicitly set to
+                           ``silent`` is not explicitly set to
                            ``True``.
         """
         if parents is None:
