@@ -4,6 +4,7 @@ python:
 env:
   - DJANGO=1.6
 install:
+  - sudo apt-get install pydot
   - pip install coveralls
   - pip install pep8
   - pip install pylint
