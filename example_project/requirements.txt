@@ -1,3 +1,0 @@
-django
-
--e git+https://github.com/pstch/django-crucrudile.git#egg=django-crucrudile
