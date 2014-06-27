@@ -13,9 +13,16 @@ class EntityTestCase(TestCase):
             inspect.isabstract(self.entity_class)
         )
 
-    def test_has_index_attr(self):
-        self.assertTrue(
-            hasattr(self.entity_class, 'index')
+    def test_init_fails(self):
+        self.assertRaises(
+            TypeError,
+            self.entity_class
+        )
+
+    def test_index_attr(self):
+        self.assertEqual(
+            self.entity_class.index,
+            False
         )
 
     def test_is_patterns_abstract(self):
@@ -23,9 +30,9 @@ class EntityTestCase(TestCase):
             self.entity_class.patterns.__isabstractmethod__
         )
 
-    def test_has_str_tree_func(self):
+    def test_str_tree_func_callable(self):
         self.assertTrue(
-            callable(self.entity_class.__dict__['get_str_tree'])
+            callable(self.entity_class.get_str_tree)
         )
 
     def test_init_sets_index(self):

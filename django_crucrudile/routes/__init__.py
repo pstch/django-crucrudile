@@ -45,7 +45,7 @@ defined.
         if name is not None:
             self.name = name
         elif self.name is None:
-            raise Exception(
+            raise ValueError(
                 "No ``name`` argument provided to __init__"
                 ", and no name defined as class attribute."
                 " (in {})".format(self)
@@ -56,7 +56,7 @@ defined.
             if self.auto_url_part:
                 self.url_part = self.name
             else:
-                raise Exception(
+                raise ValueError(
                     "No ``url_part`` argument provided to __init__"
                     ", no url_part defined as class attribute."
                     " (in {}), and auto_url_part is set to False."
@@ -131,9 +131,9 @@ class CallbackRoute(Route):
 
         """
         if callback is not None:
-            self.callback = None
+            self.callback = callback
         elif self.callback is None:
-                raise Exception(
+                raise ValueError(
                     "No ``callback`` argument provided to __init__"
                     ", and no callback defined as class attribute."
                     " (in {})".format(self)
@@ -172,7 +172,7 @@ class ViewRoute(Route):
         if view_class is not None:
             self.view_class = view_class
         elif self.view_class is None:
-            raise Exception(
+            raise ValueError(
                 "No ``view_class`` argument provided to __init__"
                 ", and no view_class defined as class attribute (in {})"
                 "".format(self)
@@ -216,7 +216,7 @@ class ModelRoute(Route):
         if model is not None:
             self.model = model
         elif self.model is None:
-            raise Exception(
+            raise ValueError(
                 "No ``model`` argument provided to __init__"
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
