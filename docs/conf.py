@@ -41,6 +41,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.graphviz',
+    'sphinx.ext.coverage',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.viewcode',
 ]
