@@ -1,4 +1,5 @@
 import inspect
+import mock
 
 from django.test import TestCase
 
@@ -25,4 +26,18 @@ class EntityTestCase(TestCase):
     def test_has_str_tree_func(self):
         self.assertTrue(
             callable(self.entity_class.__dict__['get_str_tree'])
+        )
+
+    def test_init_sets_index(self):
+        mock_index = mock.Mock()
+
+        class TestConcreteEntity(Entity):
+            def patterns(self, parents=None, add_redirect=True):
+                pass
+
+        entity = TestConcreteEntity(mock_index)
+
+        self.assertEqual(
+            entity.index,
+            mock_index
         )
