@@ -98,7 +98,12 @@ class Entity(metaclass=ABCMeta):
         )
 
     def get_pydot_graph(self, recurse_limit=None):
-        """Unmaintained at the time."""
+        """Unmaintained at the time. Returns a graph of the patterns and
+        subpatterns, made using pydot.
+
+        Needs pydot.
+
+        """
         import pydot
         _graph = pydot.Dot(graph_type='graph')
 
