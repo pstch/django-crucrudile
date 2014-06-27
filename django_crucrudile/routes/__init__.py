@@ -123,7 +123,7 @@ defined.
             yield url(
                 url_part,
                 callback,
-                url_name
+                name=url_name
             )
 
     @abstractmethod
