@@ -95,17 +95,38 @@ class EntityStoreTestCase(TestCase):
 
         mapping = {base_cls: mock_mapping_value}
 
+        # Register with mock entity, no mapping, not silent
+        # Register with mock entity, no mapping
+        self.assertEqual(
+            self.store_class.register_apply_map(
+                mock_entity, {}, silent=False
+            ),
+            mock_entity
+        )
+
+        # Register with mock entity, with mapping (without entity)
+        self.assertRaises(
+            LookupError,
+            lambda : self.store_class.register_apply_map(
+                mock_entity, mapping, silent=False
+            )
+        )
+        self.assertFalse(mock_mapping_value.called)
+
+        # Register with mock entity, no mapping
         self.assertEqual(
             self.store_class.register_apply_map(mock_entity, {}),
             mock_entity
         )
 
+        # Register with mock entity, with mapping (without entity)
         self.assertEqual(
             self.store_class.register_apply_map(mock_entity, mapping),
             mock_entity
         )
         self.assertFalse(mock_mapping_value.called)
 
+        # Register with class and mapping (with class)
         self.store_class.register_apply_map(matching_cls, mapping),
         self.assertTrue(mock_mapping_value.called)
         self.assertEqual(
@@ -113,26 +134,28 @@ class EntityStoreTestCase(TestCase):
             [(matching_cls, ), {}]
         )
 
+        # Reset mock object & mapping
         mock_mapping_value = mock.Mock()
         mapping = {base_cls: mock_mapping_value}
 
+        # Register with class and mapping (without class)
         self.store_class.register_apply_map(not_matching_cls, mapping)
         self.assertFalse(mock_mapping_value.called)
 
 
+        # Reset mapping, use iterable key
         mapping = {(base_cls, ): mock_mapping_value}
 
-        self.assertEqual(
-            self.store_class.register_apply_map(mock_entity, {}),
-            mock_entity
-        )
-
+        # Register with mock entity and mapping (with iterable keys,
+        # without entity)
         self.assertEqual(
             self.store_class.register_apply_map(mock_entity, mapping),
             mock_entity
         )
         self.assertFalse(mock_mapping_value.called)
 
+        # Register with class and mapping (with iterable keys, with
+        # class)
         self.store_class.register_apply_map(matching_cls, mapping),
         self.assertTrue(mock_mapping_value.called)
         self.assertEqual(
@@ -140,12 +163,26 @@ class EntityStoreTestCase(TestCase):
             [(matching_cls, ), {}]
         )
 
+        # Reset mock object & mapping
         mock_mapping_value = mock.Mock()
         mapping = {(base_cls, ): mock_mapping_value}
 
+        # Register with class and mapping (with iterable keys, without
+        # class)
         self.store_class.register_apply_map(not_matching_cls, mapping)
         self.assertFalse(mock_mapping_value.called)
 
+        # Reset mock object & mapping (with None key)
+        mock_mapping_value = mock.Mock()
+        mapping = {None: mock_mapping_value}
+
+        # Register with class and mapping (with None key, without class)
+        self.store_class.register_apply_map(not_matching_cls, mapping),
+        self.assertTrue(mock_mapping_value.called)
+        self.assertEqual(
+            list(mock_mapping_value.call_args),
+            [(not_matching_cls, ), {}]
+        )
 
     def test_register_class(self):
         register_cls = type('RegisteredClass', (), {})
