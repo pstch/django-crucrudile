@@ -259,6 +259,11 @@ class ModelViewRoute(ViewRoute, ModelRoute):
 
     .. inheritance-diagram:: ModelViewRoute
     """
+    def __init__(self, *args, **kwargs):
+        # TODO: Experimental!
+        super().__init__(*args, **kwargs)
+        self.redirect = self.get_url_name()
+
     @classmethod
     def make_for_view(cls, view_class, **kwargs):
         """Return a subclass of this class, setting the ``view_class``
