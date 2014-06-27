@@ -1,5 +1,5 @@
 """
-Django settings for example_project project.
+Django settings for example_app project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-hga853_+fxjo9(l%33iux&8ksd4(6^ps)!$ck8gvs9^5lspyf'
+SECRET_KEY = '3&dl4gve!@uw($91phh5if8zcb5o-lc4n!1*fas+xckr$i9$7f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -25,6 +25,8 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -34,12 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'django_extensions',
-
-    'django_crucrudile',
-
-    'example_app'
+    'example_app',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,9 +48,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'example_app.urls'
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'example_app.wsgi.application'
 
 
 # Database
@@ -84,5 +81,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-
-MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})

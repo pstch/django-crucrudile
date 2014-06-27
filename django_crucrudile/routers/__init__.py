@@ -119,6 +119,8 @@ class Router(EntityStore, Entity):
         :type index: bool
         """
         entity = super().register(entity)
+        if not hasattr(entity, 'index'):
+            import ipdb; ipdb.set_trace()
         if index or entity.index:
             self.redirect = entity
 
@@ -404,7 +406,7 @@ class ModelRouter(BaseModelRouter):
                "ViewRoute" -> "ModelViewRoute"
 
                "ModelViewRoute" -> "ListViewRoute"
-               "ModelViewRoute" -> "DetailViewRoute"
+v               "ModelViewRoute" -> "DetailViewRoute"
                "ModelViewRoute" -> "CreateViewRoute"
                "ModelViewRoute" -> "UpdateViewRoute"
                "ModelViewRoute" -> "DeleteViewRoute"
