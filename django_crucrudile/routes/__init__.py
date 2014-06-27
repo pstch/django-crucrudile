@@ -87,7 +87,7 @@ defined.
             )
 
     @abstractmethod
-    def get_callback(self):
+    def get_callback(self):  # pragma: no cover
         """Return callback to use in the URL pattern
 
         **Abstract method !** Should be defined by subclasses,
