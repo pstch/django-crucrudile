@@ -146,8 +146,6 @@ lazy ``RedirectView`` that redirects to this URL name
         if url_name:
             url_name = ''.join([namespaces, url_name])
 
-            print("Made redirect {}".format(url_name))
-
             url_pattern = url(
                 r'^$',
                 RedirectView.as_view(url=reverse_lazy(url_name))
