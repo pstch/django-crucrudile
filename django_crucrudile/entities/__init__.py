@@ -23,7 +23,7 @@ class Entity(metaclass=ABCMeta):
             self.index = index
 
     @abstractmethod
-    def patterns(self, parents=None, add_redirect=True):
+    def patterns(self, parents=None, add_redirect=True):  # pragma: no cover
         """Yield URL patterns
 
         .. warning:: This abstract method should be defined by
@@ -43,13 +43,11 @@ class Entity(metaclass=ABCMeta):
 
             """
             for pattern in patterns:
-                try:
-                    callback = (
-                        pattern.callback.__name__
-                        if pattern.callback else None
-                    )
-                except AttributeError:
-                    callback = None
+
+                callback = (
+                    pattern.callback.__name__
+                    if pattern.callback else None
+                )
 
                 if hasattr(pattern, 'url_patterns'):
                     # Resolver

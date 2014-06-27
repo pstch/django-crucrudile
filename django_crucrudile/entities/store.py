@@ -1,5 +1,7 @@
 from abc import ABCMeta
 
+__all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
+
 
 def provides(provided, **kwargs):
     """Return a decorator that uses :func:`EntityStore.register_class` to
@@ -71,7 +73,8 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         self.register_base_store()
 
     @staticmethod
-    def register_apply_map(entity, mapping, transform_kwargs=None):
+    def register_apply_map(entity, mapping,
+                           transform_kwargs=None, silent=True):
         """Apply mapping of value in ``mapping`` if ``entity`` is
         subclass (``issubclass``) or instance (``isinstance``) of key
 
@@ -101,7 +104,7 @@ class EntityStore(metaclass=EntityStoreMetaclass):
                 **transform_kwargs
             )
 
-        def _find_entity(test, silent=True):
+        def _find_entity(test):
             """Find an entity matching the given test in register_map keys, then,
             with the matching value, return :func:`_make_entity(value)`.
 
@@ -123,12 +126,13 @@ class EntityStore(metaclass=EntityStoreMetaclass):
                         "Used test '{}', register mapping bases are '{}', "
                         "tested against '{}'".format(
                             test,
-                            ', '.join(mapping.keys()),
+                            ', '.join(str(k) for k in mapping),
                             entity
                         )
                     )
-
-        if isinstance(entity, type):
+        if not mapping:
+            return entity
+        elif isinstance(entity, type):
             # entity is a class, test with issubclass
             return _find_entity(issubclass)
         else:
