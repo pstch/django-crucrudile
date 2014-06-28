@@ -172,8 +172,8 @@ lazy ``RedirectView`` that redirects to this URL name
 
             url_pattern = url(
                 r'^$',
-                RedirectView.as_view(url=reverse_lazy(url_name))
-                # TODO: Url name ?
+                RedirectView.as_view(url=reverse_lazy(url_name)),
+                name="{}-redirect".format(url_name)
             )
 
             url_pattern._redirect_url_name = url_name
