@@ -14,6 +14,8 @@ django-crucrudile
 
 * :ref:`modindex`
 
+.. automodule:: django_crucrudile
+
 Class structure graph
 ---------------------
 
