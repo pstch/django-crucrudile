@@ -53,7 +53,7 @@ class RouterTestCase(TestCase):
 
         self.documents_router = Router(
             namespace="documents",
-            url_part="^documents/"
+            url_part="documents"
         )
         self.documents_router.register(TestDocumentModel, index=True)
         self.documents_router.register(TestGroupModel)
@@ -66,7 +66,7 @@ class RouterTestCase(TestCase):
 
         self.entities_router = Router(
             namespace="entities",
-            url_part="^entities/"
+            url_part="entities"
         )
 
         self.entities_router.register(TestEntityModel, index=True)
@@ -102,7 +102,7 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "7fc45b276e4f325044f2658f27acbc005974512564e377233c7f9b712bec2935"
+            "a609b852a19bfdb03a421cfa99bc6165f2d807f4393e49d9bf65789062c751bc"
         )
 
     def test_get_pydot_graph(self):

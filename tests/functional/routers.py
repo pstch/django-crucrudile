@@ -19,12 +19,12 @@ class BaseRouter(Router):
 
 class DocumentsRouter(BaseRouter):
     namespace = "documents"
-    url_part = "^documents/"
+    url_part = "documents"
 
 
 class EntitiesRouter(BaseRouter):
     namespace = "entities"
-    url_part = "^entities/"
+    url_part = "entities"
 
 
 base_router = Router()
