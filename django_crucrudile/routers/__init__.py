@@ -277,7 +277,7 @@ class BaseModelRouter(Router):
         kwargs['model'] = self.model
         return kwargs
 
-    def __init__(self, model=None, **kwargs):
+    def __init__(self, model=None, url_part=None, **kwargs):
         """Check for :argument:`model` in kwargs, if None and not defined at
         class-level, fail.
 
@@ -299,7 +299,16 @@ class BaseModelRouter(Router):
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
+        if url_part is not None:
+            self.url_part = url_part
+        else:
+            self.url_part = self.model_url_part
         super().__init__(**kwargs)
+
+    @property
+    def model_url_part(self):
+        """Return the model name to be used when building the URL part"""
+        return self.model._meta.model_name
 
     def get_register_map(self):
         """Override to append mapping of ``SingleObjectMixin`` and
