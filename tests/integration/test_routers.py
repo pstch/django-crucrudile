@@ -17,31 +17,31 @@ class EmptyRouterTestCase(TestCase):
         list(self.base_router.patterns())
 
 
-class TestDocumentModel(models.Model):
+class DocumentModel(models.Model):
     pass
 
 
-class TestGroupModel(models.Model):
+class GroupModel(models.Model):
     pass
 
 
-class TestPhaseModel(models.Model):
+class PhaseModel(models.Model):
     pass
 
 
-class TestEntityModel(models.Model):
+class EntityModel(models.Model):
     pass
 
 
-class TestInterfaceModel(models.Model):
+class InterfaceModel(models.Model):
     pass
 
 
-class TestCommentModel(models.Model):
+class CommentModel(models.Model):
     pass
 
 
-class TestTaskModel(models.Model):
+class TaskModel(models.Model):
     pass
 
 
@@ -55,9 +55,9 @@ class RouterTestCase(TestCase):
             namespace="documents",
             url_part="documents"
         )
-        self.documents_router.register(TestDocumentModel, index=True)
-        self.documents_router.register(TestGroupModel)
-        self.documents_router.register(TestPhaseModel)
+        self.documents_router.register(DocumentModel, index=True)
+        self.documents_router.register(GroupModel)
+        self.documents_router.register(PhaseModel)
 
         self.base_router.register(
             self.documents_router,
@@ -69,15 +69,15 @@ class RouterTestCase(TestCase):
             url_part="entities"
         )
 
-        self.entities_router.register(TestEntityModel, index=True)
-        self.entities_router.register(TestInterfaceModel)
+        self.entities_router.register(EntityModel, index=True)
+        self.entities_router.register(InterfaceModel)
 
         self.base_router.register(
             self.entities_router
         )
 
-        self.base_router.register(TestCommentModel)
-        self.base_router.register(TestTaskModel)
+        self.base_router.register(CommentModel)
+        self.base_router.register(TaskModel)
 
     def _test_stores(self):
         self.assertEqual(
@@ -102,7 +102,7 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "a609b852a19bfdb03a421cfa99bc6165f2d807f4393e49d9bf65789062c751bc"
+            "5ab315f041ad0179912cd8726c02be10b676475c0c525fd4fdbf0f3b88c62f8a"
         )
 
     def test_get_pydot_graph(self):

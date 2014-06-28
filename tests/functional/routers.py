@@ -3,13 +3,13 @@ from django_crucrudile.routers import (
 )
 
 from .models import (
-    TestDocumentModel,
-    TestGroupModel,
-    TestPhaseModel,
-    TestEntityModel,
-    TestInterfaceModel,
-    TestCommentModel,
-    TestTaskModel
+    DocumentModel,
+    GroupModel,
+    PhaseModel,
+    EntityModel,
+    InterfaceModel,
+    CommentModel,
+    TaskModel
 )
 
 
@@ -31,14 +31,14 @@ base_router = Router()
 documents_router = DocumentsRouter()
 entities_router = EntitiesRouter()
 
-documents_router.register(TestDocumentModel, index=True)
-documents_router.register(TestGroupModel)
-documents_router.register(TestPhaseModel)
+documents_router.register(DocumentModel, index=True)
+documents_router.register(GroupModel)
+documents_router.register(PhaseModel)
 base_router.register(documents_router, index=True)
 
-entities_router.register(TestEntityModel, index=True)
-entities_router.register(TestInterfaceModel)
+entities_router.register(EntityModel, index=True)
+entities_router.register(InterfaceModel)
 base_router.register(entities_router)
 
-base_router.register(TestCommentModel)
-base_router.register(TestTaskModel)
+base_router.register(CommentModel)
+base_router.register(TaskModel)

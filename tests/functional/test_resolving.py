@@ -10,24 +10,24 @@ from django.views.generic import (
 
 from .routers import base_router
 from .models import (
-    TestDocumentModel,
-    TestGroupModel,
-    TestPhaseModel,
-    TestEntityModel,
-    TestInterfaceModel,
-    TestCommentModel,
-    TestTaskModel
+    DocumentModel,
+    GroupModel,
+    PhaseModel,
+    EntityModel,
+    InterfaceModel,
+    CommentModel,
+    TaskModel
 )
 
 
 MODEL_NAME_DICT = {
-    'documents': (TestDocumentModel,
-                  TestGroupModel,
-                  TestPhaseModel),
-    'entities': (TestEntityModel,
-                 TestInterfaceModel),
-    None: (TestCommentModel,
-           TestTaskModel)
+    'documents': (DocumentModel,
+                  GroupModel,
+                  PhaseModel),
+    'entities': (EntityModel,
+                 InterfaceModel),
+    None: (CommentModel,
+           TaskModel)
 }
 
 ACTION_NAME_DICT = {

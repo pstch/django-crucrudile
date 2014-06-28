@@ -1,28 +1,29 @@
 from django.db import models
 
-class TestDocumentModel(models.Model):
+
+class DocumentModel(models.Model):
     pass
 
 
-class TestGroupModel(models.Model):
+class GroupModel(models.Model):
     pass
 
 
-class TestPhaseModel(models.Model):
+class PhaseModel(models.Model):
     pass
 
 
-class TestEntityModel(models.Model):
+class EntityModel(models.Model):
     pass
 
 
-class TestInterfaceModel(models.Model):
+class InterfaceModel(models.Model):
     pass
 
 
-class TestCommentModel(models.Model):
+class CommentModel(models.Model):
     pass
 
 
-class TestTaskModel(models.Model):
+class TaskModel(models.Model):
     pass
