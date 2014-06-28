@@ -231,7 +231,7 @@ lazy ``RedirectView`` that redirects to this URL name
 
         # make a RegexURLResolver
         pattern = url(
-            url_part or '^',
+            '^{}/'.format(url_part) if url_part else '^',
             include(
                 pattern_list,
                 namespace=namespace,
