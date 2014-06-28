@@ -1,6 +1,20 @@
+"""An entity is an abstract class that defines an attribute
+(:attr:`Entity.index`), and an abstract method
+(:func:`Entity.patterns`). Entity implementations should provide the
+:func:`Entity.patterns` method, that should return a generator
+yielding Django URL patterns.
+
+.. seealso:: In ``django-crucrudile``, there are two classes that
+             directly subclass :class:`Entity` :
+
+              - :class:`django_crucrudile.routers.Router`
+              - :class:`django_crucrudile.routes.Route`
+
+"""
 from abc import ABCMeta, abstractmethod
 
-from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
+from django.core.urlresolvers import RegexURLPattern
+
 
 class Entity(metaclass=ABCMeta):
     """Abstract class for routed entities
@@ -101,7 +115,9 @@ class Entity(metaclass=ABCMeta):
         """Unmaintained at the time. Returns a graph of the patterns and
         subpatterns, made using pydot.
 
-        Needs pydot.
+        .. note:: Requires ``pydot`` (a version compatible with the
+                     current Python interpreter) to be installed.
+
 
         """
         import pydot

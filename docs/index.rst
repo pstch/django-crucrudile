@@ -1,13 +1,16 @@
 django-crucrudile
 =================
 
+.. module:: django_crucrudile
+
 .. toctree::
    installation
-   getting_started
+   quickstart
    entity_store
    entities
    routers
    routes
+   tests
 
 * :ref:`modindex`
 

@@ -1,8 +1,8 @@
 """A router is an implementation of the abstract class Entity, that
 uses an entity store to allow routing other entities. In the code,
 this is represented by subclassing
-:class:`django_crucrudile.entity.store.EntityStore` and
-:class:`django_crucrudile.entity.Entity`, and providing a generator in
+:class:`django_crucrudile.entities.store.EntityStore` and
+:class:`django_crucrudile.entities.Entity`, and providing a generator in
 ``patterns()``, yielding URL patterns made from the entity
 store. Providing :func:`django_crucrudile.entities.Entity.patterns`
 makes router classes concrete implementations of the Entity abstract
@@ -11,8 +11,10 @@ class, which allows them to be used in entity stores.
 This module contains three implementations of routers, a simple one,
 and two implementations adapted to Django models :
 
- - :class:`Router` : implements the abstract class Entity, and
-   subclassing EntityStore to implement :func:`Router.patterns`
+ - :class:`Router` : implements the abstract class
+   :class:`django_crucrudile.entities.Entity`, and subclassing
+   :class:`django_crucrudile.entities.store.EntityStore` to implement
+   :func:`Router.patterns`
  - :class:`BaseModelRouter` : subclasses :class:`Router`,
    instantiate with a model as argument, adapted to pass that
    model as argument to registered entity classes
@@ -70,7 +72,7 @@ class Router(EntityStore, Entity):
                          target, :func:`get_redirect_pattern` will
                          follow ``redirect`` attributes in the stored
                          entities.
-    :type redirect: :class:`django_crucrudile.entity.Entity`
+    :type redirect: :class:`django_crucrudile.entities.Entity`
     """
     def __init__(self,
                  namespace=None,
@@ -111,16 +113,14 @@ class Router(EntityStore, Entity):
         """Register routed entity
 
         Set as index when ``entity``
-        or :attr:`django_crucrudile.entity.Entity.index`` is True.
+        or :attr:`django_crucrudile.entities.Entity.index`` is True.
 
         :argument entity: Entity to register
-        :type entity: :class:`django_crucrudile.entity.Entity`
+        :type entity: :class:`django_crucrudile.entities.Entity`
         :argument index: Register as index
         :type index: bool
         """
         entity = super().register(entity)
-        if not hasattr(entity, 'index'):
-            import ipdb; ipdb.set_trace()
         if index or entity.index:
             self.redirect = entity
 
@@ -368,82 +368,82 @@ class ModelRouter(BaseModelRouter):
     :func:`django_crucrudile.entities.store.EntityStore.register_class`
     or the :func:`django_crucrudile.entities.store.provides`
     decorator. They will be instantiated (with the model as argument,
-    obtaining in :func:`BaseModelRouter.__init__`) when the router is
+    obtained from :func:`BaseModelRouter.__init__`) when the router is
     itself instantiated, using
     :func:`django_crucrudile.entities.store.EntityStore.register_base_store`.
 
+    .. seealso:: The following graph may help to explain the relation
+              between the generic views, routes and routers :
 
-    The following graph may help to explain the relation between the
-    generic views, routes and routers :
+              .. graphviz::
 
-    .. graphviz::
+                 digraph model_router {
+                     bgcolor="transparent"
+                     edge[dir=back, fontsize=10]
+                     node[fontsize=12]
 
-       digraph model_router {
-           bgcolor="transparent"
-           edge[dir=back, fontsize=10]
-           node[fontsize=12]
+                     subgraph baseview {
+                         edge[label="Subclasses", color="#eeeeee",
+                              fontcolor="#555555", fontsize=7]
+                         node[style=filled, color="#eeeeee",
+                              fontcolor="#555555", fontsize=10]
 
-           subgraph baseview {
-               edge[label="Subclasses", color="#eeeeee",
-                    fontcolor="#555555", fontsize=7]
-               node[style=filled, color="#eeeeee",
-                    fontcolor="#555555", fontsize=10]
+                         "Entity" [fontcolor=black, color="#dddddd",
+                                   fontsize=12]
 
-               "Entity" [fontcolor=black, color="#dddddd", fontsize=12]
+                         "Entity" -> "Router"
 
-               "Entity" -> "Router"
+                         "EntityStore" -> "Router"
+                         "Router" -> "BaseModelRouter"
+                         "BaseModelRouter" -> "ModelRouter"
 
-               "EntityStore" -> "Router"
-               "Router" -> "BaseModelRouter"
-               "BaseModelRouter" -> "ModelRouter"
+                         "Entity" -> "Route"
 
-               "Entity" -> "Route"
+                         "Route" -> "ModelRoute"
+                         "Route" -> "ViewRoute"
 
-               "Route" -> "ModelRoute"
-               "Route" -> "ViewRoute"
+                         "ModelRoute" -> "ModelViewRoute"
+                         "ViewRoute" -> "ModelViewRoute"
 
-               "ModelRoute" -> "ModelViewRoute"
-               "ViewRoute" -> "ModelViewRoute"
+                         "ModelViewRoute" -> "ListViewRoute"
+                         "ModelViewRoute" -> "DetailViewRoute"
+                         "ModelViewRoute" -> "CreateViewRoute"
+                         "ModelViewRoute" -> "UpdateViewRoute"
+                         "ModelViewRoute" -> "DeleteViewRoute"
 
-               "ModelViewRoute" -> "ListViewRoute"
-               "ModelViewRoute" -> "DetailViewRoute"
-               "ModelViewRoute" -> "CreateViewRoute"
-               "ModelViewRoute" -> "UpdateViewRoute"
-               "ModelViewRoute" -> "DeleteViewRoute"
+                     }
 
-           }
+                     subgraph routes {
+                         node[style=filled]
+                         "ListViewRoute"
+                         "DetailViewRoute"
+                         "CreateViewRoute"
+                         "UpdateViewRoute"
+                         "DeleteViewRoute"
+                     }
 
-           subgraph routes {
-               node[style=filled]
-               "ListViewRoute"
-               "DetailViewRoute"
-               "CreateViewRoute"
-               "UpdateViewRoute"
-               "DeleteViewRoute"
-           }
+                     subgraph views {
+                         node[style=dashed, color=gray,
+                              fontcolor=gray, constraint=false, fontsize=8]
+                         edge[style=dashed, color=gray,
+                              fontcolor=gray, label="Callback", fontsize=8]
+                         "ListView" -> "ListViewRoute"
+                         "DetailView" -> "DetailViewRoute"
+                         "CreateView" -> "CreateViewRoute"
+                         "UpdateView" -> "UpdateViewRoute"
+                         "DeleteView" -> "DeleteViewRoute"
+                     }
 
-           subgraph views {
-               node[style=dashed, color=gray,
-                    fontcolor=gray, constraint=false, fontsize=8]
-               edge[style=dashed, color=gray,
-                    fontcolor=gray, label="Callback", fontsize=8]
-               "ListView" -> "ListViewRoute"
-               "DetailView" -> "DetailViewRoute"
-               "CreateView" -> "CreateViewRoute"
-               "UpdateView" -> "UpdateViewRoute"
-               "DeleteView" -> "DeleteViewRoute"
-           }
+                     subgraph router {
+                         node[style=filled, color=black, fontcolor=white]
+                         edge[label="Provides", fontsize=10]
+                         "ListViewRoute" -> "ModelRouter"
+                         "DetailViewRoute" -> "ModelRouter"
+                         "CreateViewRoute" -> "ModelRouter"
+                         "UpdateViewRoute" -> "ModelRouter"
+                         "DeleteViewRoute" -> "ModelRouter"
+                     }
 
-           subgraph router {
-               node[style=filled, color=black, fontcolor=white]
-               edge[label="Provides", fontsize=10]
-               "ListViewRoute" -> "ModelRouter"
-               "DetailViewRoute" -> "ModelRouter"
-               "CreateViewRoute" -> "ModelRouter"
-               "UpdateViewRoute" -> "ModelRouter"
-               "DeleteViewRoute" -> "ModelRouter"
-           }
-
-       }
+                 }
 
     """
