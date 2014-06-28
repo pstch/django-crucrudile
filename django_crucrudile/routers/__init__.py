@@ -143,6 +143,7 @@ lazy ``RedirectView`` that redirects to this URL name
         """
         if parents is None:
             parents = []
+        parents = parents + [self]
         # this is a dirty implementation, but it works
 
         # we'll build the URL
