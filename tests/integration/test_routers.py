@@ -102,7 +102,7 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "5ab315f041ad0179912cd8726c02be10b676475c0c525fd4fdbf0f3b88c62f8a"
+            "e168f03d1ebabe7599287189ac4e62e524ca5a3005a87d0f2fc278fc641ef0dc"
         )
 
     def test_get_pydot_graph(self):
