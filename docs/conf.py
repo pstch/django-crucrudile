@@ -279,6 +279,6 @@ texinfo_documents = [
 autodoc_member_order = 'bysource'
 
 inheritance_graph_attrs = dict(
-    rankdir="TB", ratio='compress'
+    rankdir="TB", ratio='compress', bgcolor='transparent'
 )
 modindex_common_prefix = ['django_crucrudile.']
