@@ -1,3 +1,32 @@
+"""The entity store class provides functions to register entity
+instances in an entity store.
+
+It also allow entity classes to be registered at class-level in a
+"base store". These entity classes will be instantiated when the
+entity store gets instantiated, and the resulting instances will be
+registered.
+
+It also allows "register mappings" to be defined, they allow objects
+passed to register functions to be transformed based on a
+mapping. When looking for a mapping, register functions will compare
+their argument to the mapping key (using ``issubclass``, or
+``isinstance``), and use the corresponding mapping value to get the
+object that will be registered.
+
+Additionally, register mapping keys can be iterables (list or tuples),
+in which case the register functions will compare their argument to
+any of the elements in the mapping key, and match even if only a
+single item in the mapping key matches the argument.
+
+The base store is copied on each class definition, using a metaclass,
+so that using register functions that class-level won't alter the base
+store of other class definitions.
+
+This module also contains a :func:`provides` decorator, that
+decorates a entity store class, adding an object to its base store.
+
+"""
+
 from abc import ABCMeta
 
 __all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
