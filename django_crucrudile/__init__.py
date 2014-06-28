@@ -6,7 +6,7 @@ then to automatically generate an URL pattern structure.
 __title__ = 'django-crucrudile'
 __description__ = 'Django URL routing classes',
 
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 
 __author__ = 'Hugo Geoffroy'
 __author_email__ = 'hugo@pstch.net'
