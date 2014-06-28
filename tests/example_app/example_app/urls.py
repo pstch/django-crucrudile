@@ -1,1 +1,3 @@
-urlpatterns = list(__import__('.routers').base_router.patterns())
+from .routers import base_router
+
+urlpatterns = base_router.patterns()
