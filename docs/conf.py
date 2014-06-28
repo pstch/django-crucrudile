@@ -281,3 +281,4 @@ autodoc_member_order = 'bysource'
 inheritance_graph_attrs = dict(
     rankdir="TB", ratio='compress'
 )
+modindex_common_prefix = ['django_crucrudile.']

@@ -13,8 +13,10 @@ django-crucrudile
    tests
 
 * :ref:`modindex`
+* :ref:`genindex`
 
 .. automodule:: django_crucrudile
+   :noindex:
 
 Class structure graph
 ---------------------
