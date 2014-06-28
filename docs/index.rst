@@ -25,6 +25,8 @@ Class structure graph
 
    digraph class_structure {
 
+     bgcolor="transparent"
+
      "Abstract" [color=black, fontcolor=white, style=filled]
 
      "Entity" [color=black, fontcolor=white, style=filled]
