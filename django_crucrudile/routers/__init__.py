@@ -212,14 +212,14 @@ lazy ``RedirectView`` that redirects to this URL name
         if parents is None:
             parents = []
 
-        # yield redirect pattern if there is one defined (and
-        # add_redirect is True)
-        if add_redirect and self.redirect is not None:
-            yield self.get_redirect_pattern(parents)
-
         # define a pattern reader generator, yielding patterns from the
         # store entities
         def _pattern_reader():
+            # yield redirect pattern if there is one defined (and
+            # add_redirect is True)
+            if add_redirect and self.redirect is not None:
+                yield self.get_redirect_pattern(parents)
+
             for entity in self._store:
                 for pattern in entity.patterns(
                     parents + [self], add_redirect
