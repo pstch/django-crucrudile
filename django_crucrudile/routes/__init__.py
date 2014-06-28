@@ -144,7 +144,7 @@ defined.
 
         By default, yields only :attr:`url_part`.
         """
-        yield self.url_part
+        yield "^{}$".format(self.url_part) if self.url_part else '^'
 
     def get_url_name(self):
         """Return the URL name, by default from :attr:`name`"""
