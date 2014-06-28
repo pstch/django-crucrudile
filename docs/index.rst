@@ -1,15 +1,22 @@
 django-crucrudile
 =================
 
+.. module:: django_crucrudile
+
 .. toctree::
    installation
-   getting_started
+   quickstart
    entity_store
    entities
    routers
    routes
+   tests
 
 * :ref:`modindex`
+* :ref:`genindex`
+
+.. automodule:: django_crucrudile
+   :noindex:
 
 Class structure graph
 ---------------------
@@ -17,6 +24,8 @@ Class structure graph
 .. graphviz::
 
    digraph class_structure {
+
+     bgcolor="transparent"
 
      "Abstract" [color=black, fontcolor=white, style=filled]
 

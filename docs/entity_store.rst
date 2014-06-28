@@ -3,12 +3,13 @@ Entity store (``EntityStoreMetaclass``, ``EntityStore`` and ``provides``)
 
 .. module:: django_crucrudile.entities.store
 
+.. automodule:: django_crucrudile.entities.store
+   :noindex:
+
 ``provides`` decorator
 ----------------------
 
-.. automodule:: django_crucrudile.entities.store
-    :members: provides
-    :noindex:
+.. autofunction:: provides
 
 Entity store
 ------------

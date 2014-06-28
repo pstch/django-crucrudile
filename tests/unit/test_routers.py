@@ -174,6 +174,19 @@ class BaseModelRouterTestCase(TestCase):
             router_class.model
         )
 
+    def test_init_sets_url_part(self):
+        mock_url_part = mock.Mock()
+
+        router = self.router_class(
+            model=self.mock_model,
+            url_part=mock_url_part
+        )
+
+        self.assertEqual(
+            router.url_part,
+            mock_url_part
+        )
+
     def test_get_register_map_kwargs(self):
         self.assertEqual(
             self.router.get_register_map_kwargs(),

@@ -10,24 +10,24 @@ from django.views.generic import (
 
 from .routers import base_router
 from .models import (
-    TestDocumentModel,
-    TestGroupModel,
-    TestPhaseModel,
-    TestEntityModel,
-    TestInterfaceModel,
-    TestCommentModel,
-    TestTaskModel
+    DocumentModel,
+    GroupModel,
+    PhaseModel,
+    EntityModel,
+    InterfaceModel,
+    CommentModel,
+    TaskModel
 )
 
 
 MODEL_NAME_DICT = {
-    'documents': (TestDocumentModel,
-                  TestGroupModel,
-                  TestPhaseModel),
-    'entities': (TestEntityModel,
-                 TestInterfaceModel),
-    None: (TestCommentModel,
-           TestTaskModel)
+    'documents': (DocumentModel,
+                  GroupModel,
+                  PhaseModel),
+    'entities': (EntityModel,
+                 InterfaceModel),
+    None: (CommentModel,
+           TaskModel)
 }
 
 ACTION_NAME_DICT = {
@@ -49,22 +49,25 @@ class ResolveTestCase(TestCase):
             include(self.patterns),
         )
 
-    def _test_model_view(self, model, action, view_name, prefix=None):
+    def _test_model_view(self,
+                         model_name, action_name, view_name,
+                         prefix=None):
         if prefix:
-            path = "/{}/{}/{}".format(prefix, model, action)
+            path = "/{}/{}/{}".format(prefix, model_name, action_name)
         else:
-            path = "/{}/{}".format(model, action)
+            path = "/{}/{}".format(model_name, action_name)
 
         match = self.url.resolve(
             path
         )
+
         self.assertEqual(
             match.func.__name__,
             view_name
             )
         self.assertEqual(
             match.url_name,
-            "{}-{}".format(model, action)
+            "{}-{}".format(model_name, action_name)
         )
         if prefix:
             self.assertEqual(
@@ -72,32 +75,38 @@ class ResolveTestCase(TestCase):
                 prefix
             )
 
+
 for prefix, models in MODEL_NAME_DICT.items():
-    for model in models:
-        model_name = model._meta.model_name
+    for model_class in models:
+        model_name = model_class._meta.model_name
         for action_name, view_class in ACTION_NAME_DICT.items():
             view_name = view_class.__name__
-            if prefix:
-                func_name = 'test_resolve_{}_{}_{}'.format(
-                    prefix,
-                    model_name,
-                    action_name
-                )
-            else:
-                func_name = 'test_resolve_{}_{}'.format(
-                    model_name,
-                    action_name
-                )
 
-            def _test(self):
-                self._test_model_view(
-                    model_name,
-                    action_name,
-                    view_name,
-                    prefix=prefix,
-                )
+            def _make_test(model, action, view, prefix):
+                if prefix:
+                    func_name = 'test_resolve_{}_{}_{}'.format(
+                        prefix,
+                        model,
+                        action
+                    )
+                else:
+                    func_name = 'test_resolve_{}_{}'.format(
+                        model,
+                        action
+                    )
+
+                def _test(self):
+                    return ResolveTestCase._test_model_view(
+                        self,
+                        model,
+                        action,
+                        view,
+                        prefix,
+                    )
+
+                return func_name, _test
+
             setattr(
                 ResolveTestCase,
-                func_name,
-                _test
+                *_make_test(model_name, action_name, view_name, prefix)
             )

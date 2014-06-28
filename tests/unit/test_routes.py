@@ -137,7 +137,7 @@ class RouteTestCase(TestCase):
 
         self.assertEqual(
             list(route.get_url_parts()),
-            [url_part, ]
+            ['^urlpart$', ]
         )
 
     def test_get_url_name(self):
@@ -337,12 +337,20 @@ class ModelRouteTestCase(TestCase):
         route = self.concrete_class(
             name=name,
             model=self.mock_model,
-            url_part=url_part)
+            url_part=url_part
+        )
 
         self.assertEqual(
             list(route.get_url_parts()),
-            ["^{}/{}$".format(self.model_name, url_part)]
+            ["^urlpart$"]
         )
+
+        route.prefix_url_part = True
+        self.assertEqual(
+            list(route.get_url_parts()),
+            ["^test model name/urlpart$"]
+        )
+
 
     def test_get_url_name(self):
         class TestConcreteRoute(self.route_class):

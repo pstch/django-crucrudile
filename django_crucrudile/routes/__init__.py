@@ -144,7 +144,7 @@ defined.
 
         By default, yields only :attr:`url_part`.
         """
-        yield self.url_part
+        yield "^{}$".format(self.url_part) if self.url_part else '^'
 
     def get_url_name(self):
         """Return the URL name, by default from :attr:`name`"""
@@ -246,6 +246,12 @@ class ModelRoute(Route):
     :attribute model: Model to use on the Route
     :type model: :class:`django.db.models.Model`
     """
+    prefix_url_part = False
+    """
+    :attribute prefix_url_part: Prefix the URL part with the model
+                                (ex: "/model/<url_part>")
+    :type prefix_url_part: bool
+    """
     def __init__(self,
                  model=None,
                  **kwargs):
@@ -279,7 +285,11 @@ class ModelRoute(Route):
         :attr:`Route.url_part`.
 
         """
-        yield "^{}/{}$".format(self.model_url_part, self.url_part)
+        if self.prefix_url_part:
+            yield "^{}/{}$".format(self.model_url_part, self.url_part)
+        else:
+            for url_part in super().get_url_parts():
+                yield url_part
 
     def get_url_name(self):
         """Return the URL name built using :class:`ModelRoute`

@@ -1,8 +1,8 @@
 """A router is an implementation of the abstract class Entity, that
 uses an entity store to allow routing other entities. In the code,
 this is represented by subclassing
-:class:`django_crucrudile.entity.store.EntityStore` and
-:class:`django_crucrudile.entity.Entity`, and providing a generator in
+:class:`django_crucrudile.entities.store.EntityStore` and
+:class:`django_crucrudile.entities.Entity`, and providing a generator in
 ``patterns()``, yielding URL patterns made from the entity
 store. Providing :func:`django_crucrudile.entities.Entity.patterns`
 makes router classes concrete implementations of the Entity abstract
@@ -11,8 +11,10 @@ class, which allows them to be used in entity stores.
 This module contains three implementations of routers, a simple one,
 and two implementations adapted to Django models :
 
- - :class:`Router` : implements the abstract class Entity, and
-   subclassing EntityStore to implement :func:`Router.patterns`
+ - :class:`Router` : implements the abstract class
+   :class:`django_crucrudile.entities.Entity`, and subclassing
+   :class:`django_crucrudile.entities.store.EntityStore` to implement
+   :func:`Router.patterns`
  - :class:`BaseModelRouter` : subclasses :class:`Router`,
    instantiate with a model as argument, adapted to pass that
    model as argument to registered entity classes
@@ -70,7 +72,7 @@ class Router(EntityStore, Entity):
                          target, :func:`get_redirect_pattern` will
                          follow ``redirect`` attributes in the stored
                          entities.
-    :type redirect: :class:`django_crucrudile.entity.Entity`
+    :type redirect: :class:`django_crucrudile.entities.Entity`
     """
     def __init__(self,
                  namespace=None,
@@ -111,16 +113,14 @@ class Router(EntityStore, Entity):
         """Register routed entity
 
         Set as index when ``entity``
-        or :attr:`django_crucrudile.entity.Entity.index`` is True.
+        or :attr:`django_crucrudile.entities.Entity.index`` is True.
 
         :argument entity: Entity to register
-        :type entity: :class:`django_crucrudile.entity.Entity`
+        :type entity: :class:`django_crucrudile.entities.Entity`
         :argument index: Register as index
         :type index: bool
         """
         entity = super().register(entity)
-        if not hasattr(entity, 'index'):
-            import ipdb; ipdb.set_trace()
         if index or entity.index:
             self.redirect = entity
 
@@ -143,6 +143,7 @@ lazy ``RedirectView`` that redirects to this URL name
         """
         if parents is None:
             parents = []
+        parents = parents + [self]
         # this is a dirty implementation, but it works
 
         # we'll build the URL
@@ -172,8 +173,8 @@ lazy ``RedirectView`` that redirects to this URL name
 
             url_pattern = url(
                 r'^$',
-                RedirectView.as_view(url=reverse_lazy(url_name))
-                # TODO: Url name ?
+                RedirectView.as_view(url=reverse_lazy(url_name)),
+                name="{}-redirect".format(url_name)
             )
 
             url_pattern._redirect_url_name = url_name
@@ -212,14 +213,14 @@ lazy ``RedirectView`` that redirects to this URL name
         if parents is None:
             parents = []
 
-        # yield redirect pattern if there is one defined (and
-        # add_redirect is True)
-        if add_redirect and self.redirect is not None:
-            yield self.get_redirect_pattern(parents)
-
         # define a pattern reader generator, yielding patterns from the
         # store entities
         def _pattern_reader():
+            # yield redirect pattern if there is one defined (and
+            # add_redirect is True)
+            if add_redirect and self.redirect is not None:
+                yield self.get_redirect_pattern(parents)
+
             for entity in self._store:
                 for pattern in entity.patterns(
                     parents + [self], add_redirect
@@ -231,7 +232,7 @@ lazy ``RedirectView`` that redirects to this URL name
 
         # make a RegexURLResolver
         pattern = url(
-            url_part or '^',
+            '^{}/'.format(url_part) if url_part else '^',
             include(
                 pattern_list,
                 namespace=namespace,
@@ -277,7 +278,7 @@ class BaseModelRouter(Router):
         kwargs['model'] = self.model
         return kwargs
 
-    def __init__(self, model=None, **kwargs):
+    def __init__(self, model=None, url_part=None, **kwargs):
         """Check for :argument:`model` in kwargs, if None and not defined at
         class-level, fail.
 
@@ -299,7 +300,16 @@ class BaseModelRouter(Router):
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
+        if url_part is not None:
+            self.url_part = url_part
+        else:
+            self.url_part = self.model_url_part
         super().__init__(**kwargs)
+
+    @property
+    def model_url_part(self):
+        """Return the model name to be used when building the URL part"""
+        return self.model._meta.model_name
 
     def get_register_map(self):
         """Override to append mapping of ``SingleObjectMixin`` and
@@ -368,13 +378,12 @@ class ModelRouter(BaseModelRouter):
     :func:`django_crucrudile.entities.store.EntityStore.register_class`
     or the :func:`django_crucrudile.entities.store.provides`
     decorator. They will be instantiated (with the model as argument,
-    obtaining in :func:`BaseModelRouter.__init__`) when the router is
+    obtained from :func:`BaseModelRouter.__init__`) when the router is
     itself instantiated, using
     :func:`django_crucrudile.entities.store.EntityStore.register_base_store`.
 
-
-    The following graph may help to explain the relation between the
-    generic views, routes and routers :
+    The following graph may help to explain the relation
+    between the generic views, routes and routers :
 
     .. graphviz::
 
@@ -389,7 +398,8 @@ class ModelRouter(BaseModelRouter):
                node[style=filled, color="#eeeeee",
                     fontcolor="#555555", fontsize=10]
 
-               "Entity" [fontcolor=black, color="#dddddd", fontsize=12]
+               "Entity" [fontcolor=black, color="#dddddd",
+                         fontsize=12]
 
                "Entity" -> "Router"
 

@@ -17,31 +17,31 @@ class EmptyRouterTestCase(TestCase):
         list(self.base_router.patterns())
 
 
-class TestDocumentModel(models.Model):
+class DocumentModel(models.Model):
     pass
 
 
-class TestGroupModel(models.Model):
+class GroupModel(models.Model):
     pass
 
 
-class TestPhaseModel(models.Model):
+class PhaseModel(models.Model):
     pass
 
 
-class TestEntityModel(models.Model):
+class EntityModel(models.Model):
     pass
 
 
-class TestInterfaceModel(models.Model):
+class InterfaceModel(models.Model):
     pass
 
 
-class TestCommentModel(models.Model):
+class CommentModel(models.Model):
     pass
 
 
-class TestTaskModel(models.Model):
+class TaskModel(models.Model):
     pass
 
 
@@ -53,11 +53,11 @@ class RouterTestCase(TestCase):
 
         self.documents_router = Router(
             namespace="documents",
-            url_part="^documents/"
+            url_part="documents"
         )
-        self.documents_router.register(TestDocumentModel, index=True)
-        self.documents_router.register(TestGroupModel)
-        self.documents_router.register(TestPhaseModel)
+        self.documents_router.register(DocumentModel, index=True)
+        self.documents_router.register(GroupModel)
+        self.documents_router.register(PhaseModel)
 
         self.base_router.register(
             self.documents_router,
@@ -66,18 +66,18 @@ class RouterTestCase(TestCase):
 
         self.entities_router = Router(
             namespace="entities",
-            url_part="^entities/"
+            url_part="entities"
         )
 
-        self.entities_router.register(TestEntityModel, index=True)
-        self.entities_router.register(TestInterfaceModel)
+        self.entities_router.register(EntityModel, index=True)
+        self.entities_router.register(InterfaceModel)
 
         self.base_router.register(
             self.entities_router
         )
 
-        self.base_router.register(TestCommentModel)
-        self.base_router.register(TestTaskModel)
+        self.base_router.register(CommentModel)
+        self.base_router.register(TaskModel)
 
     def _test_stores(self):
         self.assertEqual(
@@ -102,7 +102,7 @@ class RouterTestCase(TestCase):
         # compare to reference hash
         self.assertEqual(
             tree_hash,
-            "7fc45b276e4f325044f2658f27acbc005974512564e377233c7f9b712bec2935"
+            "e168f03d1ebabe7599287189ac4e62e524ca5a3005a87d0f2fc278fc641ef0dc"
         )
 
     def test_get_pydot_graph(self):
