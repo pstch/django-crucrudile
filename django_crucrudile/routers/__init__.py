@@ -74,6 +74,7 @@ class Router(EntityStore, Entity):
                          entities.
     :type redirect: :class:`django_crucrudile.entities.Entity`
     """
+    add_redirect = True
     def __init__(self,
                  namespace=None,
                  url_part=None,
@@ -124,14 +125,14 @@ class Router(EntityStore, Entity):
         if index or entity.index:
             self.redirect = entity
 
-    def get_redirect_pattern(self, parents=None, silent=False):
+    def get_redirect_pattern(self, namespaces=None, silent=False):
         """Compile the URL name to this router's redirect path, and return a
 lazy ``RedirectView`` that redirects to this URL name
 
-        :argument parents: The list of parent routers will be used to
-                           get the current namespaces when building
-                           the redirect URL name
-        :type parents: list of :class:`django_crucrudile.routers.Router`
+        :argument namespaces: The list of namespaces will be used to
+                              get the current namespaces when building
+                              the redirect URL name
+        :type namespaces: list of str
         :argument silent: Do not fail if no redirect found, just
                           return None.
         :type silent: bool
@@ -141,17 +142,6 @@ lazy ``RedirectView`` that redirects to this URL name
                            ``silent`` is not explicitly set to
                            ``True``.
         """
-        if parents is None:
-            parents = []
-        parents = parents + [self]
-        # this is a dirty implementation, but it works
-
-        # we'll build the URL
-        def _namespaces():
-            for parent in parents:
-                if parent.namespace:
-                    yield parent.namespace + ':'
-
         redirect = self.redirect
 
         def _follow_redirect():
@@ -165,11 +155,13 @@ lazy ``RedirectView`` that redirects to this URL name
                     yield redirect.namespace + ':'
                 redirect = getattr(redirect, 'redirect', None)
 
-        namespaces = ''.join(_namespaces())
         url_name = ''.join(_follow_redirect())
 
         if url_name:
-            url_name = ''.join([namespaces, url_name])
+            if namespaces:
+                url_name = ':'.join([
+                    ':'.join(namespaces),
+                    url_name])
 
             url_pattern = url(
                 r'^$',
@@ -191,17 +183,16 @@ lazy ``RedirectView`` that redirects to this URL name
                     )
                 )
 
-    def patterns(self, parents=None, add_redirect=True):
+    def patterns(self, namespaces=None, add_redirect=None):
         """Read :attr:`_store` and yield a pattern of an URL group (with url part
         and namespace) containing entities's patterns (obtained from
         the entity store), also yield redirect patterns where defined.
 
-        :argument parents: We need :func:`patterns` to pass
-                           ``parents`` recursively, because it
-                           may be needed to make redirect URL patterns
-        :type parents: list of :class:`django_crucrudile.routers.Router`
-        :argument add_redirect: Add a redirect pattern if there is one
-                                defined
+        :argument namespaces: We need :func:`patterns` to pass
+                              ``namespaces`` recursively, because it
+                              may be needed to make redirect URL patterns
+        :type namespaces: list of str
+        :argument add_redirect: Override :attribute:`Router.add_redirect`
         :type add_redirect: bool
         """
         # get url_part and namespace (needed when building
@@ -210,8 +201,12 @@ lazy ``RedirectView`` that redirects to this URL name
         namespace = self.namespace
 
         # initialize default arguments
-        if parents is None:
-            parents = []
+        if namespaces is None:
+            namespaces = [self.namespace] if self.namespace else []
+        elif self.namespace:
+            namespaces = namespaces + [self.namespace]
+        if add_redirect is None:
+            add_redirect = self.add_redirect
 
         # define a pattern reader generator, yielding patterns from the
         # store entities
@@ -219,12 +214,10 @@ lazy ``RedirectView`` that redirects to this URL name
             # yield redirect pattern if there is one defined (and
             # add_redirect is True)
             if add_redirect and self.redirect is not None:
-                yield self.get_redirect_pattern(parents)
+                yield self.get_redirect_pattern(namespaces)
 
             for entity in self._store:
-                for pattern in entity.patterns(
-                    parents + [self], add_redirect
-                ):
+                for pattern in entity.patterns(namespaces, add_redirect):
                     yield pattern
 
         # consume the generator
