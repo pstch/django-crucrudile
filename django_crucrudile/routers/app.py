@@ -46,11 +46,11 @@ class AppRouter(Router):
         """Initialize application router, get namespace if required, run
         superclass init and load entities to register from module.
 
-        :attribute app_module_name: Application module name to
+        :argument app_module_name: Application module name to
                                     load. Must be importable from
                                     project root.
         :type app_module_name: str
-        :attribute add_app_namespace: Override
+        :argument add_app_namespace: Override
                                       :attr:`add_app_namespace`
         :type add_app_namespace: bool or None
         """
@@ -100,7 +100,7 @@ class AppRouter(Router):
     def register_module_entities(self, silent=None):
         """Register entities returned by :func:`self.get_routing_entities`.
 
-        :attribute silent: Override :attr:`no_app_entities_silent`
+        :argument silent: Override :attr:`no_app_entities_silent`
         :type silent: bool or None
 
         """
