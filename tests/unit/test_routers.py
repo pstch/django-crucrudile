@@ -2,7 +2,7 @@ from functools import partial
 import mock
 
 from django.test import TestCase
-from django.core.urlresolvers import RegexURLPattern, RegexURLResolver
+from django.core.urlresolvers import RegexURLResolver
 from django.db.models import Model
 from django.views.generic import (
     View, ListView, DetailView,
