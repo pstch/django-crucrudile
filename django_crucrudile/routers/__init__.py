@@ -78,7 +78,7 @@ class Router(EntityStore, Entity):
     """
     :attribute add_redirect: Add redirect pattern when calling
                              :func:`patterns`. If None, will be
-                             guessed using :attribute:`redirect`
+                             guessed using :attr:`redirect`
     :type add_redirect: bool or None
     """
     add_redirect_silent = False
@@ -89,11 +89,11 @@ class Router(EntityStore, Entity):
                                     attribute is not set (on
                                     self). Defaults to False, because
                                     in the default configuration,
-                                    :attribute:`add_redirect` is
+                                    :attr:`add_redirect` is
                                     guessed using
-                                    :attribute:`redirect`, using
+                                    :attr:`redirect`, using
                                     ``bool``. Set to True if you're
-                                    using :attribute:`add_redirect`
+                                    using :attr:`add_redirect`
                                     explicitly and want the redirect
                                     attribute to be optional.
     :type add_redirect_silent: bool
@@ -174,7 +174,7 @@ class Router(EntityStore, Entity):
 
     def get_redirect_pattern(self, namespaces=None, silent=None):
         """Compile the URL name to this router's redirect path (found by
-        following :attribute:`Router.redirect`), and that return a lazy
+        following :attr:`Router.redirect`), and that return a lazy
         ``RedirectView`` that redirects to this URL name
 
         :argument namespaces: The list of namespaces will be used to
@@ -182,7 +182,7 @@ class Router(EntityStore, Entity):
                               the redirect URL name
         :type namespaces: list of str
         :argument silent: Override
-                          :attribute:`Router.get_redirect_silent`
+                          :attr:`Router.get_redirect_silent`
         :type silent: bool
 
         :raise ValueError: If no redirect found when following
@@ -305,10 +305,10 @@ class Router(EntityStore, Entity):
                               ``namespaces`` recursively, because it
                               may be needed to make redirect URL patterns
         :type namespaces: list of str
-        :argument add_redirect: Override :attribute:`Router.add_redirect`
+        :argument add_redirect: Override :attr:`Router.add_redirect`
         :type add_redirect: bool
         :argument add_redirect_silent: Override
-                                       :attribute:`Router.add_redirect_silent`
+                                       :attr:`Router.add_redirect_silent`
         :type add_redirect: bool
         """
         # initialize default arguments
