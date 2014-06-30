@@ -55,7 +55,7 @@ def provides(provided, **kwargs):
 
 def register_instances(to_store):
     """Return a decorator that makes all instances of this class (and its
-    subclasses) automatically register themselves to :argument:`to_store`.
+    subclasses) automatically register themselves to ``to_store``.
 
     :argument to_store: Store to register instances to.
     :type to_store: :class:`EntityStore`
