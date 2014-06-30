@@ -225,7 +225,7 @@ class Router(EntityStore, Entity):
                 # getattr(redirect, 'namespace', None)).
 
                 # can't decide either
-                if issubclass(redirect, Router) and redirect.namespace:
+                if isinstance(redirect, Router) and redirect.namespace:
                     namespaces.append(redirect.namespace)
                 # save last redirect in case of exception
                 _last_redirect_found = redirect
