@@ -8,17 +8,19 @@ class AppRouter(Router):
     add_app_namespace = True
     register_app_silent = True
 
-    def __init__(self, app_module_name, add_namespace=None, **kwargs):
+    def __init__(self, app_module_name, add_app_namespace=None, **kwargs):
         self.app_module_name = app_module_name
-        if add_namespace is None:
-            add_namespace = self.add_namespace
+        if add_app_namespace is None:
+            add_app_namespace = self.add_app_namespace
 
-        if add_namespace:
+        if add_app_namespace:
             self.namespace = ':'.join(
                 self.app_module_name.split('.')
             )
 
         super().__init__(**kwargs)
+
+        self.register_module_entities()
 
     def get_routing_module_path(self):
         return '.'.join([
@@ -42,7 +44,7 @@ class AppRouter(Router):
         if silent is None:
             silent = self.register_app_silent
 
-        entities = self.get_routing_entities
+        entities = self.get_routing_entities()
         if entities:
             for entity in entities:
                 self.register(entity)
