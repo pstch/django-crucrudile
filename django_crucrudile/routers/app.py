@@ -77,7 +77,6 @@ class AppRouter(Router):
             self.routing_module_name
         ])
 
-
     def get_routing_module(self):
         """Load routing module using path from
         :func:`get_routing_module_path`.

@@ -38,7 +38,7 @@ def provides(provided, **kwargs):
 
     :argument provided: Object to register in the base store. This
                         can be an object since it may be transformed
-                         by register_class_map.
+                        by register_class_map.
     :type provided: object
 
     """
