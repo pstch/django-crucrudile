@@ -255,25 +255,31 @@ lazy ``RedirectView`` that redirects to this URL name
                 raw_target_url_name,
             )
 
+            # Create a redirect view, that will get the URL to
+            # redirect to lazily (when it's accessed), as the target
+            # URL is not known yet
             redirect_view = RedirectView.as_view(
                 url=reverse_lazy(target_url_name)
             )
 
+            # Now that we have a redirect view pointing to the target
+            # pattern, and a name for our pattern, we can create it
             url_pattern = url(
                 r'^$',
                 redirect_view,
                 name=redirect_url_name
             )
 
+            # FIXME: Used for debugging, should be removed.
             url_pattern._redirect_url_name = target_url_name
 
             return url_pattern
         elif not silent:
-            # no URL found and set to fail (not silent) if we got
+            # No URL found and set to fail (not silent) if we got
             # here, it's because _follow_redirect() returned
             # None.
             #
-            # this will happen if self.redirect is None or if
+            # This will happen if self.redirect is None or if
             # following redirect attributes returned None somewhere
             raise ValueError(
                 "Failed following redirect attribute {} "
