@@ -9,6 +9,7 @@ django-crucrudile
    entity_store
    entities
    routers
+   app_router
    routes
    tests
 
