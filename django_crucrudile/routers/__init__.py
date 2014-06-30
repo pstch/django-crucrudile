@@ -172,8 +172,9 @@ class Router(EntityStore, Entity):
             self.redirect = entity
 
     def get_redirect_pattern(self, namespaces=None, silent=None):
-        """Compile the URL name to this router's redirect path, and return a
-lazy ``RedirectView`` that redirects to this URL name
+        """Compile the URL name to this router's redirect path (found by
+        following :attribute:`Router.redirect`), and that return a lazy
+        ``RedirectView`` that redirects to this URL name
 
         :argument namespaces: The list of namespaces will be used to
                               get the current namespaces when building
@@ -186,6 +187,7 @@ lazy ``RedirectView`` that redirects to this URL name
         :raise ValueError: If no redirect found when following
                            ``redirect`` attributes, and silent
                            mode is not enabled.
+
         """
         # initialize default arguments
         if silent is None:
