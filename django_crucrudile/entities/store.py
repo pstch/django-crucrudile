@@ -34,31 +34,63 @@ __all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
 
 def provides(provided, **kwargs):
     """Return a decorator that uses :func:`EntityStore.register_class` to
-    register a class in the base store
+    register the given object in the base store.
+
+    :argument provided: Object to register in the base store. This
+                        can be an object since it may be transformed
+                         by register_class_map.
+    :type provided: object
+
     """
 
-    def register_class_to_router(router):
-        """Register the provided class"""
+    def register_obj_in_store(router):
+        """Register the provided class to :argument:`store`
+
+        :argument route: Router to register provided object to
+        :type router: :class:`EntityStore`"""
         router.register_class(provided, **kwargs)
         return router
-    return register_class_to_router
+    return register_obj_in_store
 
 
 def register_instances(to_store):
-    def patch_constructor(entity):
-        orig_init = entity.__init__
+    """Return a decorator that makes all instances of this class (and its
+    subclasses) automatically register themselves to :argument:`to_store`.
+
+    :argument to_store: Store to register instances to.
+    :type to_store: :class:`EntityStore`
+
+    """
+    def patch_constructor(entity_class):
+        """Wrap original entity_class __init__, to register instance to
+        :argument:`to_store`.
+
+        """
+        orig_init = entity_class.__init__
 
         @wraps(orig_init)
         def new_init(self, *args, **kwargs):
             orig_init(self, *args, **kwargs)
             to_store.register(self)
 
-        entity.__init__ = new_init
+        entity_class.__init__ = new_init
+        return entity_class
+    return patch_constructor
 
 
-def register_class(to_store):
-    def _register_class(entity_class):
-        to_store.register_class(entity_class)
+def register_class(to_store_class):
+    """Return a decorator that registers the decorated class in the store
+    class provided as argument, using :class:`EntityStore.register_class`.
+
+    :argument to_store_class: Store class to register class to.
+    :type to_store_class: subclass of :class:`EntityStore`
+
+    """
+    def register_obj_as_class(entity_class):
+        """Register decorated class to :argument:`to_store_class`."""
+        to_store_class.register_class(entity_class)
+        return entity_class
+    return register_obj_as_class
 
 
 class EntityStoreMetaclass(ABCMeta):
