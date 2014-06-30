@@ -45,6 +45,7 @@ class AppRouter(Router):
             silent = self.register_app_silent
 
         entities = self.get_routing_entities()
+
         if entities:
             for entity in entities:
                 self.register(entity)
