@@ -26,7 +26,7 @@ This module also contains a :func:`provides` decorator, that
 decorates a entity store class, adding an object to its base store.
 
 """
-
+from functools import wraps
 from abc import ABCMeta
 
 __all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
@@ -42,6 +42,23 @@ def provides(provided, **kwargs):
         router.register_class(provided, **kwargs)
         return router
     return register_class_to_router
+
+
+def register_instances(to_store):
+    def patch_constructor(entity):
+        orig_init = entity.__init__
+
+        @wraps(orig_init)
+        def new_init(self, *args, **kwargs):
+            orig_init(self, *args, **kwargs)
+            to_store.register(self)
+
+        entity.__init__ = new_init
+
+
+def register_class(to_store):
+    def _register_class(entity_class):
+        to_store.register_class(entity_class)
 
 
 class EntityStoreMetaclass(ABCMeta):
