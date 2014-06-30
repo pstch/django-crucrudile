@@ -104,7 +104,9 @@ defined.
                 )
         super().__init__(**kwargs)
 
-    def patterns(self, parents=None, add_redirect=None):
+    def patterns(self, parents=None,
+                 add_redirect=None,
+                 add_redirect_silent=None):
         """Yield patterns for URL parts in :func:`get_url_parts`, using
         callback in :func:`get_callback` and URL name from
         :func:`get_url_name`.
@@ -113,8 +115,12 @@ defined.
                            of ``patterns``.
         :type parents: list of :class:`django_crucrudile.routers.Router`
         :argument add_redirect: Not used in :class:`Route`'s implementation
-                           of ``patterns``.
+                                of ``patterns``.
         :type add_redirect: bool
+        :argument add_redirect_silent: Not used in :class:`Route`'s
+                                       implementation
+                                       of ``patterns``.
+        :type add_redirect_silent: bool
 
         """
         callback = self.get_callback()

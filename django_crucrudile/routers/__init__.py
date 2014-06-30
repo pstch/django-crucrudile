@@ -24,6 +24,8 @@ and two implementations adapted to Django models :
    default Django generic views.
 
 """
+from uuid import uuid4
+
 from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
@@ -45,6 +47,9 @@ __all__ = [
     "ModelRouter"
 ]
 
+
+def _random_url_id():
+    return uuid4().hex[:6]
 
 class Router(EntityStore, Entity):
     """RoutedEntity that yields an URL group containing URL patterns from
@@ -74,11 +79,46 @@ class Router(EntityStore, Entity):
                          entities.
     :type redirect: :class:`django_crucrudile.entities.Entity`
     """
-    add_redirect = True
+    add_redirect = None
+    """
+    :attribute add_redirect: Add redirect pattern when calling
+                             :func:`patterns`. If None, will be
+                             guessed using :attribute:`redirect`
+    :type add_redirect: bool or None
+    """
+    add_redirect_silent = False
+    """
+    :attribute add_redirect_silent: Fail silently when the patterns
+                                    reader is asked to add the
+                                    redirect patterns and the redirect
+                                    attribute is not set (on
+                                    self). Defaults to False, because
+                                    in the default configuration,
+                                    :attribute:`add_redirect` is
+                                    guessed using
+                                    :attribute:`redirect`, using
+                                    ``bool``. Set to True if you're
+                                    using :attribute:`add_redirect`
+                                    explicitly and want the redirect
+                                    attribute to be optional.
+    :type add_redirect_silent: bool
+    """
+    get_redirect_silent = False
+    """
+    :attribute get_redirect_silent: Fail silently when following
+                                    redirect attributes to find the
+                                    redirect URL name (if no URL name
+                                    is found).
+    :type get_redirect_silent: bool
+    """
+
     def __init__(self,
                  namespace=None,
                  url_part=None,
                  redirect=None,
+                 add_redirect=None,
+                 add_redirect_silent=None,
+                 get_redirect_silent=None,
                  **kwargs):
         """Initialize Router base attributes
 
@@ -93,6 +133,12 @@ class Router(EntityStore, Entity):
             self.url_part = url_part
         if redirect is not None:
             self.redirect = redirect
+        if add_redirect is not None:
+            self.add_redirect = add_redirect
+        if add_redirect_silent is not None:
+            self.add_redirect_silent = add_redirect_silent
+        if get_redirect_silent is not None:
+            self.get_redirect_silent = get_redirect_silent
 
         # call superclass implementation of __init__
         super().__init__(**kwargs)
@@ -125,7 +171,7 @@ class Router(EntityStore, Entity):
         if index or entity.index:
             self.redirect = entity
 
-    def get_redirect_pattern(self, namespaces=None, silent=False):
+    def get_redirect_pattern(self, namespaces=None, silent=None):
         """Compile the URL name to this router's redirect path, and return a
 lazy ``RedirectView`` that redirects to this URL name
 
@@ -133,57 +179,114 @@ lazy ``RedirectView`` that redirects to this URL name
                               get the current namespaces when building
                               the redirect URL name
         :type namespaces: list of str
-        :argument silent: Do not fail if no redirect found, just
-                          return None.
+        :argument silent: Override
+                          :attribute:`Router.get_redirect_silent`
         :type silent: bool
 
         :raise ValueError: If no redirect found when following
-                           ``redirect`` attributes, and
-                           ``silent`` is not explicitly set to
-                           ``True``.
+                           ``redirect`` attributes, and silent
+                           mode is not enabled.
         """
-        redirect = self.redirect
+        # initialize default arguments
+        if silent is None:
+            silent = self.get_redirect_silent
+        if namespaces is None:
+            namespaces = []
+        else:
+            # need to copy because _follow_redirect appends namespaces
+            # found when following redirect attributes
+            namespaces = list(namespaces)
 
-        def _follow_redirect():
-            redirect = self.redirect
-            while redirect:
-                if type(redirect) is str:
-                    yield redirect
-                    break
-                elif (redirect and
-                      getattr(redirect, 'namespace', None) is not None):
-                    yield redirect.namespace + ':'
-                redirect = getattr(redirect, 'redirect', None)
+        # used if following redirect attributes failed, to provide
+        # information in the exception.
+        _last_redirect_found = None
 
-        url_name = ''.join(_follow_redirect())
+        # maybe a while loop is better here, especially for handling
+        # _last_redirect_found. I can't decide.
+        def _follow_redirect(redirect):
+            # loop through redirect attributes
+            nonlocal _last_redirect_found
+            if isinstance(redirect, str):
+                # if it's a string, no need to follow any more (we
+                # have the URL name to redirect to and all namespaces in
+                # parent redirects have been added)
+                return redirect
+            elif redirect is not None:
+                # not a string and not None, check if it's a Router so
+                # we can get a namespace check that subclass of Router
+                # because it's in Router that the namespace attribute is
+                # defined.
 
-        if url_name:
-            if namespaces:
-                url_name = ':'.join([
-                    ':'.join(namespaces),
-                    url_name])
+                # maybe it's better to just getattr(redirect,
+                # 'namespace') and to handle the exception (or
+                # getattr(redirect, 'namespace', None)).
+
+                # can't decide either
+                if issubclass(redirect, Router) and redirect.namespace:
+                    namespaces.append(redirect.namespace)
+                # save last redirect in case of exception
+                _last_redirect_found = redirect
+                # NOTE: risk of recursive loop here, if the redirect
+                # attributes keeps being not None and never string
+                # this could happen if case of "redirect loop" :
+                # >>> A, B = [Router() for _ in range(3)]
+                # >>> A.redirect = B
+                # >>> B.redirect = A
+                # >>> _follow_redirect(A)
+                # --- /!\ infinite loop /!\ ---
+                return _follow_redirect(redirect.redirect)
+
+        # here, "raw" means "not prefixed with namespaces"
+        raw_target_url_name = _follow_redirect(self.redirect)
+
+        if raw_target_url_name:
+            # get the target URL name (by prefixing the raw version
+            # with the namespaces)
+            target_url_name = ':'.join([
+                ':'.join(namespaces),
+                raw_target_url_name
+            ]) if namespaces else raw_target_url_name
+
+            # Create an identifier for the redirection pattern.
+            # This is not required as these patterns should not be
+            # pointed to directly, but it helps when debugging
+            # (use a random ID to avoid collisions)
+            redirect_url_name = "{}-redirect".format(
+                raw_target_url_name,
+            )
+
+            redirect_view = RedirectView.as_view(
+                url=reverse_lazy(target_url_name)
+            )
 
             url_pattern = url(
                 r'^$',
-                RedirectView.as_view(url=reverse_lazy(url_name)),
-                name="{}-redirect".format(url_name)
+                redirect_view,
+                name=redirect_url_name
             )
 
-            url_pattern._redirect_url_name = url_name
-            return url_pattern
-        else:
-            if not silent:
-                raise ValueError(
-                    "Failed following redirect attribute {} "
-                    "(last redirect found {}) in {}"
-                    "".format(
-                        self.redirect,
-                        redirect,
-                        self
-                    )
-                )
+            url_pattern._redirect_url_name = target_url_name
 
-    def patterns(self, namespaces=None, add_redirect=None):
+            return url_pattern
+        elif not silent:
+            # no URL found and set to fail (not silent) if we got
+            # here, it's because _follow_redirect() returned
+            # None.
+            #
+            # this will happen if self.redirect is None or if
+            # following redirect attributes returned None somewhere
+            raise ValueError(
+                "Failed following redirect attribute {} "
+                "(last redirect found : {}) in {}"
+                "".format(
+                    self.redirect,
+                    _last_redirect_found,
+                    self
+                )
+            )
+
+    def patterns(self, namespaces=None,
+                 add_redirect=None, add_redirect_silent=None):
         """Read :attr:`_store` and yield a pattern of an URL group (with url part
         and namespace) containing entities's patterns (obtained from
         the entity store), also yield redirect patterns where defined.
@@ -194,34 +297,74 @@ lazy ``RedirectView`` that redirects to this URL name
         :type namespaces: list of str
         :argument add_redirect: Override :attribute:`Router.add_redirect`
         :type add_redirect: bool
+        :argument add_redirect_silent: Override
+                                       :attribute:`Router.add_redirect_silent`
+        :type add_redirect: bool
         """
-        # get url_part and namespace (needed when building
-        # RegexURLResolver)
-        url_part = self.url_part
-        namespace = self.namespace
-
         # initialize default arguments
+
+        # append self.namespace (if any) to given namespaces (copying
+        # the given namespace list because we will be altering it)
         if namespaces is None:
             namespaces = [self.namespace] if self.namespace else []
         elif self.namespace:
             namespaces = namespaces + [self.namespace]
+
+        # (we copy some attributes to other variables so that we can
+        # pass their original values recursively)
+        orig_add_redirect = add_redirect
+        orig_add_redirect_silent = add_redirect_silent
+
+        # If add_redirect not given, get from attributes ; If None
+        # found, guess from boolean value of self.redirect
         if add_redirect is None:
-            add_redirect = self.add_redirect
+            if self.add_redirect is not None:
+                add_redirect = self.add_redirect
+            else:
+                add_redirect = bool(self.redirect)
+        else:
+            add_redirect = add_redirect
+        # if add_redirect_silent not given, get from attributes
+        if add_redirect_silent is None:
+            add_redirect_silent = self.add_redirect_silent
+
+        # get url_part and namespace from attributes
+        # (needed when building RegexURLResolver)
+        url_part = self.url_part
+        namespace = self.namespace
+
+        # get redirect (needed if add_redirect is True)
+        redirect = self.redirect
 
         # define a pattern reader generator, yielding patterns from the
-        # store entities
-        def _pattern_reader():
+        # store entities (also get the redirect pattern if required)
+        def pattern_reader():
             # yield redirect pattern if there is one defined (and
             # add_redirect is True)
-            if add_redirect and self.redirect is not None:
-                yield self.get_redirect_pattern(namespaces)
+            if add_redirect:
+                if redirect is not None:
+                    redirect_pattern = self.get_redirect_pattern(namespaces)
+                    if redirect_pattern:
+                        yield redirect_pattern
+                else:
+                    if add_redirect_silent is False:
+                        raise ValueError(
+                            "No redirect attribute set on {} "
+                            "(and `add_redirect_silent` is True)."
+                            "".format(self)
+                        )
 
             for entity in self._store:
-                for pattern in entity.patterns(namespaces, add_redirect):
+                # yield patterns from each entity's patterns function
+                for pattern in entity.patterns(
+                        namespaces,
+                        orig_add_redirect,
+                        orig_add_redirect_silent
+                ):
                     yield pattern
 
         # consume the generator
-        pattern_list = list(_pattern_reader())
+        pattern_list = list(pattern_reader())
 
         # make a RegexURLResolver
         pattern = url(

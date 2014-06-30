@@ -38,7 +38,9 @@ class Entity(metaclass=ABCMeta):
             self.index = index
 
     @abstractmethod
-    def patterns(self, parents=None, add_redirect=True):  # pragma: no cover
+    def patterns(self, parents=None,
+                 add_redirect=None,
+                 add_redirect_silent=None):  # pragma: no cover
         """Yield URL patterns
 
         .. warning:: This abstract method should be defined by
@@ -49,7 +51,8 @@ class Entity(metaclass=ABCMeta):
         """
         pass
 
-    def get_str_tree(self, indent_char=' ', indent_size=2):
+    def get_str_tree(self, patterns_kwargs=None,
+                     indent_char=' ', indent_size=2):
         """Return the representation of a entity patterns structure"""
         def _walk_tree(patterns, level=0):
             """Walk the tree, yielding at tuple of form :
@@ -103,7 +106,8 @@ class Entity(metaclass=ABCMeta):
                     _callback or '',
                 )
 
-        patterns = self.patterns()
+        patterns_kwargs = patterns_kwargs or {}
+        patterns = self.patterns(**patterns_kwargs)
         pattern_tuples = _walk_tree(patterns)
         pattern_lines = _str_tree(pattern_tuples)
 
@@ -111,7 +115,7 @@ class Entity(metaclass=ABCMeta):
             pattern_lines
         )
 
-    def get_pydot_graph(self, recurse_limit=None):
+    def get_pydot_graph(self, patterns_kwargs=None, recurse_limit=None):
         """Unmaintained at the time. Returns a graph of the patterns and
         subpatterns, made using pydot.
 
@@ -191,7 +195,9 @@ class Entity(metaclass=ABCMeta):
                         recursive, recurse_limit
                     )
 
-        for pattern in self.patterns():
+        patterns_kwargs = patterns_kwargs or {}
+
+        for pattern in self.patterns(**patterns_kwargs):
             pattern_add_edges(
                 _graph, pattern,
                 True, recurse_limit
