@@ -285,10 +285,11 @@ class Router(EntityStore, Entity):
             # following redirect attributes returned None somewhere
             raise ValueError(
                 "Failed following redirect attribute {} "
-                "(last redirect found : {}) in {}"
+                "(last redirect found : {} (redirect value: {})) in {}"
                 "".format(
                     self.redirect,
                     _last_redirect_found,
+                    getattr(_last_redirect_found, 'redirect', 'not defined'),
                     self
                 )
             )
