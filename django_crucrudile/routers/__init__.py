@@ -156,7 +156,7 @@ class Router(EntityStore, Entity):
         })
         return mapping
 
-    def register(self, entity, index=False):
+    def register(self, entity, index=False, map_kwargs=None):
         """Register routed entity
 
         Set as index when ``entity``
@@ -166,8 +166,14 @@ class Router(EntityStore, Entity):
         :type entity: :class:`django_crucrudile.entities.Entity`
         :argument index: Register as index
         :type index: bool
+        :argument map_kwargs: Argument to pass to mapping value if
+                              entity gets transformed.
+        :type map_kwargs: dict
         """
-        entity = super().register(entity)
+        entity = super().register(
+            entity,
+            map_kwargs=map_kwargs
+        )
         if index or entity.index:
             self.redirect = entity
 
@@ -502,7 +508,7 @@ class BaseModelRouter(Router):
         return mapping
 
 
-@provides(ListView, index=True)
+@provides(ListView, map_kwargs={'index': True})
 @provides(DetailView)
 @provides(CreateView)
 @provides(UpdateView)

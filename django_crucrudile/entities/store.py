@@ -169,45 +169,69 @@ class EntityStore(metaclass=EntityStoreMetaclass):
             return _find_entity(isinstance)
 
     @classmethod
-    def register_class(cls, register_cls, **kwargs):
+    def register_class(cls, register_cls, map_kwargs=None):
         """Add a route class to :attr:`_base_store`, appling mapping from
         :func:`get_register_class_map` where required. This route class will
         be instantiated (with kwargs from :func:`get_base_store_kwargs`)
         when the Router is itself instiated, using
         :func:`register_base_store`.
 
+        :argument register_cls: Object to register (usually Route or
+                                Router classes, but could be anything
+                                because of possible mapping in
+                                :func:`get_register_class_map_kwargs`)
+        :argument map_kwargs: Argument to pass to mapping value if
+                              entity gets transformed.
+        :type map_kwargs: dict
         """
         register_class_map = cls.get_register_class_map()
         if register_class_map:
-            register_kwargs = cls.get_register_class_map_kwargs()
-            register_kwargs.update(kwargs)
+            if map_kwargs is None:
+                map_kwargs = {}
+            map_kwargs = dict(
+                cls.get_register_class_map_kwargs(),
+                **map_kwargs
+            )
 
             register_cls = cls.register_apply_map(
                 register_cls,
                 register_class_map,
-                register_kwargs
+                map_kwargs
             )
         cls._base_store.append(register_cls)
 
-    def register(self, entity):
-        """Register routed entity, applying mapping from :func:`get_register_map` where
-        required
+    def register(self, entity, map_kwargs=None):
+        """Register routed entity, applying mapping from
+        :func:`get_register_map` where required
+
+        :argument entity: Entity to register
+        :type entity: :class:`django_crucrudile.entities.Entity`
+        :argument map_kwargs: Argument to pass to mapping value if
+                              entity gets transformed.
+        :type map_kwargs: dict
 
         """
         register_map = self.get_register_map()
         if register_map:
-            kwargs = self.get_register_map_kwargs()
+            if map_kwargs is None:
+                map_kwargs = {}
+            map_kwargs = dict(
+                self.get_register_map_kwargs(),
+                **map_kwargs
+            )
+
             entity = self.register_apply_map(
                 entity,
                 register_map,
-                kwargs
+                map_kwargs
             )
         self._store.append(entity)
         return entity
 
     @classmethod
     def get_register_class_map_kwargs(cls):
-        """Arguments passed when applying register map, in :func:`register_class`"""
+        """Arguments passed when applying register map, in
+        :func:`register_class`"""
         return {}
 
     def get_register_map_kwargs(self):
