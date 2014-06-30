@@ -24,8 +24,6 @@ and two implementations adapted to Django models :
    default Django generic views.
 
 """
-from uuid import uuid4
-
 from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
@@ -47,9 +45,6 @@ __all__ = [
     "ModelRouter"
 ]
 
-
-def _random_url_id():
-    return uuid4().hex[:6]
 
 class Router(EntityStore, Entity):
     """RoutedEntity that yields an URL group containing URL patterns from
