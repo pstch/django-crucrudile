@@ -1,15 +1,30 @@
-Entity store (``EntityStoreMetaclass``, ``EntityStore`` and ``provides``)
-=========================================================================
+Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators)
+=======================================================================
 
 .. module:: django_crucrudile.entities.store
 
 .. automodule:: django_crucrudile.entities.store
    :noindex:
 
-``provides`` decorator
-----------------------
+Decorators
+----------
 
 .. autofunction:: provides
+
+Entity classes decorators
++++++++++++++++++++++++++
+
+.. autofunction:: register_instances
+
+.. autofunction:: register_class
+
+
+Register mappings decorators
+++++++++++++++++++++++++++++
+
+.. autofunction:: add_to_register_map
+
+.. autofunction:: add_to_register_class_map
 
 Entity store
 ------------
