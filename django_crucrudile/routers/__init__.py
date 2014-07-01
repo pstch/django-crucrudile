@@ -386,4 +386,4 @@ class Router(EntityStore, Entity):
 
         yield pattern
 
-from model import BaseModelRouter, ModelRouter
+from .model import BaseModelRouter, ModelRouter
