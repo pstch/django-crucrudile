@@ -39,11 +39,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
     'sphinx.ext.graphviz',
     'sphinx.ext.coverage',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.viewcode',
+    'sphinx.ext.doctest',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
