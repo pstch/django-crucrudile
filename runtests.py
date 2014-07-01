@@ -11,6 +11,7 @@ from django.core.management import execute_from_command_line
 
 def run_django_tests():
     print("#### Running tests using Django test runner...")
+    print("#### (Disable with NO_DJANGO_TESTS=1)")
     argv = ['runtests.py', 'test'] + sys.argv[1:]
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
     execute_from_command_line(argv)
@@ -25,7 +26,8 @@ def run_sphinx_tests():
 
 
 def runtests():
-    run_django_tests()
+    if os.environ.get('NO_DJANGO_TESTS') != '1':
+        run_django_tests()
     if os.environ.get('NO_SPHINX_TESTS') != '1':
         run_sphinx_tests()
 
