@@ -1,2 +1,3 @@
 coverage
+sphinx
 -e hg+https://bitbucket.org/prologic/pydot#egg=pydot
