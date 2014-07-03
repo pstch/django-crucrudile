@@ -1,5 +1,6 @@
 from functools import partial
 import mock
+from nose.tools import assert_true, assert_raises, assert_equal
 
 from django.test import TestCase
 
@@ -18,7 +19,7 @@ from django_crucrudile.routers import (
     Router, BaseModelRouter, ModelRouter,
 )
 
-class BaseModelRouterTestCase(TestCase):
+class BaseModelRouterTestCase:
     router_class = BaseModelRouter
 
     def setUp(self):
@@ -26,25 +27,25 @@ class BaseModelRouterTestCase(TestCase):
         self.router = self.router_class(model=self.mock_model)
 
     def test_subclasses_router(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.router_class, Router)
         )
 
     def test_model_attr(self):
-        self.assertEqual(self.router_class.model, None)
+        assert_equal(self.router_class.model, None)
 
     def test_init_requires_model(self):
-        self.assertEqual(
+        assert_equal(
             self.router.model,
             self.mock_model
         )
 
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``model``...
             self.router_class
         )
 
-        self.assertEqual(
+        assert_equal(
             self.router_class(model=self.mock_model).model,
             self.mock_model
         )
@@ -55,7 +56,7 @@ class BaseModelRouterTestCase(TestCase):
             {'model': self.mock_model}
         )
 
-        self.assertEqual(
+        assert_equal(
             router_class().model,
             router_class.model
         )
@@ -68,25 +69,25 @@ class BaseModelRouterTestCase(TestCase):
             url_part=mock_url_part
         )
 
-        self.assertEqual(
+        assert_equal(
             router.url_part,
             mock_url_part
         )
 
     def test_get_register_map_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.router.get_register_map_kwargs(),
             {'model': self.mock_model}
         )
 
     def test_get_base_store_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.router.get_base_store_kwargs(),
             {'model': self.mock_model}
         )
 
     def test_get_register_map(self):
-        self.assertEqual(
+        assert_equal(
             self.router.get_register_map(),
             {
                 (SingleObjectMixin, MultipleObjectMixin):
@@ -97,7 +98,7 @@ class BaseModelRouterTestCase(TestCase):
         )
 
     def test_get_register_class_map(self):
-        self.assertEqual(
+        assert_equal(
             self.router_class.get_register_class_map(),
             {
                 (SingleObjectMixin, MultipleObjectMixin):
@@ -106,11 +107,11 @@ class BaseModelRouterTestCase(TestCase):
         )
 
 
-class ModelRouterTestCase(TestCase):
+class ModelRouterTestCase:
     router_class = ModelRouter
 
     def test_subclasses_base_model_router(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.router_class, BaseModelRouter)
         )
 
@@ -123,10 +124,10 @@ class ModelRouterTestCase(TestCase):
             'DeleteRoute': DeleteView
         }
         for route_class in self.router_class._base_store:
-            self.assertTrue(
+            assert_true(
                 route_class.__name__ in _base_routes
             )
-            self.assertEqual(
+            assert_equal(
                 route_class.view_class,
                 _base_routes[route_class.__name__]
             )

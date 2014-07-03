@@ -1,7 +1,6 @@
 from functools import partial
 import mock
-
-from django.test import TestCase
+from nose.tools import assert_true, assert_raises, assert_equal
 
 from django.core.urlresolvers import RegexURLResolver
 from django.db.models import Model
@@ -17,35 +16,35 @@ from django_crucrudile.routers import (
 )
 
 
-class RouterTestCase(TestCase):
+class RouterTestCase:
     router_class = Router
 
     def setUp(self):
         self.router = self.router_class()
 
     def test_subclasses_entity(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.router_class, Entity)
         )
 
     def test_subclasses_entity_store(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.router_class, EntityStore)
         )
 
     def test_namespace_attr(self):
-        self.assertEqual(self.router_class.namespace, None)
+        assert_equal(self.router_class.namespace, None)
 
     def test_url_part_attr(self):
-        self.assertEqual(self.router_class.url_part, None)
+        assert_equal(self.router_class.url_part, None)
 
     def test_redirect_attr(self):
-        self.assertEqual(self.router_class.redirect, None)
+        assert_equal(self.router_class.redirect, None)
 
     def test_init(self):
-        self.assertEqual(self.router.namespace, None)
-        self.assertEqual(self.router.url_part, None)
-        self.assertEqual(self.router.redirect, None)
+        assert_equal(self.router.namespace, None)
+        assert_equal(self.router.url_part, None)
+        assert_equal(self.router.redirect, None)
 
         namespace = mock.Mock()
         url_part = mock.Mock()
@@ -63,15 +62,15 @@ class RouterTestCase(TestCase):
             get_redirect_silent,
         )
 
-        self.assertEqual(router.namespace, namespace)
-        self.assertEqual(router.url_part, url_part)
-        self.assertEqual(router.redirect, redirect)
-        self.assertEqual(router.add_redirect, add_redirect)
-        self.assertEqual(router.add_redirect_silent, add_redirect_silent)
-        self.assertEqual(router.get_redirect_silent, get_redirect_silent)
+        assert_equal(router.namespace, namespace)
+        assert_equal(router.url_part, url_part)
+        assert_equal(router.redirect, redirect)
+        assert_equal(router.add_redirect, add_redirect)
+        assert_equal(router.add_redirect_silent, add_redirect_silent)
+        assert_equal(router.get_redirect_silent, get_redirect_silent)
 
     def test_get_register_map(self):
-        self.assertEqual(
+        assert_equal(
             self.router.get_register_map(),
             {
                 Model: ModelRouter,
@@ -84,7 +83,7 @@ class RouterTestCase(TestCase):
 
         self.router.register(entity)
 
-        self.assertEqual(
+        assert_equal(
             self.router._store,
             [entity, ]
         )
@@ -95,11 +94,11 @@ class RouterTestCase(TestCase):
 
         self.router.register(entity)
 
-        self.assertEqual(
+        assert_equal(
             self.router._store,
             [entity, ]
         )
-        self.assertEqual(
+        assert_equal(
             self.router.redirect,
             entity
         )
@@ -109,26 +108,26 @@ class RouterTestCase(TestCase):
 
         self.router.register(entity, index=True)
 
-        self.assertEqual(
+        assert_equal(
             self.router._store,
             [entity, ]
         )
-        self.assertEqual(
+        assert_equal(
             self.router.redirect,
             entity
         )
 
     def test_get_redirect_pattern_fails(self):
-        self.assertRaises(
+        assert_raises(
             ValueError,
             self.router.get_redirect_pattern
         )
-        self.assertEqual(
+        assert_equal(
             self.router.get_redirect_pattern(silent=True),
             None
         )
         self.router.get_redirect_silent = True
-        self.assertEqual(
+        assert_equal(
             self.router.get_redirect_pattern(),
             None
         )
@@ -136,19 +135,19 @@ class RouterTestCase(TestCase):
     def test_patterns(self):
         patterns = self.router.patterns()
         pattern = next(patterns)
-        self.assertRaises(StopIteration, patterns.__next__)
-        self.assertTrue(isinstance(pattern, RegexURLResolver))
-        self.assertEqual(pattern.url_patterns, [])
+        assert_raises(StopIteration, patterns.__next__)
+        assert_true(isinstance(pattern, RegexURLResolver))
+        assert_equal(pattern.url_patterns, [])
 
     def test_patterns_fails_no_redirect(self):
-        self.assertRaises(
+        assert_raises(
             ValueError,
             partial(
                 next,
                 self.router.patterns(add_redirect=True)
             )
         )
-        self.assertTrue(
+        assert_true(
             isinstance(
                 next(self.router.patterns(
                     add_redirect=True,
@@ -160,7 +159,7 @@ class RouterTestCase(TestCase):
         router = self.router_class(
             add_redirect=True
         )
-        self.assertRaises(
+        assert_raises(
             ValueError,
             partial(
                 next,
@@ -171,7 +170,7 @@ class RouterTestCase(TestCase):
             add_redirect=True,
             add_redirect_silent=True
         )
-        self.assertTrue(
+        assert_true(
             isinstance(
                 next(router.patterns()),
                 RegexURLResolver

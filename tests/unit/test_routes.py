@@ -1,7 +1,7 @@
+from nose.tools import assert_true, assert_raises, assert_equal
 import inspect
 import mock
 
-from django.test import TestCase
 
 from django.core.urlresolvers import RegexURLPattern
 
@@ -12,44 +12,44 @@ from django_crucrudile.routes import (
 )
 
 
-class RouteTestCase(TestCase):
+class RouteTestCase:
     route_class = Route
 
     def test_is_abstract(self):
-        self.assertTrue(
+        assert_true(
             inspect.isabstract(self.route_class)
         )
 
     def test_init_fails(self):
-        self.assertRaises(
+        assert_raises(
             TypeError,
             self.route_class
         )
 
     def test_subclasses_entity(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.route_class, Entity)
         )
 
     def test_is_get_callback_abstract(self):
-        self.assertTrue(
+        assert_true(
             self.route_class.get_callback.__isabstractmethod__
         )
 
     def test_name_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.route_class.name,
             None
         )
 
     def test_url_part_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.route_class.url_part,
             None
         )
 
     def test_auto_url_part_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.route_class.auto_url_part,
             True
         )
@@ -59,28 +59,28 @@ class RouteTestCase(TestCase):
             def get_callback(self):
                 pass
 
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``name``...
             TestConcreteRoute
         )
 
         name = "test name"
 
-        self.assertEqual(
+        assert_equal(
             TestConcreteRoute(name=name).name,
             name
         )
 
         TestConcreteRoute.name = "test name (cls level)"
 
-        self.assertEqual(
+        assert_equal(
             TestConcreteRoute().name,
             TestConcreteRoute.name
         )
 
         TestConcreteRoute.auto_url_part = False
 
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``url part`` and auto_url_part set to
                          # False...
             TestConcreteRoute
@@ -88,14 +88,14 @@ class RouteTestCase(TestCase):
 
         url_part = "test url part"
 
-        self.assertEqual(
+        assert_equal(
             TestConcreteRoute(url_part=url_part).url_part,
             url_part
         )
 
         TestConcreteRoute.url_part = "test url part (cls level)"
 
-        self.assertEqual(
+        assert_equal(
             TestConcreteRoute().url_part,
             TestConcreteRoute.url_part
         )
@@ -114,16 +114,16 @@ class RouteTestCase(TestCase):
 
         pattern = patterns.pop()
 
-        self.assertEqual(
+        assert_equal(
             patterns,
             []
         )
 
-        self.assertTrue(
+        assert_true(
             isinstance(pattern, RegexURLPattern)
         )
 
-        self.assertTrue(
+        assert_true(
             mock_callback_getter.called
         )
 
@@ -135,7 +135,7 @@ class RouteTestCase(TestCase):
 
         route = TestConcreteRoute(name="name", url_part=url_part)
 
-        self.assertEqual(
+        assert_equal(
             list(route.get_url_parts()),
             ['^urlpart$', ]
         )
@@ -148,13 +148,13 @@ class RouteTestCase(TestCase):
 
         route = TestConcreteRoute(name=name, url_part="urlpart")
 
-        self.assertEqual(
+        assert_equal(
             route.get_url_name(),
             name
         )
 
 
-class CallbackRouteTestCase(TestCase):
+class CallbackRouteTestCase:
     route_class = CallbackRoute
     mock_callback = None
 
@@ -170,19 +170,19 @@ class CallbackRouteTestCase(TestCase):
         )
 
     def test_subclasses_route(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.route_class, Route)
         )
 
     def test_init_requires_callback(self):
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``callback``...
             self.route_class
         )
 
         callback = mock.Mock()
 
-        self.assertEqual(
+        assert_equal(
             self.route_class(callback=callback).callback,
             callback
         )
@@ -193,19 +193,19 @@ class CallbackRouteTestCase(TestCase):
             {'callback': callback}
         )
 
-        self.assertEqual(
+        assert_equal(
             _route_class().callback,
             callback
         )
 
     def test_get_callback(self):
-        self.assertEqual(
+        assert_equal(
             self.route.get_callback(),
             self.mock_callback
         )
 
 
-class ViewRouteTestCase(TestCase):
+class ViewRouteTestCase:
     route_class = ViewRoute
     mock_view = None
 
@@ -221,19 +221,19 @@ class ViewRouteTestCase(TestCase):
         )
 
     def test_subclasses_route(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.route_class, Route)
         )
 
     def test_init_requires_view_class(self):
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``view_class``...
             self.route_class
         )
 
         view_class = mock.Mock()
 
-        self.assertEqual(
+        assert_equal(
             self.route_class(view_class=view_class).view_class,
             view_class
         )
@@ -244,25 +244,25 @@ class ViewRouteTestCase(TestCase):
             {'view_class': view_class}
         )
 
-        self.assertEqual(
+        assert_equal(
             _route_class().view_class,
             view_class
         )
 
     def test_view_class_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.route.view_class,
             self.mock_view
         )
 
     def test_get_view_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.route.get_view_kwargs(),
             {}
         )
 
 
-class ModelRouteTestCase(TestCase):
+class ModelRouteTestCase:
     route_class = ModelRoute
 
     def setUp(self):
@@ -281,39 +281,39 @@ class ModelRouteTestCase(TestCase):
         self.mock_model._meta.model_name = self.model_name
 
     def test_is_abstract(self):
-        self.assertTrue(
+        assert_true(
             inspect.isabstract(self.route_class)
         )
 
     def test_init_fails(self):
-        self.assertRaises(
+        assert_raises(
             TypeError,
             self.route_class
         )
 
     def test_subclasses_route(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.route_class, Route)
         )
 
     def test_is_get_callback_abstract(self):
-        self.assertTrue(
+        assert_true(
             self.route_class.get_callback.__isabstractmethod__
         )
 
     def test_model_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.route_class.model,
             None
         )
 
     def test_init_requires_model(self):
-        self.assertRaises(
+        assert_raises(
             ValueError,  # No ``model``...
             self.concrete_class
         )
 
-        self.assertEqual(
+        assert_equal(
             self.concrete_class(model=self.mock_model).model,
             self.mock_model
         )
@@ -324,7 +324,7 @@ class ModelRouteTestCase(TestCase):
             {'model': self.mock_model}
         )
 
-        self.assertEqual(
+        assert_equal(
             concrete_class().model,
             concrete_class.model
         )
@@ -340,17 +340,16 @@ class ModelRouteTestCase(TestCase):
             url_part=url_part
         )
 
-        self.assertEqual(
+        assert_equal(
             list(route.get_url_parts()),
             ["^urlpart$"]
         )
 
         route.prefix_url_part = True
-        self.assertEqual(
+        assert_equal(
             list(route.get_url_parts()),
             ["^test model name/urlpart$"]
         )
-
 
     def test_get_url_name(self):
         class TestConcreteRoute(self.route_class):
@@ -364,7 +363,7 @@ class ModelRouteTestCase(TestCase):
             url_part="urlpart"
         )
 
-        self.assertEqual(
+        assert_equal(
             route.get_url_name(),
             "{}-{}".format(self.model_name, name)
         )
@@ -376,7 +375,7 @@ class ModelRouteTestCase(TestCase):
             url_part="urlpart"
         )
 
-        self.assertEqual(
+        assert_equal(
             route.model_url_name,
             self.model_name
         )
@@ -388,18 +387,18 @@ class ModelRouteTestCase(TestCase):
             url_part="urlpart"
         )
 
-        self.assertEqual(
+        assert_equal(
             route.model_url_part,
             self.model_name
         )
 
 
-class ModelViewRouteTestCase(TestCase):
+class ModelViewRouteTestCase:
     route_class = ModelViewRoute
 
     def test_subclasses_view_and_model_route(self):
-        self.assertTrue(issubclass(self.route_class, ViewRoute))
-        self.assertTrue(issubclass(self.route_class, ModelRoute))
+        assert_true(issubclass(self.route_class, ViewRoute))
+        assert_true(issubclass(self.route_class, ModelRoute))
 
     def test_get_view_kwargs(self):
         model = mock.Mock()
@@ -409,7 +408,7 @@ class ModelViewRouteTestCase(TestCase):
             name="name"
         )
 
-        self.assertEqual(
+        assert_equal(
             route.get_view_kwargs(),
             {'model': model}
         )
@@ -425,11 +424,11 @@ class ModelViewRouteTestCase(TestCase):
             test_attr='test value'
         )
 
-        self.assertTrue(new is not self.route_class)
-        self.assertTrue(issubclass(new, self.route_class))
-        self.assertEqual(new.view_class, view_class)
-        self.assertEqual(new.test_attr, 'test value')
-        self.assertEqual(new.__name__, route_name)
+        assert_true(new is not self.route_class)
+        assert_true(issubclass(new, self.route_class))
+        assert_equal(new.view_class, view_class)
+        assert_equal(new.test_attr, 'test value')
+        assert_equal(new.__name__, route_name)
 
     def test_make_for_view_stripping_view_name(self):
         self._test_make_for_view('TestView', 'TestRoute')
