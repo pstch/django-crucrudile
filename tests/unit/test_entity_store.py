@@ -1,7 +1,6 @@
 import mock
 import abc
-
-from django.test import TestCase
+from nose.tools import assert_true, assert_false, assert_raises, assert_equal
 
 
 from django_crucrudile.entities.store import(
@@ -16,16 +15,16 @@ class DecoratorTestMixin:
     decorator_blank_kwargs = {}
 
     def test_callable(self):
-        self.assertTrue(callable(self.decorator))
+        assert_true(callable(self.decorator))
 
     def test_returns_callable(self):
-        self.assertTrue(callable(self.decorator(
+        assert_true(callable(self.decorator(
             *self.decorator_blank_args,
             **self.decorator_blank_kwargs
         )))
 
 
-class ProvidesTestCase(DecoratorTestMixin, TestCase):
+class ProvidesTestCase(DecoratorTestMixin):
     @property
     def decorator(self):
         return provides
@@ -38,7 +37,7 @@ class ProvidesTestCase(DecoratorTestMixin, TestCase):
         self.decorator(mock_provided_arg,
                        **kwargs)(mock_router_class)
 
-        self.assertTrue(
+        assert_true(
             mock_router_class.register_class.called
         )
 
@@ -46,17 +45,17 @@ class ProvidesTestCase(DecoratorTestMixin, TestCase):
             mock_router_class.register_class.call_args
         )
 
-        self.assertEqual(
+        assert_equal(
             called_args,
             (mock_provided_arg,)
         )
-        self.assertEqual(
+        assert_equal(
             called_kwargs,
             kwargs
         )
 
 
-class RegisterInstancesTestCase(DecoratorTestMixin, TestCase):
+class RegisterInstancesTestCase(DecoratorTestMixin):
     @property
     def decorator(self):
         return register_instances
@@ -75,11 +74,11 @@ class RegisterInstancesTestCase(DecoratorTestMixin, TestCase):
 
         mock_entity_class()
 
-        self.assertTrue(mock_init.called)
-        self.assertTrue(mock_register.called)
+        assert_true(mock_init.called)
+        assert_true(mock_register.called)
 
 
-class RegisterClassTestCase(DecoratorTestMixin, TestCase):
+class RegisterClassTestCase(DecoratorTestMixin):
     @property
     def decorator(self):
         return register_class
@@ -91,18 +90,18 @@ class RegisterClassTestCase(DecoratorTestMixin, TestCase):
 
         self.decorator(mock_store_class)(mock_entity_class)
 
-        self.assertTrue(mock_reg_cls.called)
-        self.assertEqual(
+        assert_true(mock_reg_cls.called)
+        assert_equal(
             list(mock_reg_cls.call_args),
             [(mock_entity_class,), {}]
         )
 
 
-class EntityStoreMetaclassTestCase(TestCase):
+class EntityStoreMetaclassTestCase:
     store_metaclass = EntityStoreMetaclass
 
     def test_subclasses_abcmeta(self):
-        self.assertTrue(
+        assert_true(
             issubclass(self.store_metaclass, abc.ABCMeta)
         )
 
@@ -116,12 +115,13 @@ class EntityStoreMetaclassTestCase(TestCase):
         class StoreC(StoreB):
             _base_store = ["different"]
 
-        self.assertFalse(StoreA._base_store is StoreB._base_store)
-        self.assertTrue(StoreA._base_store == StoreB._base_store)
-        self.assertFalse(StoreA._base_store is StoreC._base_store)
-        self.assertFalse(StoreA._base_store == StoreC._base_store)
+        assert_false(StoreA._base_store is StoreB._base_store)
+        assert_true(StoreA._base_store == StoreB._base_store)
+        assert_false(StoreA._base_store is StoreC._base_store)
+        assert_false(StoreA._base_store == StoreC._base_store)
 
-class EntityStoreTestCase(TestCase):
+
+class EntityStoreTestCase:
     def setUp(self):
         class TestEntityStore(EntityStore):
             pass
@@ -130,20 +130,20 @@ class EntityStoreTestCase(TestCase):
         self.store = self.store_class()
 
     def test_has_metaclass(self):
-        self.assertTrue(
+        assert_true(
             isinstance(self.store_class, EntityStoreMetaclass)
         )
 
     def test_get_register_map(self):
-        self.assertEqual(self.store.get_register_map(), {})
+        assert_equal(self.store.get_register_map(), {})
 
     def test_get_register_class_map(self):
-        self.assertEqual(
+        assert_equal(
             self.store_class.get_register_class_map(), {}
         )
 
     def test_store_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.store._store,
             []
         )
@@ -160,7 +160,7 @@ class EntityStoreTestCase(TestCase):
 
         # Register with mock entity, no mapping, not silent
         # Register with mock entity, no mapping
-        self.assertEqual(
+        assert_equal(
             self.store_class.register_apply_map(
                 mock_entity, {}, silent=False
             ),
@@ -168,31 +168,31 @@ class EntityStoreTestCase(TestCase):
         )
 
         # Register with mock entity, with mapping (without entity)
-        self.assertRaises(
+        assert_raises(
             LookupError,
-            lambda : self.store_class.register_apply_map(
+            lambda: self.store_class.register_apply_map(
                 mock_entity, mapping, silent=False
             )
         )
-        self.assertFalse(mock_mapping_value.called)
+        assert_false(mock_mapping_value.called)
 
         # Register with mock entity, no mapping
-        self.assertEqual(
+        assert_equal(
             self.store_class.register_apply_map(mock_entity, {}),
             mock_entity
         )
 
         # Register with mock entity, with mapping (without entity)
-        self.assertEqual(
+        assert_equal(
             self.store_class.register_apply_map(mock_entity, mapping),
             mock_entity
         )
-        self.assertFalse(mock_mapping_value.called)
+        assert_false(mock_mapping_value.called)
 
         # Register with class and mapping (with class)
         self.store_class.register_apply_map(matching_cls, mapping),
-        self.assertTrue(mock_mapping_value.called)
-        self.assertEqual(
+        assert_true(mock_mapping_value.called)
+        assert_equal(
             list(mock_mapping_value.call_args),
             [(matching_cls, ), {}]
         )
@@ -203,25 +203,24 @@ class EntityStoreTestCase(TestCase):
 
         # Register with class and mapping (without class)
         self.store_class.register_apply_map(not_matching_cls, mapping)
-        self.assertFalse(mock_mapping_value.called)
-
+        assert_false(mock_mapping_value.called)
 
         # Reset mapping, use iterable key
         mapping = {(base_cls, ): mock_mapping_value}
 
         # Register with mock entity and mapping (with iterable keys,
         # without entity)
-        self.assertEqual(
+        assert_equal(
             self.store_class.register_apply_map(mock_entity, mapping),
             mock_entity
         )
-        self.assertFalse(mock_mapping_value.called)
+        assert_false(mock_mapping_value.called)
 
         # Register with class and mapping (with iterable keys, with
         # class)
         self.store_class.register_apply_map(matching_cls, mapping),
-        self.assertTrue(mock_mapping_value.called)
-        self.assertEqual(
+        assert_true(mock_mapping_value.called)
+        assert_equal(
             list(mock_mapping_value.call_args),
             [(matching_cls, ), {}]
         )
@@ -233,7 +232,7 @@ class EntityStoreTestCase(TestCase):
         # Register with class and mapping (with iterable keys, without
         # class)
         self.store_class.register_apply_map(not_matching_cls, mapping)
-        self.assertFalse(mock_mapping_value.called)
+        assert_false(mock_mapping_value.called)
 
         # Reset mock object & mapping (with None key)
         mock_mapping_value = mock.Mock()
@@ -241,8 +240,8 @@ class EntityStoreTestCase(TestCase):
 
         # Register with class and mapping (with None key, without class)
         self.store_class.register_apply_map(not_matching_cls, mapping),
-        self.assertTrue(mock_mapping_value.called)
-        self.assertEqual(
+        assert_true(mock_mapping_value.called)
+        assert_equal(
             list(mock_mapping_value.call_args),
             [(not_matching_cls, ), {}]
         )
@@ -250,7 +249,7 @@ class EntityStoreTestCase(TestCase):
     def test_register_class(self):
         register_cls = type('RegisteredClass', (), {})
         self.store_class.register_class(register_cls)
-        self.assertEqual(
+        assert_equal(
             self.store_class._base_store,
             [register_cls, ]
         )
@@ -259,25 +258,25 @@ class EntityStoreTestCase(TestCase):
         register_cls = type('RegisteredClass', (), {})
         register_obj = register_cls()
         self.store.register(register_obj)
-        self.assertEqual(
+        assert_equal(
             self.store._store,
             [register_obj, ]
         )
 
     def test_get_register_class_map_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.store_class.get_register_class_map_kwargs(),
             {}
         )
 
     def test_get_register_map_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.store.get_register_map_kwargs(),
             {}
         )
 
     def test_get_base_store_kwargs(self):
-        self.assertEqual(
+        assert_equal(
             self.store.get_base_store_kwargs(),
             {}
         )
@@ -286,8 +285,8 @@ class EntityStoreTestCase(TestCase):
         register_cls = mock.Mock()
         self.store_class.register_class(register_cls)
         self.store = self.store_class()
-        self.assertTrue(register_cls.called)
-        self.assertEqual(
+        assert_true(register_cls.called)
+        assert_equal(
             self.store._store,
             [register_cls.return_value, ]
         )

@@ -54,8 +54,9 @@ def provides(provided, **kwargs):
 
 
 def register_instances(to_store):
-    """Return a decorator that makes all instances of this class (and its
-    subclasses) automatically register themselves to ``to_store``.
+    """Return a decorator that makes all instances of the decorated class
+    (and its subclasses) automatically register themselves to
+    ``to_store``.
 
     :argument to_store: Store to register instances to.
     :type to_store: :class:`EntityStore`
@@ -93,6 +94,31 @@ def register_class(to_store_class):
     return register_obj_as_class
 
 
+def add_to_register_map(to_store_class, mapping_key):
+    """Returns a decorator that sets the ``mapping_key`` value of the base
+    register mapping of ``to_store_class`` to the decorated class.
+
+    """
+    def set_obj_as_mapping(entity_class):
+        """Set decorated class as mapping key."""
+        to_store_class.set_register_mapping(mapping_key, entity_class)
+        return entity_class
+    return set_obj_as_mapping
+
+
+def add_to_register_class_map(to_store_class, mapping_key):
+    """Returns a decorator that sets the ``mapping_key`` value of the base
+    class register mapping in the ``to_store_class`` to the decorated
+    class.
+
+    """
+    def set_obj_as_mapping(entity_class):
+        """Set decorated class as class mapping key."""
+        to_store_class.set_register_mapping(mapping_key, entity_class)
+        return entity_class
+    return set_obj_as_mapping
+
+
 class EntityStoreMetaclass(ABCMeta):
     """EntityStoreMetaclass allows :class:`EntityStore` to use a different
     :attr:`_base_store` store (list instance) for each class definitions
@@ -101,13 +127,29 @@ class EntityStoreMetaclass(ABCMeta):
     .. inheritance-diagram:: EntityStoreMetaclass
     """
     _base_store = []
-    """:attribute _base_store: Routed entity class store, instantiated
+    _base_register_map = {}
+    _base_register_class_map = {}
+    """
+    :attribute _base_store: Routed entity class store, instantiated
                                upon Router instantiation.
     :type _base_store: list
+    :attribute _base_register_map: Base register map (see
+                                   :func:`get_register_map` and
+                                   :func:`register`)
+    :type _base_store: dict
+    :attribute _base_register_class_map: Base register class map (see
+                                         :func:`get_register_class_map`
+                                         and :func:`register_class`)
+    :type _base_store: dict
     """
     def __init__(cls, name, bases, attrs):
-        """Replace :attr:`_base_store` by a copy of itself"""
+        """Replace :attr:`_base_store`, :attr:`_base_register_map` and
+        :attr:`_base_register_class_map` by copies of themselves
+
+        """
         super().__init__(name, bases, attrs)
+        cls._base_register_map = dict(cls._base_register_map)
+        cls._base_register_class_map = dict(cls._base_register_class_map)
         cls._base_store = list(cls._base_store)
 
 
@@ -120,30 +162,6 @@ class EntityStore(metaclass=EntityStoreMetaclass):
 
     .. inheritance-diagram:: EntityStore
     """
-    _base_store = []
-    """
-    :attribute _base_store: Empty store, mutable list, but will be
-                            copied for each type instance by
-                            :class:`EntityStoreMetaclass`
-    :type _base_store: list
-    """
-    def get_register_map(self):
-        """Mapping of type to function that will be evaluated (with entity)
-        when calling register. See :func:`register` and
-        :func:`register_apply_map`
-
-        """
-        return {}
-
-    @classmethod
-    def get_register_class_map(self):
-        """Mapping of type to function that will be evaluated (with entity)
-        when calling register. See :func:`register_class` and
-        :func:`register_apply_map`
-
-        """
-        return {}
-
     def __init__(self):
         """Initialize router (create empty store and register base store)"""
         super().__init__()
@@ -218,6 +236,62 @@ class EntityStore(metaclass=EntityStoreMetaclass):
             return _find_entity(isinstance)
 
     @classmethod
+    def get_register_class_map(self):
+        """Mapping of type to function that will be evaluated (with entity)
+        when calling register. See :func:`register_class` and
+        :func:`register_apply_map`.
+
+        Overriding implementations must call the base implementation
+        (using super(), usually), so that the base mappings set by
+        :func:`set_register_class_mapping` can be returned.
+
+        The base implementation returns a copy of the stored mapping,
+        so overriding implementations may append to the return value.
+        """
+        return dict(self._base_register_class_map)
+
+    @classmethod
+    def get_register_class_map_kwargs(cls):
+        """Arguments passed when applying register map, in
+        :func:`register_class`"""
+        return {}
+
+    def get_register_map(self):
+        """Mapping of type to function that will be evaluated (with entity)
+        when calling register. See :func:`register` and
+        :func:`register_apply_map`
+
+        Overriding implementations *MUST* call the base implementation
+        (using super(), usually), so that the base mappings set by
+        :func:`set_register_mapping` can be returned.
+
+        The base implementation returns a copy of the stored mapping,
+        so overriding implementations may append to the return value.
+
+        """
+        return dict(self._base_register_map)
+
+    def get_register_map_kwargs(self):
+        """Arguments passed when applying register map, in :func:`register`"""
+        return self.get_register_class_map_kwargs()
+
+    @classmethod
+    def set_register_class_mapping(self, key, value):
+        """Set a base register class mapping, that will be returned (possibly
+        with other mappings) by :func:`get_register_class_map`.
+
+        """
+        self._base_register_class_map[key] = value
+
+    @classmethod
+    def set_register_mapping(self, key, value):
+        """Set a base register mapping, that will be returned (possibly
+        with other mappings) by :func:`get_register_map`.
+
+        """
+        self._base_register_map[key] = value
+
+    @classmethod
     def register_class(cls, register_cls, map_kwargs=None):
         """Add a route class to :attr:`_base_store`, appling mapping from
         :func:`get_register_class_map` where required. This route class will
@@ -276,16 +350,6 @@ class EntityStore(metaclass=EntityStoreMetaclass):
             )
         self._store.append(entity)
         return entity
-
-    @classmethod
-    def get_register_class_map_kwargs(cls):
-        """Arguments passed when applying register map, in
-        :func:`register_class`"""
-        return {}
-
-    def get_register_map_kwargs(self):
-        """Arguments passed when applying register map, in :func:`register`"""
-        return self.get_register_class_map_kwargs()
 
     def get_base_store_kwargs(self):
         """Arguments passed when instantiating entity classes in

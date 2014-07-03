@@ -1,37 +1,37 @@
 import inspect
 import mock
-
-from django.test import TestCase
+from nose.tools import assert_true, assert_raises, assert_equal
 
 from django_crucrudile.entities import Entity
 
-class EntityTestCase(TestCase):
+
+class EntityTestCase:
     entity_class = Entity
 
     def test_is_abstract(self):
-        self.assertTrue(
+        assert_true(
             inspect.isabstract(self.entity_class)
         )
 
     def test_init_fails(self):
-        self.assertRaises(
+        assert_raises(
             TypeError,
             self.entity_class
         )
 
     def test_index_attr(self):
-        self.assertEqual(
+        assert_equal(
             self.entity_class.index,
             False
         )
 
     def test_is_patterns_abstract(self):
-        self.assertTrue(
+        assert_true(
             self.entity_class.patterns.__isabstractmethod__
         )
 
     def test_str_tree_func_callable(self):
-        self.assertTrue(
+        assert_true(
             callable(self.entity_class.get_str_tree)
         )
 
@@ -44,7 +44,7 @@ class EntityTestCase(TestCase):
 
         entity = TestConcreteEntity(mock_index)
 
-        self.assertEqual(
+        assert_equal(
             entity.index,
             mock_index
         )

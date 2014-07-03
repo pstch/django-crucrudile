@@ -1,14 +1,13 @@
 from functools import partial
 import mock
+from nose.tools import assert_true, assert_raises, assert_equal
 
-
-from django.test import TestCase
 
 from django_crucrudile.routers import app
 from django_crucrudile.routers.app import AppRouter
 
 
-class AppRouterTestCase(TestCase):
+class AppRouterTestCase:
     router_class = AppRouter
     mock_routing_module = None
 
@@ -38,7 +37,7 @@ class AppRouterTestCase(TestCase):
 
 
     def test_init_fails(self):
-        self.assertRaises(
+        assert_raises(
             TypeError,
             self.router_class
         )
@@ -47,20 +46,20 @@ class AppRouterTestCase(TestCase):
         router = self.mocked_router_class(
             app_module_name="test1.test2",
         )
-        self.assertEqual(router.namespace, "test1:test2")
+        assert_equal(router.namespace, "test1:test2")
 
         router = self.mocked_router_class(
             app_module_name="test1.test2",
             add_app_namespace=False
         )
-        self.assertEqual(router.namespace, None)
+        assert_equal(router.namespace, None)
 
         router_class, mock_func = self._get_cls_with_fake_attr(
             'add_app_namespace', False, self.mocked_router_class
         )
 
         router = router_class(app_module_name="test1.test2")
-        self.assertEqual(router.namespace, None)
+        assert_equal(router.namespace, None)
 
     def test_init_calls_register_modules_entities(self):
         router_class, mock_func = self._get_cls_with_fake_attr(
@@ -68,7 +67,7 @@ class AppRouterTestCase(TestCase):
             base=self.mocked_router_class
         )
         router = router_class(app_module_name="test")
-        self.assertTrue(mock_func.called)
+        assert_true(mock_func.called)
 
     def test_register_module_entities_not_silent(self):
         router_class, mock_func = self._get_cls_with_fake_attr(
@@ -76,7 +75,7 @@ class AppRouterTestCase(TestCase):
             base=self.mocked_router_class,
         )
         router = router_class(app_module_name="test")
-        self.assertRaises(
+        assert_raises(
             ValueError,
             partial(
                 self.router_class.register_module_entities,
@@ -91,7 +90,7 @@ class AppRouterTestCase(TestCase):
         )
         router = router_class(app_module_name="test")
 
-        self.assertEqual(
+        assert_equal(
             router.get_routing_entities(),
             self.mock_routing_module.entities
         )
@@ -107,7 +106,7 @@ class AppRouterTestCase(TestCase):
             router
         )
 
-        self.assertEqual(
+        assert_equal(
             router._store,
             []
         )
@@ -127,7 +126,7 @@ class AppRouterTestCase(TestCase):
             router
         )
 
-        self.assertEqual(
+        assert_equal(
             router._store,
             mock_list
         )
@@ -136,7 +135,7 @@ class AppRouterTestCase(TestCase):
             router, silent=False
         )
 
-        self.assertEqual(
+        assert_equal(
             router._store,
             mock_list*2
         )
@@ -145,12 +144,12 @@ class AppRouterTestCase(TestCase):
         router = self.mocked_router_class(
             app_module_name="test_app_module_name",
         )
-        self.assertEqual(
+        assert_equal(
             router.get_routing_module_path(),
             "test_app_module_name.routing"
         )
         router.routing_module_name = 'test_routing_module_name'
-        self.assertEqual(
+        assert_equal(
             router.get_routing_module_path(),
             "test_app_module_name.test_routing_module_name"
         )
@@ -164,7 +163,7 @@ class AppRouterTestCase(TestCase):
         import_module_mock.entities = []
         app.import_module = lambda x: import_module_mock
         router = router_class(app_module_name="test")
-        self.assertEqual(
+        assert_equal(
             router.get_routing_module(),
             import_module_mock
         )

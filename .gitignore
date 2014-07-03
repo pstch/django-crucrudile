@@ -8,18 +8,19 @@ build/
 dist/
 *.egg-info/
 
-pylint/
-pylint.html
 .coverage
-htmlcov/
+
 .cov2emacs*
 .coveralls.yml
 
-pycallgraph.gdf
-pycallgraph.png
+var/pycallgraph.png
 
-docs/_*
-/.project
-/.pydevproject
+var/docs_html/
+var/docs_coverage/
+var/docs_doctests/
 
-drafts/
+var/coverage_html/
+
+var/pylint/
+
+example_app/db.sqlite3

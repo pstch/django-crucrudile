@@ -1,6 +1,6 @@
 import hashlib
+from nose.tools import assert_equal
 
-from django.test import TestCase
 from django.db import models
 
 from django_crucrudile.routers import (
@@ -8,8 +8,7 @@ from django_crucrudile.routers import (
 )
 
 
-class EmptyRouterTestCase(TestCase):
-    """#TODO"""
+class EmptyRouterTestCase:
     def setUp(self):
         self.base_router = Router()
 
@@ -45,8 +44,7 @@ class TaskModel(models.Model):
     pass
 
 
-class RouterTestCase(TestCase):
-    """#TODO"""
+class RouterTestCase:
     def setUp(self):
         self.base_router = Router()
         self.base_router.base = True
@@ -80,11 +78,11 @@ class RouterTestCase(TestCase):
         self.base_router.register(TaskModel)
 
     def _test_stores(self):
-        self.assertEqual(
+        assert_equal(
             self.base_router._store,
             [self.documents_router]
         )
-        self.assertEqual(
+        assert_equal(
             self.documents_router._store,
             [self.dashboard_route]
         )
@@ -100,7 +98,7 @@ class RouterTestCase(TestCase):
         tree_hash = _hash(sorted_tree)
 
         # compare to reference hash
-        self.assertEqual(
+        assert_equal(
             tree_hash,
             "ec7727a9186e497ad77a6377509f75c2f3bb85909e316bc756061801d0c4aaac"
         )
