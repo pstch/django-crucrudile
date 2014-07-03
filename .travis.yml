@@ -10,7 +10,7 @@ install:
   - pip install -r tests/requirements.txt
   - pip install .
 script:
-  - runtests.py
+  - ./runtests.py
 after_success:
   - pylint --rcfile=.pylintrc django_crucrudile
   - pep8 django_crucrudile
