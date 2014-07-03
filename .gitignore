@@ -22,3 +22,5 @@ var/docs_doctests/
 var/coverage_html/
 
 var/pylint/
+
+example_app/db.sqlite3
