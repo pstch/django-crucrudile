@@ -1,7 +1,6 @@
 from django.db.models import Model
 
 from django_crucrudile.entities.store import provides
-from django_crucrudile.routes import ModelViewRoute
 from django_crucrudile.routers import (
     Router, BaseModelRouter
 )
@@ -39,7 +38,7 @@ class EntitiesRouter(BaseRouter):
     url_part = "entities"
 
 
-@provides(ModelViewRoute.make_for_view(ListView, index=True))
+@provides(ListView, map_kwargs={'index': True})
 @provides(DetailView)
 @provides(CreateView)
 @provides(UpdateView)
