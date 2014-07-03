@@ -5,39 +5,98 @@
 """
 import os
 import sys
-import nose
 
+from colorama import (
+    Fore as F,
+    Back as B,
+    Style as S,
+)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
 
 
+def bright(text):
+    print(S.BRIGHT + text + S.RESET_ALL)
+
+
+def dim(text):
+    print(S.DIM + text + S.RESET_ALL)
+
+
+def error(text):
+    print(S.BRIGHT + F.RED, end='')
+    print(text, end='')
+    print(S.RESET_ALL)
+
+
+def success(text):
+    print(S.BRIGHT + F.GREEN, end='')
+    print(text, end='')
+    print(S.RESET_ALL)
+
+
+def format_results(text):
+    print(
+        str(text).replace(
+            "True",
+            F.GREEN + "True" + F.RESET
+        ).replace(
+            "False",
+            F.RED + "False" + F.RESET
+        )
+    )
+
+
 def run_nose_main():
-    print("#### Running tests using nose test runner...")
-    print("#### (Disable with {}=1)".format(run_nose_main.disable_with))
+    bright("#### Running tests using nose test runner...")
+    dim("#### (Disable with {}=1)".format(run_nose_main.disable_with))
+    print(S.DIM, end='')
+    import nose
     return nose.main()
-    print("#### Done running tests with Django test runner.")
+    print(S.RESET_ALL, end='')
+    bright("#### Done running tests with Django test runner.")
 
 
 def run_sphinx_main():
-    print("#### Running tests using Sphinx doctest builder...")
-    print("#### (Disable with {}=1)".format(run_sphinx_main.disable_with))
+    bright("#### Running tests using Sphinx doctest builder...")
+    dim("#### (Disable with {}=1)".format(run_sphinx_main.disable_with))
     import sphinx
-    return sphinx.main(['-E', '-b', 'doctest', 'docs', 'var/docs_doctests'])
-    print("#### Done running tests using Sphinx doctest builder.")
+    print(S.DIM, end='')
+    return sphinx.main(
+        ['-N', '-E', '-b', 'doctest', 'docs', 'var/docs_doctests']
+    )
+    print(S.RESET_ALL, end='')
+    bright("#### Done running tests using Sphinx doctest builder.")
 
 run_nose_main.disable_with = "NO_NOSE_TESTS"
 run_sphinx_main.disable_with = "NO_SPHINX_TESTS"
 
 
 def fails(runner, *args, **kwargs):
+    runner_name = runner.__name__
+
+    def _error(text):
+        error(text.format(runner_name))
+
+    def _success(text):
+        success(text.format(runner_name))
+
     try:
-        return bool(runner(*args, **kwargs))
+        failed = bool(runner(*args, **kwargs))
+        if failed:
+            _error("## {} failed by returning True")
+        else:
+            _success("## {} succeeded by returning False")
     except SystemExit as ex:
-        return ex.code
+        if ex.code:
+            _error("## {} failed with SystemExit(True)")
+            return True
+        else:
+            _success("## {} succeeded with SystemExit(False)")
+            return False
     except Exception as ex:
-        print("## {} failed with : {}".format(runner, ex))
+        _error("## {} failed with : {}")
         return True
-    return False
 
 
 def safely_run_if_enabled(runner):
@@ -58,19 +117,26 @@ TESTS = [
 
 def runtests():
     print("## django-crucrudile test runner script")
-    results = list(try_tests(TESTS))
-    print("## Test results : {}".format(
-        dict(
-            zip(
-                (test.__name__ for test in TESTS),
-                results)
+    results = dict(
+        zip(
+            (test.__name__ for test in TESTS),
+            list(try_tests(TESTS))
         )
+    )
+
+    format_results("## Test results : {}".format(
+        results
     ))
-    if not all(results):
-        print("## Error: (at least) a test runner failed !")
+
+    if not all(results.values()):
+        error("## Error: (at least) a test runner failed !")
+        error("## Failed test runners :")
+        for name, result in results.items():
+            if not result:
+                error("## - {}".format(name))
         sys.exit(1)
     else:
-        print("## OK")
+        success("## OK")
 
 if __name__ == '__main__':
     print("## django-crucrudile test runner script")
