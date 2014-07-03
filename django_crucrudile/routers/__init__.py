@@ -103,6 +103,17 @@ class Router(EntityStore, Entity):
                                     is found).
     :type get_redirect_silent: bool
     """
+    @classmethod
+    def for_namespace(cls, namespace, no_url_part=False):
+        cls_name = namespace.capitalize()
+        attrs = dict(namespace=namespace)
+        if not no_url_part:
+            attrs['url_part'] = namespace
+        return type(
+            cls_name,
+            (cls,),
+            attrs
+        )
 
     def __init__(self,
                  namespace=None,
