@@ -21,7 +21,7 @@ objects) :
    metadata from the model
 
 These two abstract classes are used to provide three concrete
-pppimplementations, that take specific metadata (either on initialization
+implementations, that take specific metadata (either on initialization
 or as class attribute) to be able to return URL patterns :
 
  - :class:`CallbackRoute` : Implements :class:`Route`, provides an
