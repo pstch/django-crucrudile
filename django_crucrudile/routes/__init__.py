@@ -81,8 +81,9 @@ defined.
 
     def get_arg_regexs(self):
         arguments = self.get_arguments()
-        for required, regex in arguments.get_regexs():
-            separator = arguments.get_separator(required)
+        required, regexs = arguments.get_regexs()
+        separator = arguments.get_separator(required)
+        for regex in regexs:
             yield separator, regex
 
 
@@ -182,7 +183,7 @@ n
         """
         pass
 
-    def get_url_regexs(self):
+    def get_url_regexs(self, url_part = None):
         """Yield URL parts (for different combinations of URL
         arguments). The :class:`Route` bimplementation of
         :func:`patterns` will yield an URL pattern for each URL regex
@@ -190,7 +191,10 @@ n
 
         By default, yields only :attr:`url_part`.
         """
-        part = self.url_part or ''
+        if url_part is not None:
+            part = url_part
+        else:
+            part = self.url_part or ''
 
         for separator, regex in self.get_arg_regexs():
             yield "^{}$".format(
