@@ -10,22 +10,34 @@ class RouteArguments(list):
     opt_separator = "/?"
     required_default = True
 
+    @classmethod
+    def test_input(cls, input_data):
+        return isinstance(input_data, list)
+
     def __init__(self, arguments):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
         """
-        super().__init__(arguments)
+        super().__init__(arguments or [])
+        self.required = None
+        self.init_regexs()
 
-    def get_separator(self, required=True):
+    def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
         argument
 
         :argument required: If False, will return the optional
                             argument separator instead of the regular
-                            one. Default is True.
+                            one. Default is the value of
+                            :attr:`required_default`.
         :type required: bool
         """
+        if required is None:
+            if self.required is None:
+                required = self.required_default
+            else:
+                required = self.required
         if required:
             return self.separator
         else:
@@ -52,10 +64,12 @@ class RouteArguments(list):
 
             yield required, arg_spec
 
-    def get_regexs(self):
-        """Returns a boolean indicating if the arguments in this object are
-        "required" (i.e. they will always be present in the regex),
-        and a list of argument URL regexes.
+    def init_regexs(self):
+        """Sets an instance attribute (``required``) contaning a boolean
+        indicating if the arguments in this object are "required"
+        (i.e. they will always be present in the regex), and another
+        attribute (``arg_combs``) containing a list of argument URL
+        regexes.
 
         The returned boolean value is useful to know if this regex
         part should be joined to another regex part using an optional
@@ -98,4 +112,6 @@ class RouteArguments(list):
                 for comb in arg_combs
                 for arg in possible_args_list
             ]
-        return is_required, arg_combs
+
+        self.arg_combs = arg_combs
+        self.required = is_required

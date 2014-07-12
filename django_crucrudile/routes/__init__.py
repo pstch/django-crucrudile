@@ -38,8 +38,8 @@ or as class attribute) to be able to return URL patterns :
    :class:`django_crucrudile.routers.ModelRouter` store.
 
 """
+from functools import lru_cache
 from abc import abstractmethod
-
 from django.conf.urls import url
 
 from django_crucrudile.entities import Entity
@@ -55,34 +55,52 @@ __all__ = [
 
 
 class ArgumentsMixin:
-    arguments = []
+    _argument_obj = None
+    arguments_spec = []
     arguments_class = RouteArguments
 
     def __init__(self,
-                 arguments=None, arguments_class=None,
+                 arguments_spec=None, arguments_class=None,
                  **kwargs):
         """Initialize Route, check that needed attributes/arguments are
 defined.
 
         """
-        if arguments is not None:
-            self.arguments = arguments
+        if arguments_spec is not None:
+            self.arguments_spec = arguments_spec
         if arguments_class is not None:
             self.arguments_class = arguments_class
 
+        self.arguments = self.arguments_spec
+
         super().__init__(**kwargs)
 
-    def get_arguments(self):
-        if isinstance(self.arguments, list):
-            regexs = self.arguments_class(self.arguments)
+    @property
+    def arguments(self):
+        return self._argument_obj
+
+    @arguments.setter
+    def arguments(self, arguments):
+        self._argument_obj = self._get_argument_obj(
+            arguments, self.arguments_class
+        )
+
+    @staticmethod
+    def _get_argument_obj(arguments, arguments_class):
+        is_arguments_class = isinstance(
+            arguments,
+            arguments_class
+        )
+        if is_arguments_class:
+            arguments
+        elif arguments_class.test_input(arguments):
+            return arguments_class(arguments)
         else:
-            regexs = self.arguments
-        return regexs
+            raise TypeError("Could not parse arguments : {}".format(arguments))
 
     def get_arg_regexs(self):
-        arguments = self.get_arguments()
-        required, regexs = arguments.get_regexs()
-        separator = arguments.get_separator(required)
+        regexs = self.arguments.arg_combs
+        separator = self.arguments.get_separator()
         for regex in regexs:
             yield separator, regex
 
