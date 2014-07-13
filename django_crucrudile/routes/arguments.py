@@ -1,23 +1,29 @@
-class RouteArguments(list):
-    """Route URL arguments specification. Generates argument regexes from
-    a given argument specification. This allows you to give the possible
-    URL arguments to be used in the URL, and :func:`get_regexs` will
-    return a regex for each argument combination found.
+from abc import ABCMeta, abstractmethod
 
-    """
+class BaseArgParser(list, metaclass=ABCMeta):
     separator = "/"
-
     opt_separator = "/?"
     required_default = True
 
-    def __init__(self, arguments):
+    def __init__(self,
+                 arg_specs, required_default=None,
+                 separator=None, opt_separator=None,):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
         """
-        super().__init__(arguments)
+        self.arg_specs = arg_specs
+        self.required = False
+        if required_default:
+            self.required_default = required_default
+        if separator:
+            self.separator = separator
+        if opt_separator:
+            self.opt_separator = opt_separator
 
-    def get_separator(self, required=True):
+        super().__init__(self.get_arg_regexs())
+
+    def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
         argument
 
@@ -26,21 +32,35 @@ class RouteArguments(list):
                             one. Default is True.
         :type required: bool
         """
+        if required is None:
+            required = self.required_default
         if required:
             return self.separator
         else:
             return self.opt_separator
 
-    def clean(self):
-        """Yield "cleaned" items. Cleaning an item implies converting it to a
-        2-tuple (with :attr:`required_default` and the item) if it's
-        not one, then wrapping the original item (now the 2nd element
-        of the tuple) in a single item list if it's a string.
+    @abstractmethod
+    def make_arg_regexs(self):
+        pass
+
+class SimpleArgParser(BaseArgParser):
+    """Route URL arguments specification. Generates argument regexes from
+    a given argument specification. This allows you to give the possible
+    URL arguments to be used in the URL, and :func:`get_regexs` will
+    return a regex for each argument combination found.
+
+    """
+    def clean_arg_specs(self):
+        """Yield "cleaned" arg specification. Cleaning an arg specification
+        implies converting it to a 2-tuple (with
+        :attr:`required_default` and the original item) if it's not
+        one, then wrapping the original item (now the 2nd element of
+        the tuple) in a single item list if it's a string.
 
         """
         # RouteArguments is itself a list, so we can just iterate over
         # self to get the original items
-        for item in self:
+        for item in self.arg_specs:
             if not isinstance(item, tuple):
                 # not a tuple, use required_default to build one
                 required, arg_spec = self.required_default, item
@@ -52,10 +72,8 @@ class RouteArguments(list):
 
             yield required, arg_spec
 
-    def get_regexs(self):
-        """Returns a boolean indicating if the arguments in this object are
-        "required" (i.e. they will always be present in the regex),
-        and a list of argument URL regexes.
+    def make_arg_regexs(self):
+        """Returns a list of argument URL regexes.
 
         The returned boolean value is useful to know if this regex
         part should be joined to another regex part using an optional
@@ -82,14 +100,12 @@ class RouteArguments(list):
 
         # False at the beginning, will be set *while* iterating over
         # the arguments
-        is_required = False
-
         # iterate over the cleaned items
         for required, possible_args_list in self.clean():
             # a single required argument specifications is enough to
             # mark the whole object as required
             if required:
-                is_required = True
+                self.required = True
             # get the argument separator
             separator = self.get_separator(required)
 
@@ -98,4 +114,4 @@ class RouteArguments(list):
                 for comb in arg_combs
                 for arg in possible_args_list
             ]
-        return is_required, arg_combs
+        return arg_combs
