@@ -1,18 +1,20 @@
 from abc import ABCMeta, abstractmethod
 
+
 class BaseArgParser(list, metaclass=ABCMeta):
     separator = "/"
     opt_separator = "/?"
     required_default = True
 
-    def __init__(self,
-                 arg_specs, required_default=None,
-                 separator=None, opt_separator=None,):
+    def __init__(self, arguments,
+                 required_default=None,
+                 separator=None,
+                 opt_separator=None,
+                 **kwargs):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
         """
-        self.arg_specs = arg_specs
         self.required = False
         if required_default:
             self.required_default = required_default
@@ -21,7 +23,7 @@ class BaseArgParser(list, metaclass=ABCMeta):
         if opt_separator:
             self.opt_separator = opt_separator
 
-        super().__init__(self.get_arg_regexs())
+        super().__init__(arguments)
 
     def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
@@ -43,6 +45,7 @@ class BaseArgParser(list, metaclass=ABCMeta):
     def make_arg_regexs(self):
         pass
 
+
 class SimpleArgParser(BaseArgParser):
     """Route URL arguments specification. Generates argument regexes from
     a given argument specification. This allows you to give the possible
@@ -50,7 +53,15 @@ class SimpleArgParser(BaseArgParser):
     return a regex for each argument combination found.
 
     """
-    def clean_arg_specs(self):
+    def __init__(self, arg_specs):
+
+
+    @staticmethod
+    def mark_arg_specs(arg_specs):
+        pass
+
+    @staticmethod
+    def clean_arg_specs(arg_specs, required_default):
         """Yield "cleaned" arg specification. Cleaning an arg specification
         implies converting it to a 2-tuple (with
         :attr:`required_default` and the original item) if it's not
@@ -60,10 +71,10 @@ class SimpleArgParser(BaseArgParser):
         """
         # RouteArguments is itself a list, so we can just iterate over
         # self to get the original items
-        for item in self.arg_specs:
+        for item in arg_specs:
             if not isinstance(item, tuple):
                 # not a tuple, use required_default to build one
-                required, arg_spec = self.required_default, item
+                required, arg_spec = required_default, item
             else:
                 required, arg_spec = item
 
@@ -72,6 +83,7 @@ class SimpleArgParser(BaseArgParser):
 
             yield required, arg_spec
 
+    @staticmethod
     def make_arg_regexs(self):
         """Returns a list of argument URL regexes.
 

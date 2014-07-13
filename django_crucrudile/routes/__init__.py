@@ -123,6 +123,7 @@ defined.
                     )
                 )
 
+
 class Route(Entity):
     """Abstract class for a :class:`django_crucrudile.entity.Entity` that
     yields URL patterns.
