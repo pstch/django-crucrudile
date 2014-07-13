@@ -38,8 +38,8 @@ or as class attribute) to be able to return URL patterns :
    :class:`django_crucrudile.routers.ModelRouter` store.
 
 """
+from functools import lru_cache
 from abc import abstractmethod
-
 from django.conf.urls import url
 
 from django_crucrudile.entities import Entity
@@ -55,39 +55,75 @@ __all__ = [
 
 
 class ArgumentsMixin:
-    arguments = []
-    arguments_class = RouteArguments
+    _argument_obj = None
+    arguments_spec = []
+    arguments_parsers = RouteArguments
 
     def __init__(self,
-                 arguments=None, arguments_class=None,
+                 arguments_spec=None, arguments_class=None,
                  **kwargs):
         """Initialize Route, check that needed attributes/arguments are
 defined.
 
         """
-        if arguments is not None:
-            self.arguments = arguments
+        if arguments_spec is not None:
+            self.arguments_spec = arguments_spec
         if arguments_class is not None:
             self.arguments_class = arguments_class
 
+        self.arguments = self.arguments_spec
+
         super().__init__(**kwargs)
 
-    def get_arguments(self):
-        if isinstance(self.arguments, list):
-            regexs = self.arguments_class(self.arguments)
+    @property
+    def arguments(self):
+        return self._argument_obj
+
+    @arguments.setter
+    def arguments(self, arguments):
+        self._argument_obj = self._get_argument_obj(
+            arguments, self.arguments_class
+        )
+
+    @staticmethod
+    def _get_argument_obj(arguments, arguments_class):
+        is_arguments_class = isinstance(
+            arguments,
+            arguments_class
+        )
+        if is_arguments_class:
+            arguments
+        elif arguments_class.test_input(arguments):
+            return arguments_class(arguments)
         else:
-            regexs = self.arguments
-        return regexs
+            raise TypeError("Could not parse arguments : {}".format(arguments))
 
     def get_arg_regexs(self):
-        arguments = self.get_arguments()
-        required, regexs = arguments.get_regexs()
-        separator = arguments.get_separator(required)
+        regexs = self.arguments.arg_combs
+        separator = self.arguments.get_separator()
         for regex in regexs:
             yield separator, regex
 
+    def clean_url_part(self, url_part=None):
+        if url_part is not None:
+            part = url_part
+        else:
+            part = self.url_part
+        if part:
+            return '/' + part
+        else:
+            return ''
 
-class Route(ArgumentsMixin, Entity):
+    def make_url_regexs(self, url_part=None):
+        part = self.clean_url_part(url_part)
+        for arg in self.arguments.arg_combs:
+            yield '^{}$'.format(
+                self.arguments.get_separator().join(
+                    filter(None, [part, arg])
+                    )
+                )
+
+class Route(Entity):
     """Abstract class for a :class:`django_crucrudile.entity.Entity` that
     yields URL patterns.
 
@@ -165,25 +201,39 @@ defined.
 
         """
         callback = self.get_callback()
-        url_name = self.get_url_name()
-        for url_part in self.get_url_regexs():
-            yield url(
-                url_part,
-                callback,
-                name=url_name
-            )
+        for url_regex in self.get_url_regexs():
+            for url_name in self.make_url_names():
+                yield url(
+                    url_regex,
+                    callback,
+                    name=url_name
+                )
 
     @abstractmethod
     def get_callback(self):  # pragma: no cover
         """Return callback to use in the URL pattern
-n
+
         **Abstract method !** Should be defined by subclasses,
         otherwise class instantiation will fail.
 
         """
         pass
 
-    def get_url_regexs(self, url_part = None):
+    def make_url_regexs(self, url_part=None):
+        if url_part is not None:
+            part = url_part
+        else:
+            part = self.url_part
+        if part:
+            yield '/' + part
+        else:
+            yield ''
+
+    def make_url_names(self):
+        """Return the URL name, by default from :attr:`name`"""
+        yield self.name
+
+    def get_url_regexs(self, url_part=None):
         """Yield URL parts (for different combinations of URL
         arguments). The :class:`Route` bimplementation of
         :func:`patterns` will yield an URL pattern for each URL regex
@@ -191,21 +241,8 @@ n
 
         By default, yields only :attr:`url_part`.
         """
-        if url_part is not None:
-            part = url_part
-        else:
-            part = self.url_part or ''
-
-        for separator, regex in self.get_arg_regexs():
-            yield "^{}$".format(
-                separator.join(
-                    filter(None, [part, regex])
-                )
-            )
-
-    def get_url_name(self):
-        """Return the URL name, by default from :attr:`name`"""
-        return self.name
+        for url_regex in self.make_url_regexs():
+            yield url_regex
 
 
 from .callback import CallbackRoute
