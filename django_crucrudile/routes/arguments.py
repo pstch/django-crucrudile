@@ -6,7 +6,8 @@ class BaseArgParser(list, metaclass=ABCMeta):
     opt_separator = "/?"
     required_default = True
 
-    def __init__(self, arguments,
+    @abstractmethod
+    def __init__(self, arg_regexs,
                  required_default=None,
                  separator=None,
                  opt_separator=None,
@@ -23,7 +24,7 @@ class BaseArgParser(list, metaclass=ABCMeta):
         if opt_separator:
             self.opt_separator = opt_separator
 
-        super().__init__(arguments)
+        super().__init__(arg_regexs)
 
     def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
@@ -41,10 +42,6 @@ class BaseArgParser(list, metaclass=ABCMeta):
         else:
             return self.opt_separator
 
-    @abstractmethod
-    def make_arg_regexs(self):
-        pass
-
 
 class SimpleArgParser(BaseArgParser):
     """Route URL arguments specification. Generates argument regexes from
@@ -53,49 +50,26 @@ class SimpleArgParser(BaseArgParser):
     return a regex for each argument combination found.
 
     """
-    def __init__(self, arg_specs):
+    def __init__(self, specs, **kwargs):
+        def _get_parts_lists(regexs, args):
+            for regex in regexs:
+                for arg in args:
+                    yield regex, arg
 
+        def _filter_none(parts_lists):
+            for parts_list in parts_lists:
+                yield filter(None, parts_list)
 
-    @staticmethod
-    def mark_arg_specs(arg_specs):
-        pass
+        def _join_with_sep(parts_lists, required):
+            sep = self.get_separator(required)
+            for parts_list in parts_lists:
+                yield sep.join(parts_list)
 
-    @staticmethod
-    def clean_arg_specs(arg_specs, required_default):
-        """Yield "cleaned" arg specification. Cleaning an arg specification
-        implies converting it to a 2-tuple (with
-        :attr:`required_default` and the original item) if it's not
-        one, then wrapping the original item (now the 2nd element of
-        the tuple) in a single item list if it's a string.
+        def _cartesian_product(required, regexs, args):
+            parts_lists = _get_parts_lists(regexs, args)
+            parts_lists = _filter_none(parts_lists)
+            return _join_with_sep(parts_lists)
 
-        """
-        # RouteArguments is itself a list, so we can just iterate over
-        # self to get the original items
-        for item in arg_specs:
-            if not isinstance(item, tuple):
-                # not a tuple, use required_default to build one
-                required, arg_spec = required_default, item
-            else:
-                required, arg_spec = item
-
-            if isinstance(arg_spec, str):
-                arg_spec = [arg_spec, ]
-
-            yield required, arg_spec
-
-    @staticmethod
-    def make_arg_regexs(self):
-        """Returns a list of argument URL regexes.
-
-        The returned boolean value is useful to know if this regex
-        part should be joined to another regex part using an optional
-        separator, instead of the regular, required, separator.
-
-        In its implementation, this runs a variant of the cartesian
-        product on the list items to get all the possible argument
-        combinations.
-
-        """
 
         # arg_combs need an empty string so that the recursive list
         # comprehension below works
@@ -108,22 +82,43 @@ class SimpleArgParser(BaseArgParser):
         # still need an URL regex (with no arguments), which will be
         # made from the empty string singleton returned by this
         # function.
-        arg_combs = ['']
+        regexs = ['']
 
         # False at the beginning, will be set *while* iterating over
         # the arguments
         # iterate over the cleaned items
-        for required, possible_args_list in self.clean():
-            # a single required argument specifications is enough to
-            # mark the whole object as required
+        specs = self.clean(specs)
+        specs = self.mark_required(specs)
+
+        for required, args in specs:
+            regexs = _cartesian_product(required, regexs, args)
+
+        super().__init__(regexs, **kwargs)
+
+    def clean(self, arg_specs):
+        """Yield "cleaned" arg specification. Cleaning an arg specification
+        implies converting it to a 2-tuple (with
+        :attr:`required_default` and the original item) if it's not
+        one, then wrapping the original item (now the 2nd element of
+        the tuple) in a single item list if it's a string.
+
+        """
+        # RouteArguments is itself a list, so we can just iterate over
+        # self to get the original items
+        for item in arg_specs:
+            if not isinstance(item, tuple):
+                # not a tuple, use required_default to build one
+                required, arg_spec = self.required_default, item
+            else:
+                required, arg_spec = item
+
+            if isinstance(arg_spec, str):
+                arg_spec = [arg_spec, ]
+
+            yield required, arg_spec
+
+    def mark_required(self, arg_specs):
+        for required, arg_spec in arg_specs:
             if required:
                 self.required = True
-            # get the argument separator
-            separator = self.get_separator(required)
-
-            arg_combs = [
-                separator.join(filter(None, [comb, arg]))
-                for comb in arg_combs
-                for arg in possible_args_list
-            ]
-        return arg_combs
+            yield required, arg_spec
