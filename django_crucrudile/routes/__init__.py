@@ -57,7 +57,7 @@ __all__ = [
 class ArgumentsMixin:
     _argument_obj = None
     arguments_spec = []
-    arguments_parsers = RouteArguments
+    arguments_class = RouteArguments
 
     def __init__(self,
                  arguments_spec=None, arguments_class=None,
@@ -104,26 +104,8 @@ defined.
         for regex in regexs:
             yield separator, regex
 
-    def clean_url_part(self, url_part=None):
-        if url_part is not None:
-            part = url_part
-        else:
-            part = self.url_part
-        if part:
-            return '/' + part
-        else:
-            return ''
 
-    def make_url_regexs(self, url_part=None):
-        part = self.clean_url_part(url_part)
-        for arg in self.arguments.arg_combs:
-            yield '^{}$'.format(
-                self.arguments.get_separator().join(
-                    filter(None, [part, arg])
-                    )
-                )
-
-class Route(Entity):
+class Route(ArgumentsMixin, Entity):
     """Abstract class for a :class:`django_crucrudile.entity.Entity` that
     yields URL patterns.
 
@@ -201,39 +183,25 @@ defined.
 
         """
         callback = self.get_callback()
-        for url_regex in self.get_url_regexs():
-            for url_name in self.make_url_names():
-                yield url(
-                    url_regex,
-                    callback,
-                    name=url_name
-                )
+        url_name = self.get_url_name()
+        for url_part in self.get_url_regexs():
+            yield url(
+                url_part,
+                callback,
+                name=url_name
+            )
 
     @abstractmethod
     def get_callback(self):  # pragma: no cover
         """Return callback to use in the URL pattern
-
+n
         **Abstract method !** Should be defined by subclasses,
         otherwise class instantiation will fail.
 
         """
         pass
 
-    def make_url_regexs(self, url_part=None):
-        if url_part is not None:
-            part = url_part
-        else:
-            part = self.url_part
-        if part:
-            yield '/' + part
-        else:
-            yield ''
-
-    def make_url_names(self):
-        """Return the URL name, by default from :attr:`name`"""
-        yield self.name
-
-    def get_url_regexs(self, url_part=None):
+    def get_url_regexs(self, url_part = None):
         """Yield URL parts (for different combinations of URL
         arguments). The :class:`Route` bimplementation of
         :func:`patterns` will yield an URL pattern for each URL regex
@@ -241,8 +209,21 @@ defined.
 
         By default, yields only :attr:`url_part`.
         """
-        for url_regex in self.make_url_regexs():
-            yield url_regex
+        if url_part is not None:
+            part = url_part
+        else:
+            part = self.url_part or ''
+
+        for separator, regex in self.get_arg_regexs():
+            yield "^{}$".format(
+                separator.join(
+                    filter(None, [part, regex])
+                )
+            )
+
+    def get_url_name(self):
+        """Return the URL name, by default from :attr:`name`"""
+        return self.name
 
 
 from .callback import CallbackRoute
