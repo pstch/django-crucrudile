@@ -1,16 +1,33 @@
-from abc import ABCMeta, abstractmethod
+from functools import partial
+from itertools import product
 
+from abc import ABCMeta
+
+def cleaner(func):
+    def register_cleaner(parser_class):
+        parser_class.register_cleaner(func)
+        return parser_class
+    return register_cleaner
+
+class ArgParserMetaclass(ABCMeta):
+    _clean_funcs = []
+
+    def __init__(cls, name, bases, attrs):
+        super().__init__(nanme, bases, attrs)
+        self._clean_funcs = list(_clean_funcs)
+
+    def register_cleaner(cls, func):
+        self._clean_funcs.append(func)
 
 class BaseArgParser(list, metaclass=ABCMeta):
     separator = "/"
     opt_separator = "/?"
     required_default = True
 
-    def __init__(self, arguments,
+    def __init__(self, regexs,
                  required_default=None,
                  separator=None,
-                 opt_separator=None,
-                 **kwargs):
+                 opt_separator=None):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
@@ -23,7 +40,7 @@ class BaseArgParser(list, metaclass=ABCMeta):
         if opt_separator:
             self.opt_separator = opt_separator
 
-        super().__init__(arguments)
+        super().__init__(regexs)
 
     def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
@@ -41,9 +58,20 @@ class BaseArgParser(list, metaclass=ABCMeta):
         else:
             return self.opt_separator
 
-    @abstractmethod
-    def make_arg_regexs(self):
-        pass
+    def clean(self, specs):
+        clean_funcs = [
+            self.make_tuple,
+            self.apply_required_default,
+            self.mark_required,
+            self.make_args_list,
+            self.make_separator
+        ]
+        for func in self._cleaners:
+            specs = map(func, specs)
+
+        return specs
+
+    def __init__(self, specs, **kwargs):
 
 
 class SimpleArgParser(BaseArgParser):
@@ -53,77 +81,45 @@ class SimpleArgParser(BaseArgParser):
     return a regex for each argument combination found.
 
     """
-    def __init__(self, arg_specs):
-
-
     @staticmethod
-    def mark_arg_specs(arg_specs):
-        pass
+    def join_parts(parts, separator):
+        return separator.join(filter(None, parts))
 
-    @staticmethod
-    def clean_arg_specs(arg_specs, required_default):
-        """Yield "cleaned" arg specification. Cleaning an arg specification
-        implies converting it to a 2-tuple (with
-        :attr:`required_default` and the original item) if it's not
-        one, then wrapping the original item (now the 2nd element of
-        the tuple) in a single item list if it's a string.
+    def __init__(self, specs, **kwargs):
+        regexs = ['']
+        specs = map(self.clean_spec, specs)
 
-        """
-        # RouteArguments is itself a list, so we can just iterate over
-        # self to get the original items
-        for item in arg_specs:
-            if not isinstance(item, tuple):
-                # not a tuple, use required_default to build one
-                required, arg_spec = required_default, item
-            else:
-                required, arg_spec = item
+        for separator, args in specs:
+            join_parts = partial(self.join_parts, separator=separator)
+            regexs = map(join_parts, product(regexs, args))
 
-            if isinstance(arg_spec, str):
-                arg_spec = [arg_spec, ]
+        super().__init__(regexs, **kwargs)
 
-            yield required, arg_spec
 
-    @staticmethod
-    def make_arg_regexs(self):
-        """Returns a list of argument URL regexes.
+    def make_tuple(self, item):
+        if not isinstance(item, tuple):
+            return None, item
+        else:
+            return item
 
-        The returned boolean value is useful to know if this regex
-        part should be joined to another regex part using an optional
-        separator, instead of the regular, required, separator.
+    def apply_required_default(self, item):
+        required, args = item
+        if required is None:
+            required = self.redirect_default
+        return required, args
 
-        In its implementation, this runs a variant of the cartesian
-        product on the list items to get all the possible argument
-        combinations.
+    def mark_required(self, item):
+        required, args = item
+        if required:
+            self.required = True
+        return required, args
 
-        """
+    def make_args_list(self, item):
+        required, args = item
+        if isinstance(args, str):
+            args = [args, ]
+        return required, args
 
-        # arg_combs need an empty string so that the recursive list
-        # comprehension below works
-
-        # it needs to start with an empty string so that it can be
-        # joined to append arguments
-
-        # it also matches with this function behaviour : if no
-        # arguments are defined (so the below loop doesn't run), we
-        # still need an URL regex (with no arguments), which will be
-        # made from the empty string singleton returned by this
-        # function.
-        arg_combs = ['']
-
-        # False at the beginning, will be set *while* iterating over
-        # the arguments
-        # iterate over the cleaned items
-        for required, possible_args_list in self.clean():
-            # a single required argument specifications is enough to
-            # mark the whole object as required
-            if required:
-                self.required = True
-            # get the argument separator
-            separator = self.get_separator(required)
-
-            arg_combs = [
-                separator.join(filter(None, [comb, arg]))
-                for comb in arg_combs
-                for arg in possible_args_list
-            ]
-        return arg_combs
+    def make_separator(self, item):
+        required, args = item
+        return self.get_separator(required), args

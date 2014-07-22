@@ -148,9 +148,9 @@ class EntityStoreMetaclass(ABCMeta):
 
         """
         super().__init__(name, bases, attrs)
-        cls._base_register_map = dict(cls._base_register_map)
-        cls._base_register_class_map = dict(cls._base_register_class_map)
-        cls._base_store = list(cls._base_store)
+        cls._base_register_map = cls._base_register_map.copy()
+        cls._base_register_class_map = cls._base_register_class_map.copy()
+        cls._base_store = cls._base_store.copy()
 
 
 class EntityStore(metaclass=EntityStoreMetaclass):
