@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from functools import partial
+from functools import partial, reduce
 from itertools import product
 
 
@@ -17,14 +17,15 @@ def compose(functions, args=None, kwargs=None):
         return partial(func, *args, **kwargs)
 
     def inner_compose(f, g):
-        f = add_args(f)
-        g = add_args(g)
+        f = pass_args(f)
+        g = pass_args(g)
         return lambda x: f(bg(x))
 
-    return functools.reduce(
+    return reduce(
         inner_compose,
         functions
     )
+
 
 class BaseArgParser(list, metaclass=ABCMeta):
     separator = "/"
@@ -129,4 +130,4 @@ class ArgParser(BaseArgParser):
 
     def parse_regexs(self, specs):
         filters = compose(self.regexs_filters, self)
-        return map(self.regexs_filter, specs)
+        return map(filters, specs)

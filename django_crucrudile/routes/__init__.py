@@ -38,13 +38,13 @@ or as class attribute) to be able to return URL patterns :
    :class:`django_crucrudile.routers.ModelRouter` store.
 
 """
-from functools import lru_cache
 from abc import abstractmethod
 from django.conf.urls import url
 
 from django_crucrudile.entities import Entity
 
-from .arguments import ArgParser
+from .arguments import ArgumentsMixin
+
 
 __all__ = [
     'Route',
@@ -54,48 +54,7 @@ __all__ = [
 ]
 
 
-class ArgumentsMixin:
-    arguments_spec = []
-    arguments_parsers = ArgParser
-
-    def __init__(self,
-                 arguments_spec=None, arguments_parser=None,
-                 **kwargs):
-        """Initialize Route, check that needed attributes/arguments are
-defined.
-
-        """
-        if arguments_spec is not None:
-            self.arguments_spec = arguments_spec
-        if arguments_parser is not None:
-            self.arguments_parser = arguments_parser
-
-        self.arguments = self.arguments_parser(self.arguments_spec)
-
-        super().__init__(**kwargs)
-
-    def clean_url_part(self, url_part=None):
-        if url_part is not None:
-            part = url_part
-        else:
-            part = self.url_part
-        if part:
-            return '/' + part
-        else:
-            return ''
-
-    def make_url_regexs(self, url_part=None):
-        part = self.clean_url_part(url_part)
-        for arg in self.arguments.arg_combs:
-            print("part is {}".format(part))
-            yield '^{}$'.format(
-                self.arguments.get_separator().join(
-                    filter(None, [part, arg])
-                    )
-                )
-
-
-class Route(Entity):
+class BaseRoute(Entity):
     """Abstract class for a :class:`django_crucrudile.entity.Entity` that
     yields URL patterns.
 
@@ -218,6 +177,10 @@ defined.
         """
         for url_regex in self.make_url_regexs(url_part):
             yield url_regex
+
+
+class Route(ArgumentsMixin, BaseRoute):
+    pass
 
 
 from .callback import CallbackRoute

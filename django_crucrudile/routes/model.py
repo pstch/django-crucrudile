@@ -1,6 +1,7 @@
 from . import Route
 from .view import ViewRoute
 
+
 class ModelRoute(Route):
     """Implementation of Route that requires a model to be set either
     on the class (:attr:`model` attribute), or to be passed in
