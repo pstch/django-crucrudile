@@ -97,6 +97,8 @@ class RouterTestCase:
 
         tree_hash = _hash(sorted_tree)
 
+        print(sorted_tree)
+
         # compare to reference hash
         assert_equal(
             tree_hash,

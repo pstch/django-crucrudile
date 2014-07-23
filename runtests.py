@@ -85,8 +85,10 @@ def fails(runner, *args, **kwargs):
         failed = bool(runner(*args, **kwargs))
         if failed:
             _error("## {} failed by returning True")
+            return True
         else:
             _success("## {} succeeded by returning False")
+            return False
     except SystemExit as ex:
         if ex.code:
             _error("## {} failed with SystemExit(True)")

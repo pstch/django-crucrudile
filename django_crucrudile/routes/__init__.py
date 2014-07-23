@@ -44,7 +44,7 @@ from django.conf.urls import url
 
 from django_crucrudile.entities import Entity
 
-from .arguments import RouteArguments
+from .arguments import ArgParser
 
 __all__ = [
     'Route',
@@ -55,12 +55,11 @@ __all__ = [
 
 
 class ArgumentsMixin:
-    _argument_obj = None
     arguments_spec = []
-    arguments_parsers = RouteArguments
+    arguments_parsers = ArgParser
 
     def __init__(self,
-                 arguments_spec=None, arguments_class=None,
+                 arguments_spec=None, arguments_parser=None,
                  **kwargs):
         """Initialize Route, check that needed attributes/arguments are
 defined.
@@ -68,41 +67,12 @@ defined.
         """
         if arguments_spec is not None:
             self.arguments_spec = arguments_spec
-        if arguments_class is not None:
-            self.arguments_class = arguments_class
+        if arguments_parser is not None:
+            self.arguments_parser = arguments_parser
 
-        self.arguments = self.arguments_spec
+        self.arguments = self.arguments_parser(self.arguments_spec)
 
         super().__init__(**kwargs)
-
-    @property
-    def arguments(self):
-        return self._argument_obj
-
-    @arguments.setter
-    def arguments(self, arguments):
-        self._argument_obj = self._get_argument_obj(
-            arguments, self.arguments_class
-        )
-
-    @staticmethod
-    def _get_argument_obj(arguments, arguments_class):
-        is_arguments_class = isinstance(
-            arguments,
-            arguments_class
-        )
-        if is_arguments_class:
-            arguments
-        elif arguments_class.test_input(arguments):
-            return arguments_class(arguments)
-        else:
-            raise TypeError("Could not parse arguments : {}".format(arguments))
-
-    def get_arg_regexs(self):
-        regexs = self.arguments.arg_combs
-        separator = self.arguments.get_separator()
-        for regex in regexs:
-            yield separator, regex
 
     def clean_url_part(self, url_part=None):
         if url_part is not None:
@@ -117,6 +87,7 @@ defined.
     def make_url_regexs(self, url_part=None):
         part = self.clean_url_part(url_part)
         for arg in self.arguments.arg_combs:
+            print("part is {}".format(part))
             yield '^{}$'.format(
                 self.arguments.get_separator().join(
                     filter(None, [part, arg])
@@ -202,12 +173,12 @@ defined.
 
         """
         callback = self.get_callback()
-        for url_regex in self.get_url_regexs():
-            for url_name in self.make_url_names():
+        for regex in self.get_url_regexs():
+            for name in self.get_url_names():
                 yield url(
-                    url_regex,
+                    regex,
                     callback,
-                    name=url_name
+                    name=name
                 )
 
     @abstractmethod
@@ -226,13 +197,16 @@ defined.
         else:
             part = self.url_part
         if part:
-            yield '/' + part
+            yield '^{}$'.format(part)
         else:
             yield ''
 
-    def make_url_names(self):
+    def get_url_name(self):
         """Return the URL name, by default from :attr:`name`"""
-        yield self.name
+        return self.name
+
+    def get_url_names(self):
+        yield self.get_url_name()
 
     def get_url_regexs(self, url_part=None):
         """Yield URL parts (for different combinations of URL
@@ -242,7 +216,7 @@ defined.
 
         By default, yields only :attr:`url_part`.
         """
-        for url_regex in self.make_url_regexs():
+        for url_regex in self.make_url_regexs(url_part):
             yield url_regex
 
 
