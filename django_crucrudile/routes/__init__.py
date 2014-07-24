@@ -189,7 +189,6 @@ class BaseRoute(Entity):
 from .arguments import ArgumentsMixin
 
 class Route(ArgumentsMixin, BaseRoute):
-    #arguments_spec = [["<pk>", "<slug>"], "<opt>", "<opt2>"]
     pass
 
 

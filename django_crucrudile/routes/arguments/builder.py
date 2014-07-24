@@ -12,11 +12,6 @@ def combine(iterable, separator):
 class ArgsBuilder(URLPartList):
     _required = None
 
-    def get_required(self):
-        return self._required
-
-    def set_required(self, value):
-        self._required = value
 
     def __init__(self, iterable, *args, **kwargs):
         super().__init__(
@@ -26,8 +21,6 @@ class ArgsBuilder(URLPartList):
 
     def get_filters(self):
         return super().get_filters() + [
-            # iterable(tuple (bool, str or list (str))) -> idem
-            partial(self.flag_required, flag_setter=self.set_required),
             # iterable(tuple (bool, str or list (str))) ->
             # iterable(tuple (bool, list(str))) ->
             self.transform_args_to_list,
@@ -35,16 +28,6 @@ class ArgsBuilder(URLPartList):
             # iterable(str)
             partial(self.cartesian_product, get_separator=self.get_separator)
         ]
-
-
-    @staticmethod
-    def flag_required(items, flag_setter):
-        items = list(items)
-        flag_setter(False)
-        for required, args in items:
-            if required:
-                flag_setter(True)
-            yield required, args
 
     @staticmethod
     def transform_args_to_list(items):
