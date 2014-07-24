@@ -169,7 +169,6 @@ class BaseRoute(Entity):
     def get_url_regexs(self):
         def _join_parts(iterable, join_str=''):
             return join_str.join(filter(None))
-
         for prefix, name, suffix in self.get_url_specs():
             _prefix, _name, _suffix = (
                 part_list.apply_filters()

@@ -1,5 +1,20 @@
 from copy import copy
-from functools import reduce, partial
+from itertools import chain
+from functools import reduce, partial, wraps
+
+def pass_tuple(count=1):
+    def decorator(func):
+        @wraps(func)
+        def decorated(args_tuple, *args, **kwargs):
+            return args_tuple[:count] + (
+                func(
+                    *args_tuple[count:] + args,
+                    **kwargs
+                ),
+            )
+        return decorated
+    return decorator
+
 
 def compose(functions, args=None, kwargs=None):
     if args is None:
@@ -23,17 +38,17 @@ def compose(functions, args=None, kwargs=None):
     )
 
 
-class Separated(list):
+class Separated:
     separator = "/"
     opt_separator = "/?"
     required_default = True
 
     def __init__(self,
-                 iterable,
+                 *args,
                  separator=None,
                  opt_separator=None,
                  required_default=None,
-                 ):
+                 **kwargs):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
@@ -46,7 +61,7 @@ class Separated(list):
         if required_default:
             self.required_default = required_default
 
-        super().__init__(iterable)
+        super().__init__(*args, **kwargs)
 
 
     def get_separator(self, required=None):
@@ -63,9 +78,9 @@ class Separated(list):
         if required:
             return self.separator
         else:
-            return self.opt_separator
+            return self.opppt_separator
 
-class ParsableList(list):
+class Parsable:
     def __add__(self, other):
         if not other:
             return self
@@ -98,12 +113,19 @@ class ParsableList(list):
         return self(items)
 
 
-class OptionalPartList(Separated, ParsableList):
+class OptionalPartList(Separated, Parsable, list):
     def __init__(self, iterable=None,
                  separator=None, opt_separator=None, required_default=None):
+        # allow directly creating empty lists
         if iterable is None:
             iterable = []
-        super().__init__(iterable, separator, opt_separator, required_default)
+
+        super().__init__(
+            iterable,
+            separator=separator,
+            opt_separator=opt_separator,
+            required_default=required_default
+        )
 
 
     def get_filters(self):
@@ -129,30 +151,17 @@ class OptionalPartList(Separated, ParsableList):
 
 
 class URLBuilder(OptionalPartList):
-    _first_item_required = None
-
-    def get_first_item_required(self):
-        return self._first_item_required
-
-    def set_first_item_required(self, value):
-        self._first_item_required = value
-
     def get_filters(self):
         return super().get_filters() + [
             self.filter_empty_items,
             partial(
-                self.flag_first_item_required,
-                flag_setter=self.set_first_item_required
+                self.add_first_item_required_flag,
             ),
             partial(
                 self.flatten,
                 get_separator=self.get_separator
             ),
             self.join,
-            partial(
-                self.add_first_item_required_flag,
-                flag_getter=self.get_first_item_required
-            )
         ]
 
     @staticmethod
@@ -162,14 +171,19 @@ class URLBuilder(OptionalPartList):
                     yield required, item
 
     @staticmethod
-    def flag_first_item_required(items, flag_setter):
-        required, item = next(items)
-        flag_setter(required)
-        yield required, item
-        for required, item in items:
-            yield required, item
+    def add_first_item_required_flag(items):
+        try:
+            required, item = next(items)
+        except StopIteration:
+            return False, items
+        else:
+            return required, chain(
+                ((required, item),),
+                items
+            )
 
     @staticmethod
+    @pass_tuple(1)
     def flatten(items, get_separator):
         required, item = next(items)
         if item:
@@ -180,9 +194,6 @@ class URLBuilder(OptionalPartList):
                 yield item
 
     @staticmethod
+    @pass_tuple(1)
     def join(items):
         return ''.join(items)
-
-    @staticmethod
-    def add_first_item_required_flag(items, flag_getter):
-        return flag_getter(), items
