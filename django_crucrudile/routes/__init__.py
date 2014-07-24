@@ -38,10 +38,12 @@ or as class attribute) to be able to return URL patterns :
    :class:`django_crucrudile.routers.ModelRouter` store.
 
 """
+from functools import partial
 from abc import abstractmethod
 from django.conf.urls import url
 
 from django_crucrudile.entities import Entity
+from django_crucrudile.urlutils import URLBuilder
 
 from .arguments import ArgumentsMixin
 
@@ -150,15 +152,34 @@ defined.
         """
         pass
 
-    def make_url_regexs(self, url_part=None):
-        if url_part is not None:
-            part = url_part
-        else:
-            part = self.url_part
-        if part:
-            yield '^{}$'.format(part)
-        else:
-            yield ''
+    def get_url_part(self):
+        return self.url_part
+
+    def get_url_parts(self):
+        yield self.get_url_part()
+
+    def get_url_specs(self):
+        prefix = URLBuilder(None, '/')
+        name = URLBuilder(None, '-')
+        suffix = URLBuilder(None, '/', '/?')
+
+        for part in self.get_url_parts():
+            if part is not None:
+                name.append(self.url_part)
+            yield prefix, name, suffix
+
+    def get_url_regexs(self):
+        def _join_parts(iterable, join_str=''):
+            return join_str.join(filter(None))
+
+        for prefix, name, suffix in self.get_url_specs():
+            _prefix, _name, _suffix = (
+                part_list.apply_filters()
+                for part_list in (prefix, name, suffix)
+            )
+            builder = URLBuilder([_prefix, _name, _suffix])
+            required, built = builder.apply_filters()
+            yield '^{}$'.format(built)
 
     def get_url_name(self):
         """Return the URL name, by default from :attr:`name`"""
@@ -167,19 +188,10 @@ defined.
     def get_url_names(self):
         yield self.get_url_name()
 
-    def get_url_regexs(self, url_part=None):
-        """Yield URL parts (for different combinations of URL
-        arguments). The :class:`Route` bimplementation of
-        :func:`patterns` will yield an URL pattern for each URL regex
-        returned by this iterator.
-
-        By default, yields only :attr:`url_part`.
-        """
-        for url_regex in self.make_url_regexs(url_part):
-            yield url_regex
-
+from .arguments import ArgumentsMixin
 
 class Route(ArgumentsMixin, BaseRoute):
+    #arguments_spec = [["<pk>", "<slug>"], "<opt>", "<opt2>"]
     pass
 
 

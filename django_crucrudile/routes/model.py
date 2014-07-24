@@ -52,24 +52,14 @@ class ModelRoute(Route):
         """Return the model name to be used when building the URL part"""
         return self.model_url_name
 
-    def get_url_regexs(self, url_part=None):
-        """Yield an URL part built using :class:`ModelRoute`
-        :func:`model_url_part` and :class:`Route`
-        :attr:`Route.url_part`.
 
-        """
-        if url_part is None:
-            url_part = self.url_part
-
-        if self.prefix_url_part:
-            if self.url_part:
-                url_part = "/".join(
-                    [self.model_url_part, url_part]
-                )
+    def get_url_specs(self):
+        for prefix, name, suffix in super().get_url_specs():
+            if self.prefix_url_part:
+                yield prefix + self.model_url_name, name, suffix
             else:
-                url_part = self.model_url_part
+                yield prefix, name, suffix
 
-        return super().get_url_regexs(url_part)
 
     def get_url_name(self):
         """Return the URL name built using :class:`ModelRoute`
