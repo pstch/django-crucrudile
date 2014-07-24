@@ -23,15 +23,17 @@ def compose(functions, args=None, kwargs=None):
     )
 
 
-class URLPartList(list):
+class Separated(list):
     separator = "/"
     opt_separator = "/?"
     required_default = True
 
-    def __init__(self, iterable=None,
+    def __init__(self,
+                 iterable,
                  separator=None,
                  opt_separator=None,
-                 required_default=None):
+                 required_default=None,
+                 ):
         """Initialize route arguments, takes the argument specification (list)
         as argument
 
@@ -43,29 +45,9 @@ class URLPartList(list):
             self.opt_separator = opt_separator
         if required_default:
             self.required_default = required_default
-        if iterable is None:
-            iterable = []
 
         super().__init__(iterable)
 
-    def __add__(self, other):
-        if not other:
-            return self
-
-        new = copy(self)
-
-        if isinstance(other, list):
-            new.extend(other)
-        else:
-            new.append(other)
-
-        return new
-
-    def get_filters(self):
-        return [
-            self.transform_to_tuple,
-            partial(self.apply_required_default, default=self.required_default)
-        ]
 
     def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
@@ -83,6 +65,53 @@ class URLPartList(list):
         else:
             return self.opt_separator
 
+class ParsableList(list):
+    def __add__(self, other):
+        if not other:
+            return self
+
+        new = copy(self)
+
+        if isinstance(other, list):
+            new.extend(other)
+        else:
+            new.append(other)
+
+        return new
+
+    def get_filters(self):
+        return []
+
+    def __call__(self, items=None):
+        if items is None:
+            items = self
+
+        filters = self.get_filters()
+        composed_filters = compose(reversed(filters))
+        # tuple (bool, str or list (str))
+        # or str or list (tuple (bool, str or list (str)) or str)
+        # ->
+        # iterable(str)
+        return composed_filters(items)
+
+    def apply_filters(self, items=None):
+        return self(items)
+
+
+class OptionalPartList(Separated, ParsableList):
+    def __init__(self, iterable=None,
+                 separator=None, opt_separator=None, required_default=None):
+        if iterable is None:
+            iterable = []
+        super().__init__(iterable, separator, opt_separator, required_default)
+
+
+    def get_filters(self):
+        return super().get_filters() + [
+            self.transform_to_tuple,
+            partial(self.apply_required_default, default=self.required_default)
+        ]
+
     @staticmethod
     def transform_to_tuple(items):
         for item in items:
@@ -99,22 +128,8 @@ class URLPartList(list):
             yield required, args
 
 
-    def apply_filters(self, items=None, filters=None):
-        if filters is None:
-            filters = self.get_filters()
-        if items is None:
-            items = self
-
-        composed_filters = compose(reversed(filters))
-        # tuple (bool, str or list (str))
-        # or str or list (tuple (bool, str or list (str)) or str)
-        # ->
-        # iterable(str)
-        return composed_filters(items)
-
-
-class URLBuilder(URLPartList):
-    _first_item_required = True
+class URLBuilder(OptionalPartList):
+    _first_item_required = None
 
     def get_first_item_required(self):
         return self._first_item_required

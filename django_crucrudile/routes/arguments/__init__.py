@@ -1,17 +1,17 @@
 from .. import BaseRoute
-from .builder import ArgsBuilder
+from .parser import ArgumentsParser
 
 
-__all__ = ["ArgumentsMixin", "ArgBuilder"]
+__all__ = ["ArgumentsMixin", "ArgParser"]
 
 
 class ArgumentsMixin(BaseRoute):
     arguments_spec = []
-    arguments_builder = ArgsBuilder
+    arguments_parser = ArgumentsParser
 
 
     def __init__(self, *args,
-                 arguments_spec=None, arguments_builder=None,
+                 arguments_spec=None, arguments_parser=None,
                  **kwargs):
         """Initialize Route, check that needed attributes/arguments are
         defined.
@@ -19,10 +19,11 @@ class ArgumentsMixin(BaseRoute):
         """
         if arguments_spec is not None:
             self.arguments_spec = arguments_spec
-        if arguments_builder is not None:
-            self.arguments_builder = arguments_builder
+        if arguments_parser is not None:
+            self.arguments_parser = arguments_parser
 
-        self.arguments = self.arguments_builder(self.arguments_spec)
+        parser = self.arguments_parser(self.arguments_spec)
+        self.arguments = parser()
 
         super().__init__(*args, **kwargs)
 

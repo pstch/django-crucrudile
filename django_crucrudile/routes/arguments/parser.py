@@ -2,23 +2,14 @@ from abc import ABCMeta, abstractmethod
 from functools import partial, reduce
 from itertools import product
 
-from django_crucrudile.urlutils import URLPartList
+from django_crucrudile.urlutils import OptionalPartList
 
 
 def combine(iterable, separator):
     return separator.join(filter(None, iterable))
 
 
-class ArgsBuilder(URLPartList):
-    _required = None
-
-
-    def __init__(self, iterable, *args, **kwargs):
-        super().__init__(
-            self.apply_filters(iterable),
-            *args, **kwargs
-        )
-
+class ArgumentsParser(OptionalPartList):
     def get_filters(self):
         return super().get_filters() + [
             # iterable(tuple (bool, str or list (str))) ->
@@ -26,7 +17,8 @@ class ArgsBuilder(URLPartList):
             self.transform_args_to_list,
             # iterable(tuple (bool, list(str))) ->
             # iterable(str)
-            partial(self.cartesian_product, get_separator=self.get_separator)
+            partial(self.cartesian_product, get_separator=self.get_separator),
+            self.consume_cartesian_product
         ]
 
     @staticmethod
@@ -56,3 +48,7 @@ class ArgsBuilder(URLPartList):
 
         for comb in combs:
             yield first_item_required, comb
+
+    @staticmethod
+    def consume_cartesian_product(items):
+        return list(items)
