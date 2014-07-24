@@ -45,11 +45,9 @@ from django.conf.urls import url
 from django_crucrudile.entities import Entity
 from django_crucrudile.urlutils import URLBuilder
 
-from .arguments import ArgumentsMixin
-
 
 __all__ = [
-    'Route',
+    'BaseRoute', 'Route',
     'CallbackRoute',
     'ViewRoute',
     'ModelRoute', 'ModelViewRoute'
@@ -89,7 +87,7 @@ class BaseRoute(Entity):
                  name=None, url_part=None,
                  **kwargs):
         """Initialize Route, check that needed attributes/arguments are
-defined.
+        defined.
 
         """
         if name is not None:
@@ -195,6 +193,7 @@ class Route(ArgumentsMixin, BaseRoute):
     pass
 
 
+from .arguments import ArgumentsMixin
 from .callback import CallbackRoute
 from .view import ViewRoute
 from .model import ModelRoute, ModelViewRoute
