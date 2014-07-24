@@ -40,10 +40,12 @@ class ModelRoute(Route):
             )
         super().__init__(**kwargs)
 
+
     @property
     def model_url_name(self):
         """Return the model name to be used when building the URL name"""
         return self.model._meta.model_name
+
 
     @property
     def model_url_part(self):
