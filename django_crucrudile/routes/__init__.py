@@ -167,15 +167,17 @@ class BaseRoute(Entity):
             yield prefix, name, suffix
 
     def get_url_regexs(self):
-        for spec in self.get_url_specs():
-            def call(_callable):
-                return _callable()
-            url_builder = URLBuilder(builder() for builder in spec)
+        def _join_parts(iterable, join_str=''):
+            return join_str.join(filter(None))
 
-            required, built_url = url_builder()
-            print("built url {}".format(built_url))
-
-            yield '^{}$'.format(built_url)
+        for prefix, name, suffix in self.get_url_specs():
+            _prefix, _name, _suffix = (
+                part_list.apply_filters()
+                for part_list in (prefix, name, suffix)
+            )
+            builder = URLBuilder([_prefix, _name, _suffix])
+            required, built = builder.apply_filters()
+            yield '^{}$'.format(built)
 
     def get_url_name(self):
         """Return the URL name, by default from :attr:`name`"""
