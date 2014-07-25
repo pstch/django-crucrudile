@@ -171,11 +171,11 @@ class BaseRoute(Entity):
             return join_str.join(filter(None))
         for prefix, name, suffix in self.get_url_specs():
             _prefix, _name, _suffix = (
-                part_list.apply_filters()
+                part_list()
                 for part_list in (prefix, name, suffix)
             )
             builder = URLBuilder([_prefix, _name, _suffix])
-            required, built = builder.apply_filters()
+            required, built = builder()
             yield '^{}$'.format(built)
 
     def get_url_name(self):

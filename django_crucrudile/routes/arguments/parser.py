@@ -10,8 +10,8 @@ def combine(iterable, separator):
 
 
 class ArgumentsParser(OptionalPartList):
-    def get_filters(self):
-        return super().get_filters() + [
+    def get_parsers(self):
+        return super().get_parsers() + [
             # iterable(tuple (bool, str or list (str))) ->
             # iterable(tuple (bool, list(str))) ->
             self.transform_args_to_list,

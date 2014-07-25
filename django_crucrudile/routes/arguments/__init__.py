@@ -32,4 +32,4 @@ class ArgumentsMixin(BaseRoute):
         for prefix, name, suffix in super().get_url_specs():
             if self.arguments:
                 for arg in self.arguments:
-                    yield prefix, name, suffix + arg
+                    yield prefix, name, suffix + [arg]

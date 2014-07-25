@@ -56,7 +56,7 @@ class ModelRoute(Route):
     def get_url_specs(self):
         for prefix, name, suffix in super().get_url_specs():
             if self.prefix_url_part:
-                yield prefix + self.model_url_name, name, suffix
+                yield prefix + [self.model_url_name], name, suffix
             else:
                 yield prefix, name, suffix
 
