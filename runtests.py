@@ -12,7 +12,7 @@ from colorama import (
     Style as S,
 )
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+os.environ["DJANGO_SETTINGS_MODULE"] ="tests.settings"
 
 
 def bright(text):
