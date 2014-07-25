@@ -230,6 +230,15 @@ class OptionalPartList(Separated, Parsable, list):
 
     .. inheritance-diagram:: OptionalPartList
 
+    .. testcode::
+
+       builder = OptionalPartList(["<1>", (None, "<2>"), (False, "<3>")])
+       print(list(builder()))
+
+    .. testoutput::
+
+       [(True, '<1>'), (True, '<2>'), (False, '<3>')]
+
     """
     def __add__(self, other):
         """Concatenate with other iterable, creating a new object..
@@ -304,7 +313,8 @@ class OptionalPartList(Separated, Parsable, list):
         """
         return super().get_parsers() + [
             self.transform_to_tuple,
-            partial(self.apply_required_default, default=self.required_default)
+            partial(self.apply_required_default, default=self.required_default),
+            list
         ]
 
     @staticmethod
@@ -386,6 +396,8 @@ class URLBuilder(OptionalPartList):
     - :func:`flatten`
     - :func:`join`
 
+    .. inheritance-diagram:: URLBuilder
+
     .. testcode::
 
        builder = URLBuilder(["<1>", "<2>", (False, "<3>")])
@@ -398,8 +410,6 @@ class URLBuilder(OptionalPartList):
 
        (True, '<1>/<2>/?<3>')
        (False, '<1>/<2>/?<3>')
-
-    .. inheritance-diagram:: URLBuilder
 
     """
     def get_parsers(self):
