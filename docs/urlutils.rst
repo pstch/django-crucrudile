@@ -103,15 +103,25 @@ Optional URL parts list
            "apply_required_default"[style="filled", fillcolor="#BBBBFF", color="blue"]
        }
 
-       "[(required, ...)]" -> "transform_to_tuple"
        "..." -> "transform_to_tuple"
+
+       subgraph transform_to_tuple {
+           edge[dir="back"]
+           "transform_to_tuple" -> "[(required, ...)]"
+       }
+
        "transform_to_tuple" -> "[(required, ...)] "
 
        "[(required, ...)] " -> "[(None, ...)]"
        "[(required, ...)] " -> "[(bool, ...)]"
 
        "[(None, ...)]" -> "apply_required_default"
-       "[(bool, ...)]" -> "apply_required_default"
+
+       subgraph apply_required_default {
+           edge[dir="back"]
+           "apply_required_default" -> "[(bool, ...)]"
+       }
+
        "apply_required_default" -> "[(bool, ...)] "
 
        subgraph types {
