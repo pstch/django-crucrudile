@@ -172,6 +172,19 @@ class Separated:
 
         :returns: Separator
         :rtype: str
+
+        .. testcode::
+
+           obj = Separated()
+           print(obj.get_separator(True))
+           print(obj.get_separator(False))
+
+        .. testoutput::
+
+           /
+           /?
+
+
         """
         if required is None:
             required = self.required_default
@@ -181,11 +194,25 @@ class Separated:
             return self.opt_separator
 
 class Parsable:
-    """Class whose instances may be called, to return a "parsed"
-    version of the list. The parsed version is obtained by passing the
-    original version in the parsers returned by :func:`get_parsers`.
+    """Class whose instances may be called, to return a "parsed" version,
+    obtained by passing the original version in the parsers returned
+    by :func:`get_parsers`.
 
     .. inheritance-diagram:: Parsable
+
+    .. testcode::
+
+       class TestParsable(Parsable, int):
+           def get_parsers(self):
+                return [lambda x: x*2, lambda x: x+2]
+
+       parser = TestParsable(5)
+       print(parser())
+
+    .. testoutput::
+
+       12
+
     """
     def get_parsers(self):
         """Return parsers list. Base implementation returns an empty list. To
