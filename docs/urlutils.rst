@@ -203,23 +203,22 @@ URL Builder
        }
 
        "[(required, ...)]" -> "transform_to_tuple"
-       "..." -> "transform_to_tuple"
        "transform_to_tuple" -> "[(required, ...)] "
+       "..." -> "transform_to_tuple"
 
        "[(required, ...)] " -> "[(None, ...)]"
        "[(required, ...)] " -> "[(bool, ...)]"
 
        "[(None, ...)]" -> "apply_required_default"
-       "[(bool, ...)]" -> "apply_required_default"
        "apply_required_default" -> "[(bool, ...)] "
+       "[(bool, ...)]" -> "apply_required_default"
 
        "[(bool, ...)] " -> "[(required, None)]"
        "[(bool, ...)] " -> "[(required, not None)]"
 
        "[(required, None)]" -> "filter_empty_items"
-       "[(required, not None)]" -> "filter_empty_items"
-
        "filter_empty_items" -> "[(required, not None)] "
+       "[(required, not None)]" -> "filter_empty_items"
 
        subgraph add_first_item_required_flag {
            edge[dir="back"]
