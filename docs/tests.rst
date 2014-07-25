@@ -11,29 +11,26 @@ Running the tests
 Dependencies
 ------------
 
-Dependencies are stored in the ``requirements.txt`` file. Tests need another set of dependencies stored in ``tests/requirements.txt``.
+Dependencies (and test dependencies) are set in the ``setup.py``, and
+installed when the package gets installed (or when the tests are
+executed for test dependencies).
 
-.. code-block:: sh
-
-   pip install -r requirements.txt
-   pip install -r tests/requirements.txt
-
-
-``runtests.py`` script
+Running tests
 ----------------------
 
-The ``runtests.py`` script uses the nose test runner and Sphinx to run
-tests.nose tests can be disabled using ``NO_NOSE_TESTS=1``, and
-doctests can be disabled using ``NO_SPHINX_TESTS=1``.
+The test register used in ``setup.py`` is the ``runtests.py`` script
+uses the nose test runner and Sphinx to run tests.nose tests can be
+disabled using ``NO_NOSE_TESTS=1``, and doctests can be disabled using
+``NO_SPHINX_TESTS=1``.
 
 .. code-block:: sh
 
-   ./runtests.py
+   python setup.py test
 
 Nose tests
 ~~~~~~~~~~
 
-The ``nosetests`` command can also be used to run the tests (doctests will not be included).
+The ``nosetests`` command can also be used to run the tests (doctests will not be included, and test dependencies not installed).
 
 Documentation tests
 ~~~~~~~~~~~~~~~~~~~
@@ -49,12 +46,12 @@ Code coverage
 
 .. warning:: The code coverage report does not cover documentation tests.
 
-Coverage report is automatically executed while running nose tests. ``nosetests`` prints a basic coverage report, and the HTML coverage report is generated in ``vars/coverage_html``. Coverage reports can also be seen at .. _coveralls.io/r/pstch/django-crucrudile: https://coveralls.io/r/pstch/django-crucrudile .
+Coverage report is automatically executed while running nose tests. ``nosetests`` prints a basic coverage report, and the HTML coverage report is generated in ``vars/coverage_html``. Coverage reports can also be seen at `coveralls.io/r/pstch/django-crucrudile <https://coveralls.io/r/pstch/django-crucrudile>`_.
 
 Call graphs
 -----------
 
-If you install pycallgraph (``pip install pycallgraph``, may require some additional dependencies), you can use it to trace call graphs of the executed code. Sadly, it does not work with nosetests, but it's very easy to use it manually, for specific tests :
+If you install pycallgraph (``pip install pycallgraph``), you can use it to trace call graphs of the executed code. Sadly, it does not work with nosetests, but it's very easy to use it manually, for specific tests :
 
 .. code-block:: sh
 
@@ -66,3 +63,9 @@ If you install pycallgraph (``pip install pycallgraph``, may require some additi
    " | pycallgraph -I django_crucrudile\* graphviz -- /dev/stdin
 
 The call graph will be written to ``pycallgraph.png``.
+
+.. warning::
+
+   ``pycallgraph`` may need ``pydot`` to be installed (a Python 3
+   compatible version. At this date, it is available in
+   `bitbucket.org/prologic/pydot <https://bitbucket.org/prologic/pydot>`_.)

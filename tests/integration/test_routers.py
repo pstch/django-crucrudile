@@ -102,7 +102,3 @@ class RouterTestCase:
             tree_hash,
             "ec7727a9186e497ad77a6377509f75c2f3bb85909e316bc756061801d0c4aaac"
         )
-
-    def test_get_pydot_graph(self):
-        self.base_router.get_pydot_graph()
-        self.base_router.get_pydot_graph(recurse_limit=2)

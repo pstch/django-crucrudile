@@ -1,5 +1,6 @@
+mock
 nose
-coverage
 sphinx
+coverage
 colorama
--e hg+https://bitbucket.org/prologic/pydot#egg=pydot
+django_extensions
