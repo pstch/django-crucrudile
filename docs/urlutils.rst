@@ -203,8 +203,8 @@ URL Builder
        }
 
        "[(required, ...)]" -> "transform_to_tuple"
-       "..." -> "transform_to_tuple"
        "transform_to_tuple" -> "[(required, ...)] "
+       "..." -> "transform_to_tuple"
 
        "[(required, ...)] " -> "[(None, ...)]"
        "[(required, ...)] " -> "[(bool, ...)]"
