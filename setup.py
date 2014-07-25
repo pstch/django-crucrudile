@@ -6,8 +6,11 @@
 """
 
 from setuptools import setup, find_packages
+import os
 
 import django_crucrudile
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
 
 CLASSIFIERS = [
     'Framework :: Django',
@@ -35,10 +38,17 @@ setup(
     packages=find_packages(exclude=['tests']),
 
     install_requires=[
-        'Django == 1.6'
+        'django == 1.6'
     ],
-
+    tests_require=[
+        'mock',
+        'nose',
+        'coverage',
+        'sphinx',
+        'colorama',
+        'django_extensions',
+    ],
     classifiers=CLASSIFIERS,
 
-    test_suite='runtests.runtests',
+    test_suite='nose.collector',
 )

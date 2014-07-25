@@ -47,8 +47,8 @@ class BaseModelRouter(Router):
         return kwargs
 
     def __init__(self, model=None, url_part=None, **kwargs):
-        """Check for :argument:`model` in kwargs, if None and not defined at
-        class-level, fail.
+        """Read model (from args or class-level value (:attr:`model`), fail if
+        none found.
 
         :argument model: see :attr:`model`
         :type model: :class:`django.db.Models`

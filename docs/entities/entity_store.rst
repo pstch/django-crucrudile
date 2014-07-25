@@ -1,6 +1,8 @@
 Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators)
 =======================================================================
 
+.. contents::
+
 .. module:: django_crucrudile.entities.store
 
 .. automodule:: django_crucrudile.entities.store

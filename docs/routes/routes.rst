@@ -1,6 +1,8 @@
 Routes (``Route``, ``ModelRoute``, ``ViewRoute`` and ``ModelViewRoute``)
 ========================================================================
 
+.. contents::
+
 .. module:: django_crucrudile.routes
 
 .. automodule:: django_crucrudile.routes

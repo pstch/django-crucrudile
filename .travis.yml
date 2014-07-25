@@ -2,15 +2,13 @@ language: python
 python:
   - "3.3"
 env:
-  - DJANGO=1.6
+  - DJANGO=1.6 DJANGO_SETTINGS_MODULE=tests.settings
 install:
   - pip install coveralls
   - pip install pep8
-  - pip install -r tests/requirements.txt
-  - pip install .
 script:
-  - ./runtests.py
+  - coverage run --source=django_crucrudile -- setup.py test
 after_success:
-  - pep8 django_crucrudile
   - coverage report -m
+  - pep8 django_crucrudile
   - coveralls

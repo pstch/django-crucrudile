@@ -43,6 +43,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.doctest',
 ]
 

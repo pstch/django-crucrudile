@@ -11,6 +11,7 @@ django-crucrudile
    routers/routers
    routers/app_router
    routes/routes
+   urlutils
    tests
    examples/bookstore
 
