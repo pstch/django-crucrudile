@@ -2,8 +2,7 @@ language: python
 python:
   - "3.3"
 env:
-  - DJANGO=1.6
-  - DJANGO_SETTINGS_MODULE=tests.settings
+  - DJANGO=1.6 DJANGO_SETTINGS_MODULE=tests.settings
 install:
   - pip install coveralls
   - pip install pep8
