@@ -1,6 +1,8 @@
 URL utils
 =========
 
+.. contents::
+
 .. module:: django_crucrudile.urlutils
 
 .. automodule:: django_crucrudile.urlutils

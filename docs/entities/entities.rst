@@ -1,6 +1,8 @@
 Entity (``Entity``)
 ===================
 
+.. contents::
+
 .. module:: django_crucrudile.entities
 
 .. automodule:: django_crucrudile.entities

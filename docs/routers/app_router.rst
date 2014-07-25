@@ -1,6 +1,8 @@
 Application router (``AppRouter``)
 ===================================
 
+.. contents::
+
 .. module:: django_crucrudile.routers.app
 
 .. automodule:: django_crucrudile.routers.app
