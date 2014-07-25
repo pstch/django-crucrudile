@@ -62,3 +62,5 @@ If you install pycallgraph (``pip install pycallgraph``, may require some additi
    case.setUp()
    case.test_get_str_tree()
    " | pycallgraph -I django_crucrudile\* graphviz -- /dev/stdin
+
+The call graph will be written to ``pycallgraph.png``.
