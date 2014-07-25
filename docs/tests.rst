@@ -1,10 +1,12 @@
 Running the tests
 =================
 
-.. _Online tests: https://travis-ci.org/pstch/django-crucrudile/builds
-.. _Online coverage reports: https://coveralls.io/r/pstch/django-crucrudile
+.. contents::
 
 .. note:: If you are using a virtual environment, it should be activated before running the following code blocks.
+
+- `Online tests <https://travis-ci.org/pstch/django-crucrudile/builds>`_ (Travis-CI)
+- `Online coverage reports <https://coveralls.io/r/pstch/django-crucrudile>`_ (Coveralls)
 
 Dependencies
 ------------
