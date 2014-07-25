@@ -39,9 +39,9 @@ Classes
    separator-related options to be passed to :func:`Separated.__init__`
    and provides a :func:`Separated.get_separator`.
  - :class:`Parsable` provides a class which instances can be called
-   (:func:`Separated.__call__`), to return the "parsed" version of the
+   (:func:`Parsable.__call__`), to return the "parsed" version of the
    instance. The parsed version is made by passing the instance through
-   the functions returned by :func:`Separated.get_parsers()`.
+   the functions returned by :func:`Parsable.get_parsers()`.
  - :class:`OptionalPartList` provides a class that implements
    :class:`Separated` and :class:`Parsable` with a :py:class:`list`, and
    that provides two parsers (that, if needed : transform the original
