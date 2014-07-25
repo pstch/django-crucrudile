@@ -87,7 +87,7 @@ Optional URL parts list
        edge[fontsize=10, weight=1.2]
        node[fontsize=12, nodesep=0.75, ranksep=0.75]
 
-       subgraph t_t_t {
+       subgraph ttt {
            rank="same"
            rankdir="LR"
            "..."[style="filled", fillcolor="#BBFFBB", color="green"]
@@ -95,7 +95,7 @@ Optional URL parts list
            "transform_to_tuple"[style="filled", fillcolor="#BBBBFF", color="blue"]
        }
 
-       subgraph a_r_d {
+       subgraph ard {
            rank="same"
            rankdir="LR"
            "[(None, ...)]"
@@ -105,7 +105,7 @@ Optional URL parts list
 
        "..." -> "transform_to_tuple"
 
-       subgraph transform_to_tuple {
+       subgraph rev {
            edge[dir="back"]
            "transform_to_tuple" -> "[(required, ...)]"
        }
@@ -117,7 +117,7 @@ Optional URL parts list
 
        "[(None, ...)]" -> "apply_required_default"
 
-       subgraph apply_required_default {
+       subgraph rev {
            edge[dir="back"]
            "apply_required_default" -> "[(bool, ...)]"
        }
@@ -167,7 +167,7 @@ URL Builder
        bgcolor="transparent"
        edge[fontsize=10, weight=1.2]
        node[fontsize=12, nodesep=0.75, ranksep=0.75]
-       subgraph t_t_t {
+       subgraph ttt {
            rank="same"
            rankdir="LR"
            "..."[style="filled", fillcolor="#BBFFBB", color="green"]
@@ -175,7 +175,7 @@ URL Builder
 
        }
 
-       subgraph a_r_d {
+       subgraph ard {
            rank="same"
            rankdir="LR"
            "[(None, ...)]"[style="filled", fillcolor="#FFFFBB"]
@@ -183,7 +183,7 @@ URL Builder
 
        }
 
-       subgraph f_e_i {
+       subgraph fei {
            rank="same"
            rankdir="LR"
            "[(required, None)]"[style="filled", fillcolor="#FFFFBB"]
@@ -191,7 +191,7 @@ URL Builder
            "[(required, not None)]"[style="filled", fillcolor="#FFFFBB"]
        }
 
-       subgraph a_firf {
+       subgraph afirf {
            rank="same"
            rankdir="LR"
            "add_first_item_required_flag"[style="filled", fillcolor="#BBBBFF", color="blue"]
@@ -213,35 +213,47 @@ URL Builder
        }
 
        "[(required, ...)]" -> "transform_to_tuple"
+
+       subgraph rev {
+          edge[dir="back"]
+          "transform_to_tuple" -> "..."
+       }
+
        "transform_to_tuple" -> "[(required, ...)] "
-       "..." -> "transform_to_tuple"
 
        "[(required, ...)] " -> "[(None, ...)]"
        "[(required, ...)] " -> "[(bool, ...)]"
 
        "[(None, ...)]" -> "apply_required_default"
+       subgraph rev {
+          edge[dir="back"]
+          "apply_required_default" -> "[(bool, ...)]"
+       }
        "apply_required_default" -> "[(bool, ...)] "
-       "[(bool, ...)]" -> "apply_required_default"
 
        "[(bool, ...)] " -> "[(required, None)]"
        "[(bool, ...)] " -> "[(required, not None)]"
 
        "[(required, None)]" -> "filter_empty_items"
-       "filter_empty_items" -> "[(required, not None)] "
-       "[(required, not None)]" -> "filter_empty_items"
 
-       subgraph add_first_item_required_flag {
+       subgraph rev {
+           edge[dir="back"]
+           "filter_empty_items" -> "[(required, not None)]"
+       }
+
+       "filter_empty_items" -> "[(required, not None)] "
+
+
+       subgraph rev {
            edge[dir="back"]
            "add_first_item_required_flag" -> "[(required, not None)] "
        }
 
        "add_first_item_required_flag" -> "(bool, [(required, not None)])"
-
        "(bool, [(required, not None)])" -> "flatten"
-
        "flatten" -> "(bool, [str])"
 
-       subgraph join {
+       subgraph rev {
            edge[dir="back"]
            "join" -> "(bool, [str])"
        }
