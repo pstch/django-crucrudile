@@ -161,24 +161,24 @@ URL Builder
            rank="same"
            rankdir="LR"
            "..."[style="filled", fillcolor="#BBFFBB", color="green"]
-           "[(required, ...)]"[style="filled", fillcolor="#BBFFBB", color="green"]
-           "transform_to_tuple"[style="filled", fillcolor="#BBBBFF", color="blue"]
+           "transform_to_tuple"[style="filled", fillcolor="#BBBBFF", color="blue"]           "[(required, ...)]"[style="filled", fillcolor="#BBFFBB", color="green"]
+
        }
 
        subgraph a_r_d {
            rank="same"
            rankdir="LR"
            "[(None, ...)]"[style="filled", fillcolor="#FFFFBB"]
-           "[(bool, ...)]"[style="filled", fillcolor="#FFFFBB"]
-           "apply_required_default"[style="filled", fillcolor="#BBBBFF", color="blue"]
+           "apply_required_default"[style="filled", fillcolor="#BBBBFF", color="blue"]           "[(bool, ...)]"[style="filled", fillcolor="#FFFFBB"]
+
        }
 
        subgraph f_e_i {
            rank="same"
            rankdir="LR"
            "[(required, None)]"[style="filled", fillcolor="#FFFFBB"]
-           "[(required, not None)]"[style="filled", fillcolor="#FFFFBB"]
            "filter_empty_items"[style="filled", fillcolor="#BBBBFF", color="blue"]
+           "[(required, not None)]"[style="filled", fillcolor="#FFFFBB"]
        }
 
        subgraph a_firf {
@@ -203,8 +203,8 @@ URL Builder
        }
 
        "[(required, ...)]" -> "transform_to_tuple"
-       "transform_to_tuple" -> "[(required, ...)] "
        "..." -> "transform_to_tuple"
+       "transform_to_tuple" -> "[(required, ...)] "
 
        "[(required, ...)] " -> "[(None, ...)]"
        "[(required, ...)] " -> "[(bool, ...)]"
