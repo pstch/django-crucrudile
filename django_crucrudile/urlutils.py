@@ -178,7 +178,7 @@ class Separated:
         if required:
             return self.separator
         else:
-            return self.opppt_separator
+            return self.opt_separator
 
 class Parsable:
     """Class whose instances may be called, to return a "parsed"
@@ -385,6 +385,19 @@ class URLBuilder(OptionalPartList):
     - :func:`add_first_item_required_flag`
     - :func:`flatten`
     - :func:`join`
+
+    .. testcode::
+
+       builder = URLBuilder(["<1>", "<2>", (False, "<3>")])
+       print(builder())
+
+       builder = URLBuilder([(False, "<1>"), "<2>", (False, "<3>")])
+       print(builder())
+
+    .. testoutput::
+
+       (True, '<1>/<2>/?<3>')
+       (False, '<1>/<2>/?<3>')
 
     .. inheritance-diagram:: URLBuilder
 
