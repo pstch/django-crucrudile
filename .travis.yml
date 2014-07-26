@@ -3,26 +3,16 @@ python:
   - "3.4"
 env:
   - DJANGO=1.6 DJANGO_SETTINGS_MODULE=tests.settings
+cache:
+  directories:
+  - /home/travis/build/cache/
+  - /home/travis/virtualenv/python3.4.0/lib/python3.4/site-packages
 install:
-  - pip freeze
   - pip install coveralls
   - pip install pep8
-before_script:
-  - sh -c "[ -d /home/travis/build/cache/ ] || mkdir /home/travis/build/cache"
-  - ls /home/travis/build/
-  - ls /home/travis/build/cache
-  - sh -c "cp /home/travis/build/cache/*.egg . -rv || echo"
 script:
   - coverage run --source=django_crucrudile -- setup.py test
-after_script:
-  - cp *.egg /home/travis/build/cache/ -rv
-  - ls /home/travis/build/
-  - ls /home/travis/build/cache
 after_success:
   - coverage report -m
   - pep8 django_crucrudile
   - coveralls
-cache:
-  - pip
-  - /home/travis/build/cache/
-  - Pygments-1.6-py3.4.egg
