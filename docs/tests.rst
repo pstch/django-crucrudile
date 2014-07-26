@@ -58,7 +58,11 @@ Running tests manually
 Nose tests
 ~~~~~~~~~~
 
-The ``nosetests`` command can also be used to run the tests (doctests will not be included, and test dependencies not installed).
+To run nosetests (they include the doctests), use :
+
+.. code-block:: sh
+
+   nosetests
 
 Documentation tests
 ~~~~~~~~~~~~~~~~~~~
@@ -84,7 +88,7 @@ If you install pycallgraph (``pip install pycallgraph``), you can use it to trac
 .. code-block:: sh
 
    echo "
-   import django_crucrudile.tests.integration.tests_routers as tests
+   import tests.integration.test_routers as tests
    case = tests.RouterTestCase()
    case.setUp()
    case.test_get_str_tree()

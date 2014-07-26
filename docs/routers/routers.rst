@@ -1,5 +1,5 @@
-Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``) [TODO]
-====================================================================
+Router and router mixins
+========================
 
 .. contents::
 
@@ -7,24 +7,65 @@ Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``) [TODO]
 
 .. automodule:: django_crucrudile.routers
    :noindex:
+   :no-members:
 
 Base router
------------
++++++++++++
 
 .. autoclass:: Router
    :members:
    :undoc-members:
    :show-inheritance:
 
-Model router
-------------
+Router mixins
++++++++++++++
 
-.. autoclass:: BaseModelRouter
+Model router mixin
+------------------
+
+.. automodule:: django_crucrudile.routers.mixins.model
+   :no-members:
+
+.. autoclass:: ModelMixin
    :members:
    :undoc-members:
    :show-inheritance:
 
+Application/project router mixin
+------------------------
+
+.. automodule:: django_crucrudile.routers.mixins.app
+   :no-members:
+
+.. autoclass:: AppMixin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: ProjectMixin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Model router
++++++++++++++
+
+.. automodule:: django_crucrudile.routers.model
+   :no-members:
+
 .. autoclass:: ModelRouter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Generic model router
+--------------------
+
+.. automodule:: django_crucrudile.routers.model.generic
+   :no-members:
+
+.. autoclass:: GenericModelRouter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +73,7 @@ Model router
 The following graph may help to explain the relation between the
 generic views, routes and routers :
 
-.. graphviz::
+.. graph2viz::
 
    digraph model_router {
        bgcolor="transparent"

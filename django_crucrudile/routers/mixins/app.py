@@ -8,10 +8,7 @@ attribute of the application's ``router`` module.
 from importlib import import_module
 from django.conf import settings
 
-from . import Router
-
-
-class AppRouter(Router):
+class AppMixin:
     """Router that gets initialized with an application name, and
     automatically registers entities that :func:`get_routing_entities` can
     find in :func:`get_routing_module`. By defaults, this results to a
@@ -157,7 +154,7 @@ class AppRouter(Router):
             )
 
 
-class ProjectRouter(Router):
+class ProjectMixin:
     app_list = None
     add_project_namespace = None
     no_apps_silent = False

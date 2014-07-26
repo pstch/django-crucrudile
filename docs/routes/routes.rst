@@ -114,14 +114,11 @@ View
 
 
 
-Route implementations
----------------------
-
 .. module:: django_crucrudile.routes
    :noindex:
 
 Callback route
->>>>>>>>>>>>>>
+--------------
 
 .. autoclass:: django_crucrudile.routes.CallbackRoute
    :special-members:
@@ -129,7 +126,7 @@ Callback route
                      __dict__, __weakref__
 
 View route
->>>>>>>>>>
+----------
 
 .. autoclass:: django_crucrudile.routes.ViewRoute
    :special-members:
@@ -137,7 +134,7 @@ View route
                      __dict__, __weakref__
 
 Model view route
->>>>>>>>>>>>>>>>
+----------------
 
 .. autoclass:: django_crucrudile.routes.ModelViewRoute
    :special-members:

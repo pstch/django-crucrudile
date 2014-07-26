@@ -1,25 +1,17 @@
-from django.views.generic import (
-    ListView, DetailView,
-    CreateView, UpdateView, DeleteView
-)
-
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 
-from django_crucrudile.entities.store import provides
 from django_crucrudile.routes import ModelViewRoute
 
-from . import Router
 
-
-class BaseModelRouter(Router):
+class ModelMixin:
     """ModelRouter with no views. Give :attr:`model` kwarg where needed,
     ask it in :func:`__init__`, and map ``SingleObjectMixin`` and
     ``MultipleObjectMixin`` to
     :class:`django_crucrudile.routes.ModelViewRoute` in register
     functions.
 
-    .. inheritance-diagram:: BaseModelRouter
+    .. inheritance-diagram:: ModelMixin
 
     """
     model = None
@@ -123,31 +115,3 @@ class BaseModelRouter(Router):
             ModelViewRoute.make_for_view
         })
         return mapping
-
-
-@provides(ListView, map_kwargs={'index': True})
-@provides(DetailView)
-@provides(CreateView)
-@provides(UpdateView)
-@provides(DeleteView)
-class ModelRouter(BaseModelRouter):
-    """Routes Django generic views with the model given in instantiation.
-
-    Provides specific ModelViewRoute classes, created for the
-    following Django generic views :
-
-     - :class:`django.views.generic.ListView`
-     - :class:`django.views.generic.DetailView`
-     - :class:`django.views.generic.CreateView`
-     - :class:`django.views.generic.UpdateView`
-     - :class:`django.views.generic.DeleteView`
-
-    These classes are registered in the base store, using
-    :func:`django_crucrudile.entities.store.EntityStore.register_class`
-    or the :func:`django_crucrudile.entities.store.provides`
-    decorator. They will be instantiated (with the model as argument,
-    obtained from :func:`BaseModelRouter.__init__`) when the router is
-    itself instantiated, using
-    :func:`django_crucrudile.entities.store.EntityStore.register_base_store`.
-
-    """

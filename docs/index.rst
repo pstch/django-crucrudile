@@ -9,7 +9,6 @@ django-crucrudile
    entities/entity_store
    entities/entities
    routers/routers
-   routers/app_router
    urlutils
    routes/routes
    tests

@@ -4,16 +4,8 @@ from nose.tools import assert_equal
 from django.db import models
 
 from django_crucrudile.routers import (
-    Router,
+    Router as BaseRouter,
 )
-
-
-class EmptyRouterTestCase:
-    def setUp(self):
-        self.base_router = Router()
-
-    def test_patterns_empty(self):
-        list(self.base_router.patterns())
 
 
 class DocumentModel(models.Model):
@@ -43,10 +35,22 @@ class CommentModel(models.Model):
 class TaskModel(models.Model):
     pass
 
+class Router(BaseRouter):
+    generic = True
+
+
+class EmptyRouterTestCase:
+    def setUp(self):
+        self.base_router = Router()
+
+    def test_patterns_empty(self):
+        list(self.base_router.patterns())
+
 
 class RouterTestCase:
     def setUp(self):
         self.base_router = Router()
+        self.base_router.generic = True
         self.base_router.base = True
 
         self.documents_router = Router(
@@ -100,5 +104,5 @@ class RouterTestCase:
         # compare to reference hash
         assert_equal(
             tree_hash,
-            "ec7727a9186e497ad77a6377509f75c2f3bb85909e316bc756061801d0c4aaac"
+            "33e058d3ed3a0b25990b879a2c4943d760b57b04fab8fb11598ad0db12f169af"
         )

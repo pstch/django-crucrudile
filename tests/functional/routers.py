@@ -14,7 +14,7 @@ from .models import (
 
 
 class BaseRouter(Router):
-    pass
+    generic = True
 
 
 class DocumentsRouter(BaseRouter):
@@ -27,7 +27,7 @@ class EntitiesRouter(BaseRouter):
     url_part = "entities"
 
 
-base_router = Router()
+base_router = BaseRouter()
 documents_router = DocumentsRouter()
 entities_router = EntitiesRouter()
 

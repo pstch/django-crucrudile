@@ -15,11 +15,11 @@ and two implementations adapted to Django models :
    :class:`django_crucrudile.entities.Entity`, and subclassing
    :class:`django_crucrudile.entities.store.EntityStore` to implement
    :func:`Router.patterns`
- - :class:`BaseModelRouter` : subclasses :class:`Router`,
+ - :class:`model.ModelRouter` : subclasses :class:`Router`,
    instantiate with a model as argument, adapted to pass that
    model as argument to registered entity classes
- - :class:`ModelRouter` : that subclasses :class:`BaseModelRouter`
-   along with a set of default
+ - :class:`model.generic.GenericModelRouter` : that subclasses
+   :class:`model.ModelRouter` along with a set of default
    :class:`django_crucrudile.routes.ModelViewRoute` for the five
    default Django generic views.
 
@@ -28,27 +28,38 @@ from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
 from django.db.models import Model
-from django.views.generic import View, RedirectView
+from django.views.generic import (
+    View, RedirectView,
+)
 
 from django_crucrudile.routes import ViewRoute
 from django_crucrudile.entities import Entity
 from django_crucrudile.entities.store import EntityStore
 
-__all__ = [
-    "Router", "BaseModelRouter",
-    "ModelRouter"
-]
+from .mixins.model import ModelMixin
 
-# ModelRouter and BaseModelRouter (the `routers.model` module) are
-# imported at EOF (so that they can use the Router class
+__all__ = [
+    "Router",
+    "ModelRouter",
+    "GenericModelRouter"
+]
 
 
 class Router(EntityStore, Entity):
     """RoutedEntity that yields an URL group containing URL patterns from
-    the entities in the entity store. The URL group can be set have an URL
-    part and a namespace.
+    the entities in the entity store
+    (:class:`django_crucrudile.entities.store.EntityStore`). The URL
+    group can be set have an URL part and na namespace.
+
+    Also handles URL redirections : allows setting an Entity as
+    "index", which means that it will become the default routed entity
+    for the parent entity (implementation details in
+    :func:`get_redirect_pattern`).
 
     .. inheritance-diagram:: Router
+
+    ..
+
     """
     namespace = None
     """
@@ -64,19 +75,26 @@ class Router(EntityStore, Entity):
     """
     redirect = None
     """
-    :attribute redirect: If defined, :class:`Router` will add a redirect view
-                         to the returned patterns. To get the redirect
-                         target, :func:`get_redirect_pattern` will
-                         follow ``redirect`` attributes in the stored
-                         entities.
+    :attribute redirect: If defined, :class:`Router` will add a
+                         redirect view to the returned patterns. To
+                         get the redirect target,
+                         :func:`get_redirect_pattern` will follow
+                         ``redirect`` attributes in the stored
+                         entities. The attribute's value is altered by
+                         the :func:`register`, if ``index`` is
+                         ``True`` in its arguments or if the
+                         registered entity
+                         :attr:`django_crucrudile.entities.Entity.index`
+                         attribute is set to True.
     :type redirect: :class:`django_crucrudile.entities.Entity`
     """
     add_redirect = None
     """
     :attribute add_redirect: Add redirect pattern when calling
-                             :func:`patterns`. If None, will be
-                             guessed using :attr:`redirect`
-    :type add_redirect: bool or None
+                             :func:`patterns`. If None (default), will
+                             be guessed using :attr:`redirect` (Add
+                             redirect only if there is one defined)
+    :type add_redirect: bool
     """
     add_redirect_silent = False
     """
@@ -92,7 +110,7 @@ class Router(EntityStore, Entity):
                                     ``bool``. Set to True if you're
                                     using :attr:`add_redirect`
                                     explicitly and want the redirect
-                                    attribute to be optional.
+                                    pattern to be optional.
     :type add_redirect_silent: bool
     """
     get_redirect_silent = False
@@ -103,18 +121,14 @@ class Router(EntityStore, Entity):
                                     is found).
     :type get_redirect_silent: bool
     """
-    @classmethod
-    def for_namespace(cls, namespace, no_url_part=False):
-        cls_name = namespace.capitalize()
-        attrs = dict(namespace=namespace)
-        if not no_url_part:
-            attrs['url_part'] = namespace
-        return type(
-            cls_name,
-            (cls,),
-            attrs
-        )
-
+    generic = False
+    """
+    :attribute generic: If True, :func:`get_register_map` will return
+                        a :class:`model.generic.GenericModelRouter`
+                        (with preconfigured Django videws) for the
+                        ``Model`` type.
+    :type generic: bool
+    """
     def __init__(self,
                  namespace=None,
                  url_part=None,
@@ -122,12 +136,18 @@ class Router(EntityStore, Entity):
                  add_redirect=None,
                  add_redirect_silent=None,
                  get_redirect_silent=None,
+                 generic=None,
                  **kwargs):
-        """Initialize Router base attributes
+        """Initialize Router base attributes from given arguments
 
-        :argument namespace: see :attr:`url_part`
-        :argument url_part: see :attr:`redirect`
-        :argument redirect: see :attr:`redirect`
+        :argument namespace: Optional. See :attr:`namespace`
+        :argument url_part: Optional. See :attr:`url_part`
+        :argument redirect: Optional. See :attr:`redirect`
+        :argument add_redirect: Optional. See :attr:`add_redirect`
+        :argument add_redirect_silent: Optional. See :attr:`add_redirect_silent`
+        :argument get_redirect_silent: Optional. See :attr:`get_redirect_silent`
+        :argument generic: Optional. See :attr:`generic`
+
         """
         # initialize base attributes
         if namespace is not None:
@@ -142,36 +162,44 @@ class Router(EntityStore, Entity):
             self.add_redirect_silent = add_redirect_silent
         if get_redirect_silent is not None:
             self.get_redirect_silent = get_redirect_silent
+        if generic is not None:
+            self.generic = generic
 
         # call superclass implementation of __init__
         super().__init__(**kwargs)
 
     def get_register_map(self):
-        """Basic register map, passes models to a
-        :class:`django_crucrudile.routers.ModelRouter`, Django views
-        to a :class:`django_crucrudile.routes.ViewRoute`
+        """Add two base register mappings (to the mappings returned by the super implementation) :
+
+        - :class:`django.db.models.Model` subclasses are passed to a :class:`model.ModelRouter` (or :class:`model.generic.GenericModelRouter`) if :attr:`generic` is set to ``True``)
+        - :class:`django.views.generic.View` subclasses are passed to a View
+
+        :returns: Register mappings
+        :rtype: dict
 
         """
         mapping = super().get_register_map()
         mapping.update({
-            Model: ModelRouter,
+            Model: ModelRouter if not self.generic else GenericModelRouter,
             View: ViewRoute,
         })
         return mapping
 
     def register(self, entity, index=False, map_kwargs=None):
-        """Register routed entity
+        """Register routed entity, using
+        :func:`django_crucrudile.entities.store.entityStore.register`
 
-        Set as index when ``entity``
-        or :attr:`django_crucrudile.entities.Entity.index`` is True.
+        Set as index when ``index`` or ``entity.index`` is True.
 
         :argument entity: Entity to register
         :type entity: :class:`django_crucrudile.entities.Entity`
-        :argument index: Register as index
+        :argument index: Register as index (set :attr:`redirect` to ``entity``
         :type index: bool
-        :argument map_kwargs: Argument to pass to mapping value if
-                              entity gets transformed.
+        :argument map_kwargs: Optional. Keyword arguments to pass to
+                              mapping value if entity gets
+                              transformed.
         :type map_kwargs: dict
+
         """
         entity = super().register(
             entity,
@@ -368,7 +396,7 @@ class Router(EntityStore, Entity):
                     if add_redirect_silent is False:
                         raise ValueError(
                             "No redirect attribute set on {} "
-                            "(and `add_redirect_silent` is True)."
+                            "(and :attr:`add_redirect_silent` is True)."
                             "".format(self)
                         )
 
@@ -397,4 +425,5 @@ class Router(EntityStore, Entity):
 
         yield pattern
 
-from .model import BaseModelRouter, ModelRouter
+from .model import ModelRouter
+from .model.generic import GenericModelRouter
