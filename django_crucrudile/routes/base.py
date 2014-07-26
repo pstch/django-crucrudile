@@ -78,6 +78,8 @@ class BaseRoute(Entity):
         """Initialize Route, check that needed attributes/arguments are
         defined.
 
+        Also sets ``self.redirect`` to the URL name (using :func:`get_url_name`).
+
         :argument name: See :attr:`name`
         :argument url_part: See :attr:`url_part`
 
@@ -130,6 +132,7 @@ class BaseRoute(Entity):
                     "".format(self)
                 )
         super().__init__(**kwargs)
+        self.redirect = self.get_url_name()
 
     def patterns(self, parents=None,
                  add_redirect=None,

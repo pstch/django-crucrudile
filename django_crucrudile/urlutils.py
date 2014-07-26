@@ -93,9 +93,9 @@ def compose(functions, *args, **kwargs):
 
     """
 
-    if args is None:
+    if args is None: # pragma: no cover
         args = []
-    if kwargs is None:
+    if kwargs is None: # pragma: no cover
         kwargs = {}
 
     funcs = map(
@@ -155,7 +155,7 @@ class Separated:
             self.separator = separator
         if opt_separator:
             self.opt_separator = opt_separator
-        if required_default:
+        if required_default: # pragma: no cover
             self.required_default = required_default
 
         super().__init__(*args, **kwargs)
@@ -176,11 +176,13 @@ class Separated:
         .. testcode::
 
            obj = Separated()
+           print(obj.get_separator())
            print(obj.get_separator(True))
            print(obj.get_separator(False))
 
         .. testoutput::
 
+           /
            /
            /?
 

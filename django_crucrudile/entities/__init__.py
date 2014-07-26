@@ -34,6 +34,7 @@ class Entity(metaclass=ABCMeta):
     :type index: bool
     """
     def __init__(self, index=None):
+        self.redirect = None
         if index is not None:
             self.index = index
 
