@@ -10,8 +10,8 @@ install:
   - pip install coveralls
   - pip install pep8
 before_script:
-  - [ -d /home/travis/build/cache/ ] || mkdir /home/travis/build/cache
-  - cp /home/travis/build/cache/*.egg . -r || echo
+  - sh -c "[ -d /home/travis/build/cache/ ] || mkdir /home/travis/build/cache"
+  - sh -c "cp /home/travis/build/cache/*.egg . -r || echo"
 script:
   - coverage run --source=django_crucrudile -- setup.py test
 after_script:
