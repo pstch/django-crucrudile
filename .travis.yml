@@ -1,8 +1,14 @@
 language: python
 python:
+  - "3.2"
   - "3.3"
+  - "3.4"
+  - "pypy"
 env:
   - DJANGO=1.6 DJANGO_SETTINGS_MODULE=tests.settings
+cache:
+  directories:
+    - /home/travis/virtualenv/python3.3/lib/python3.3/site-packages
 install:
   - pip install coveralls
   - pip install pep8
