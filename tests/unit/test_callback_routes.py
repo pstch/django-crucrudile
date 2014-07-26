@@ -3,7 +3,7 @@
 from nose.tools import assert_true, assert_raises, assert_equal
 import mock
 
-from django_crucrudile.routes import Route, CallbackRoute
+from django_crucrudile.routes import CallbackRoute
 
 
 class CallbackRouteTestCase:
@@ -18,12 +18,7 @@ class CallbackRouteTestCase:
         )
         self.mock_callback = mock.Mock()
         self.route = self.route_class(
-            callback=self.mock_callback, name="name"
-        )
-
-    def test_subclasses_route(self):
-        assert_true(
-            issubclass(self.route_class, Route)
+            callback=self.mock_callback
         )
 
     def test_init_requires_callback(self):
