@@ -7,19 +7,21 @@ install:
   - pip freeze
   - pip install coveralls
   - pip install pep8
-cache:
-  directories:
-    - /home/travis/build/cache
 before_script:
+  - sh -c "[ -d /home/travis/build/cache/ ] || mkdir /home/travis/build/cache"
   - ls /home/travis/build/
   - ls /home/travis/build/cache
-  - sh -c "[ -d /home/travis/build/cache/ ] || mkdir /home/travis/build/cache"
   - sh -c "cp /home/travis/build/cache/*.egg . -rv || echo"
 script:
   - coverage run --source=django_crucrudile -- setup.py test
 after_script:
   - cp *.egg /home/travis/build/cache/ -rv
+  - ls /home/travis/build/
+  - ls /home/travis/build/cache
 after_success:
   - coverage report -m
   - pep8 django_crucrudile
   - coveralls
+cache:
+  directories:
+    - /home/travis/build/cache
