@@ -352,7 +352,7 @@ class OptionalPartList(Separated, Parsable, list):
         :type items: iterable
 
         :returns: List of tuples
-        :rtype: generator
+        :rtype: iterable of tuple
 
         .. testcode::
 
@@ -384,7 +384,7 @@ class OptionalPartList(Separated, Parsable, list):
         :type default: boolean
 
         :returns: List of tuples, with required default value applied
-        :rtype: generator
+        :rtype: iterable of tuple
 
         .. testcode::
 
@@ -469,7 +469,7 @@ class URLBuilder(OptionalPartList):
         :type items: iterable
 
         :returns: List of URL part specs (with empty items cleared out)
-        :rtype: list of tuples
+        :rtype: list of tuple
 
         .. testcode::
 
@@ -539,7 +539,7 @@ class URLBuilder(OptionalPartList):
         :type items: iterable
 
         :returns: List of URL parts with separators
-        :rtype: generator
+        :rtype: iterable of str
 
         .. warning::
 
