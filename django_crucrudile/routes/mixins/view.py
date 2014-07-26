@@ -113,9 +113,9 @@ class ViewMixin:
         using the view class name.
 
         This is useful when combined with
-        :func:`django_crucrudile.entity.store.EntityStore.register_class`,
+        :func:`django_crucrudile.entities.store.EntityStore.register_class`,
         as it only accepts classes (in opposition to
-        :func:`django_crucrudile.entity.store.EntityStore.register`).
+        :func:`django_crucrudile.entities.store.EntityStore.register`).
 
         :argument view_class: View class to set on the resulting class
         :type view_class: subclass of :class:`django.views.generic.view`

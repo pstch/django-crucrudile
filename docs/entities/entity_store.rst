@@ -1,5 +1,5 @@
-Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators)
-=======================================================================
+Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators) [TODO]
+==============================================================================
 
 .. contents::
 

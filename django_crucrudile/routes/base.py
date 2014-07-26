@@ -50,7 +50,7 @@ class BaseRoute(Entity):
     The URL part and URL name must be either set on class, or given at
     :func:`__init__`.
 
-    .. inheritance-diagram:: Route
+    .. inheritance-diagram:: BaseRoute
 
     """
     name = None
