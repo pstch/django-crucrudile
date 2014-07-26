@@ -24,4 +24,4 @@ after_success:
   - coveralls
 cache:
   directories:
-    - /home/travis/build/cache
+  - /home/travis/build/cache
