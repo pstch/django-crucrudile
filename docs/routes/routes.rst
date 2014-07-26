@@ -1,40 +1,97 @@
-Routes (``Route``, ``ModelRoute``, ``ViewRoute`` and ``ModelViewRoute``)
-========================================================================
+Routes and route mixins
+=======================
 
 .. contents::
 
 .. module:: django_crucrudile.routes
 
 .. automodule:: django_crucrudile.routes
+   :no-members:
    :noindex:
 
-Abstract routes
----------------
+.. testsetup::
 
-.. autoclass:: Route
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   from mock import Mock
 
-.. autoclass:: ModelRoute
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   from django_crucrudile.routes.base import BaseRoute
+   from django_crucrudile.routes import (
+       ArgumentsMixin, CallbackMixin, ViewMixin, ModelMixin
+   )
+   from django_crucrudile.routes.mixins.arguments.parser import (
+       combine, ArgumentsParser
+   )
 
-Routes
+
+Base route
 ----------
 
-.. autoclass:: CallbackRoute
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. automodule:: django_crucrudile.routes.base
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
-.. autoclass:: ViewRoute
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Route mixins
+------------
 
-.. autoclass:: ModelViewRoute
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. automodule:: django_crucrudile.routes.mixins
+   :no-members:
+
+Abstract
+>>>>>>>>
+
+Arguments
+~~~~~~~~~
+
+.. automodule:: django_crucrudile.routes.mixins.arguments
+   :no-members:
+
+.. autoclass:: django_crucrudile.routes.mixins.arguments.ArgumentsMixin
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+Parser
+++++++
+
+.. automodule:: django_crucrudile.routes.mixins.arguments.parser
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+
+Model
+~~~~~
+
+.. automodule:: django_crucrudile.routes.mixins.model
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+
+Concrete
+>>>>>>>>
+
+Callback
+~~~~~~~~
+
+.. automodule:: django_crucrudile.routes.mixins.callback
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+
+View
+~~~~
+
+.. automodule:: django_crucrudile.routes.mixins.view
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+
+
+Route implementations
+---------------------
+
+.. automodule:: django_crucrudile.routes
+   :noindex:

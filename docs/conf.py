@@ -11,7 +11,6 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
 import sys
 import os
 
@@ -278,6 +277,12 @@ texinfo_documents = [
 
 # Autodoc settings
 autodoc_member_order = 'bysource'
+
+autodoc_default_flags = [
+    'members',
+    'undoc-members',
+    'show-inheritance'
+]
 
 inheritance_graph_attrs = dict(
     rankdir="TB", ratio='compress', bgcolor='transparent'
