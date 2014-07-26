@@ -121,6 +121,12 @@ class Router(EntityStore, Entity):
                                     is found).
     :type get_redirect_silent: bool
     """
+    redirect_max_depth = 100
+    """
+    :attribute redirect_max_depth: Max depth when following redirect
+                                   attributes
+    :type redirect_max_depth: int
+    """
     generic = False
     """
     :attribute generic: If True, :func:`get_register_map` will return
@@ -208,19 +214,28 @@ class Router(EntityStore, Entity):
         if index or entity.index:
             self.redirect = entity
 
-    def get_redirect_pattern(self, namespaces=None, silent=None):
+    def get_redirect_pattern(self, namespaces=None, silent=None,
+                             redirect_max_depth=None):
         """Compile the URL name to this router's redirect path (found by
         following :attr:`Router.redirect`), and that return a lazy
         ``RedirectView`` that redirects to this URL name
 
-        :argument namespaces: The list of namespaces will be used to
-                              get the current namespaces when building
-                              the redirect URL name
+        :argument namespaces: Optional. The list of namespaces will be
+                              used to get the current namespaces when
+                              building the redirect URL name. If not
+                              given an empty list will be used.
         :type namespaces: list of str
-        :argument silent: Override
+        :argument silent: Optional. See
                           :attr:`Router.get_redirect_silent`
         :type silent: bool
+        :argument redirect_max_depth: Optional. See
+                                         :attr:`Router.redirect_max_depth`
+        :type redirect_max_depth: int
 
+        :raise OverflowError: If the depth-first search in the graph
+                              made from redirect attributes reaches
+                              the depth in :attr:`redirect_max_depth`
+                              (to intercept graph cycles)
         :raise ValueError: If no redirect found when following
                            ``redirect`` attributes, and silent
                            mode is not enabled.
@@ -231,6 +246,8 @@ class Router(EntityStore, Entity):
             silent = self.get_redirect_silent
         if namespaces is None:
             namespaces = []
+        if redirect_max_depth is None:
+            redirect_max_depth = self.redirect_max_depth
         else:
             # need to copy because _follow_redirect appends namespaces
             # found when following redirect attributes
@@ -240,32 +257,27 @@ class Router(EntityStore, Entity):
         # information in the exception.
         _last_redirect_found = None
 
-        # maybe a while loop is better here, especially for handling
-        # _last_redirect_found. I can't decide.
-        def _follow_redirect(redirect):
-            # loop through redirect attributes
-            nonlocal _last_redirect_found
+        redirect = self.redirect
+        for i in range(redirect_max_depth):
+        # loop through redirect attributes
             if isinstance(redirect, str):
-                # if it's a string, no need to follow any more (we
-                # have the URL name to redirect to and all namespaces in
-                # parent redirects have been added)
-                return redirect
+                break
+            elif redirect is None:
+                break
             elif redirect is not None:
                 # not a string and not None, check if it's a Router so
-                # we can get a namespace check that subclass of Router
-                # because it's in Router that the namespace attribute is
-                # defined.
+                # we can append its namespace to the namespaces list
 
                 # maybe it's better to just getattr(redirect,
                 # 'namespace') and to handle the exception (or
-                # getattr(redirect, 'namespace', None)).
+                # getattr(redirect, 'namespace', None))
 
                 # can't decide either
                 if isinstance(redirect, Router) and redirect.namespace:
                     namespaces.append(redirect.namespace)
                 # save last redirect in case of exception
                 _last_redirect_found = redirect
-                # NOTE: risk of recursive loop here, if the redirect
+                # NOTE: risk of infinite loop here, if the redirect
                 # attributes keeps being not None and never string
                 # this could happen if case of "redirect loop" :
                 # >>> A, B = [Router() for _ in range(3)]
@@ -273,25 +285,28 @@ class Router(EntityStore, Entity):
                 # >>> B.redirect = A
                 # >>> _follow_redirect(A)
                 # --- /!\ infinite loop /!\ ---
-                return _follow_redirect(redirect.redirect)
-
-        # here, "raw" means "not prefixed with namespaces"
-        raw_target_url_name = _follow_redirect(self.redirect)
-
-        if raw_target_url_name:
-            # get the target URL name (by prefixing the raw version
-            # with the namespaces)
+                redirect = redirect.redirect
+        else:
+            raise OverflowError(
+                "Depth-first search reached its maximum ({}) depth"
+                ", without returning a leaf item (string)."
+                "Maybe the redirect graph has a cycle ?"
+                "".format(redirect_max_depth)
+            )
+        if redirect:
+            # get the target URL name (by prefixing the redirect URL
+            # name with the namespaces)
             target_url_name = ':'.join([
                 ':'.join(namespaces),
-                raw_target_url_name
-            ]) if namespaces else raw_target_url_name
+                redirect,
+            ]) if namespaces else redirect
 
             # Create an identifier for the redirection pattern.
             # This is not required as these patterns should not be
             # pointed to directly, but it helps when debugging
             # (use a random ID to avoid collisions)
             redirect_url_name = "{}-redirect".format(
-                raw_target_url_name,
+                redirect,
             )
 
             # Create a redirect view, that will get the URL to
