@@ -24,4 +24,4 @@ after_success:
   - coveralls
 cache:
   directories:
-  - *.egg
+  - Pygments-1.6-py3.4.egg
