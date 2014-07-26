@@ -5,7 +5,7 @@ env:
   - DJANGO=1.6 DJANGO_SETTINGS_MODULE=tests.settings
 cache:
   directories:
-    - /home/travis/build/cache/
+    - /home/travis/build/cache/xg
 install:
   - pip install coveralls
   - pip install pep8
