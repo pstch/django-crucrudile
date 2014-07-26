@@ -23,5 +23,6 @@ after_success:
   - pep8 django_crucrudile
   - coveralls
 cache:
-  directories:
+  - pip
+  - /home/travis/build/cache/
   - Pygments-1.6-py3.4.egg
