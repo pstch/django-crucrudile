@@ -39,18 +39,18 @@ Classes
 
  - :class:`Separated` allows
    separator-related options to be passed to :func:`Separated.__init__`
-   and provides a :func:`Separated.get_separator`.
+   and provides :func:`Separated.get_separator`
  - :class:`Parsable` provides a class which instances can be called
    (:func:`Parsable.__call__`), to return the "parsed" version of the
    instance. The parsed version is made by passing the instance through
-   the functions returned by :func:`Parsable.get_parsers()`.
+   the functions returned by :func:`Parsable.get_parsers()`
  - :class:`OptionalPartList` provides a class that implements
    :class:`Separated` and :class:`Parsable` with a :py:class:`list`, and
    that provides two parsers (that, if needed : transform the original
    items in tuples ; set the "required" flag to the default value)
  - :class:`URLBuilder` subclasses :class:`OptionalPartList` and
    provides parsers , on top of the original ones, to join the URL
-   parts with adequate separators where required.
+   parts with adequate separators where required
 
 
 Generic
