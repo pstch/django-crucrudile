@@ -31,21 +31,6 @@ Model router mixin
    :exclude-members: __abstractmethods__, __module__,
                      __dict__, __weakref__
 
-Application/project router mixin [TODO]
----------------------------------------
-
-.. automodule:: django_crucrudile.routers.mixins.app
-   :no-members:
-
-.. autoclass:: AppMixin
-   :special-members:
-   :exclude-members: __abstractmethods__, __module__,
-                     __dict__, __weakref__
-
-.. autoclass:: ProjectMixin
-   :special-members:
-   :exclude-members: __abstractmethods__, __module__,
-                     __dict__, __weakref__
 
 
 Model router
