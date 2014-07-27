@@ -481,6 +481,14 @@ super implementation)
         [<RegexURLPattern redirect_target-redirect ^$>,
          'MockPattern1', 'MockPattern2']
 
+        >>> router.redirect = None
+        >>>
+        >>> list(router.patterns(add_redirect=True))
+        ... # doctest: +NORMALIZE_WHITESPACE
+        Traceback (most recent call last):
+          ...
+        ValueError: No redirect attribute set and
+        ``add_redirect_silent`` is ``False``).
         """
         # initialize default arguments
 
@@ -499,11 +507,11 @@ super implementation)
         # If add_redirect not given, get from attributes ; If None
         # found, guess from boolean value of self.redirect
         if add_redirect is None:
-            if self.add_redirect is not None:
+            if self.add_redirect is not None:  # pragma: no cover
                 add_redirect = self.add_redirect
             else:
                 add_redirect = bool(self.redirect)
-        else:
+        else:  # pragma: no cover
             add_redirect = add_redirect
         # if add_redirect_silent not given, get from attributes
         if add_redirect_silent is None:
@@ -530,8 +538,8 @@ super implementation)
                 else:
                     if add_redirect_silent is False:
                         raise ValueError(
-                            "No redirect attribute set on {} "
-                            "(and :attr:`add_redirect_silent` is False)."
+                            "No redirect attribute set "
+                            "(and ``add_redirect_silent`` is ``False``)."
                             "".format(self)
                         )
 
