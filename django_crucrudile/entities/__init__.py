@@ -44,9 +44,9 @@ an URL pattern tree.
 
         :argument index: See :attr:`index`
         """
-        self.redirect = None
-        if index is not None:
+        if index is not None:  # pragma: no cover
             self.index = index
+        self.redirect = None
 
     @abstractmethod
     def patterns(self, parents=None,

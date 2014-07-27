@@ -43,7 +43,7 @@ def provides(provided, **kwargs):
 
     :argument provided: Class (or object) to register in the base store. This
                         can be an object since it may be transformed
-                        by :func:`EntityStore.register_apply_map`
+                        by :func:`EntityStore.register_apply_map`d
     :type provided: object
 
     """
@@ -261,6 +261,21 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         True
         >>> class_mock.called
         False
+
+        With subclass and single bases (no matching base, not silent) :
+
+        >>> class_mock = Mock()
+        >>> applied = EntityStore.register_apply_map(
+        ...   SubClass,
+        ...   {OtherClass: class_mock},
+        ...   silent=False
+        ... )
+        ... # doctest: +NORMALIZE_WHITESPACE
+        Traceback (most recent call last):
+          ...
+        LookupError: Could not find matching key in register
+        mapping. Used test 'issubclass', register mapping bases are
+        '', tested against 'SubClass'
 
         With subclass and no mappings (not silent) :
 
