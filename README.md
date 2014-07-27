@@ -1,7 +1,7 @@
 django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile.svg?branch=crucrudile)](https://travis-ci.org/pstch/django-crucrudile) [![Coverage Status](https://coveralls.io/repos/pstch/django-crucrudile/badge.png?branch=crucrudile)](https://coveralls.io/r/pstch/django-crucrudile?branch=crucrudile)
 =================
 
-Current release is `0.9.1`.
+Current release is `0.9.2`.
 
 **WARNING :** This project is still a WIP. The implementation of the concept is stable, and I already use it in my own projects, but it will still take some times before I can release a proper version (somewhen in April 2014).
 
