@@ -274,10 +274,31 @@ super implementation)
         >>> router = Router()
         >>> router.register(entity)
         >>>
-        >>> type(router.get_redirect_pattern()).__name__
+        >>> pattern = router.get_redirect_pattern()
+        >>>
+        >>> type(pattern).__name__
         'RegexURLPattern'
-        >>> router.get_redirect_pattern().callback.__name__
+        >>> pattern.callback.__name__
         'RedirectView'
+        >>> pattern._target_url_name
+        'redirect_target'
+
+        >>> from mock import Mock
+        >>> entity = Mock()
+        >>> entity.redirect.redirect = 'redirect_target'
+        >>>
+        >>> router = Router()
+        >>> router.register(entity)
+        >>>
+        >>> pattern = router.get_redirect_pattern(
+        ...  namespaces=['ns1', 'ns2']
+        ... )
+        >>> type(pattern).__name__
+        'RegexURLPattern'
+        >>> pattern.callback.__name__
+        'RedirectView'
+        >>> pattern._target_url_name
+        'ns1:ns2:redirect_target'
 
         >>> entity = Mock()
         >>> entity.redirect.redirect = entity
@@ -393,7 +414,7 @@ super implementation)
             )
 
             # FIXME: Used for debugging, should be removed.
-            url_pattern._redirect_url_name = target_url_name
+            url_pattern._target_url_name = target_url_name
 
             return url_pattern
         elif not silent:
