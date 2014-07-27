@@ -10,6 +10,7 @@ URL utils
 
 .. testsetup::
 
+   from mock import Mock
    from django_crucrudile.urlutils import *
 
 Decorators
@@ -29,8 +30,8 @@ Functions
 This module defines the :func:`compose` function, that compose a list
 of functions into a single function that returns its arguments, passed
 in chain to each of the functions. This function is used by
-:class:`Parsable` to compose the filters returned by
-:func:`Parsable.get_filters`, in :func:`Parsable.__call__`.
+:class:`Parsable` to compose the parsers returned by
+:func:`Parsable.get_parsers`, in :func:`Parsable.__call__`.
 
 .. autofunction:: compose
 
@@ -59,7 +60,7 @@ Generic
 .. note::
 
    These classes provide bases for the :class:`URLBuilder` and
-   :class:`django_crucrudile.routes.arguments.parser.ArgumentsParser`
+   :class:`django_crucrudile.routes.mixins.arguments.parser.ArgumentsParser`
    classes.
 
 .. autoclass:: Separated

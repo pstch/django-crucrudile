@@ -1,5 +1,5 @@
-Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``)
-=============================================================
+Router and router mixins
+========================
 
 .. contents::
 
@@ -7,32 +7,58 @@ Routers (``Router``, ``BaseModelRouter`` and ``ModelRouter``)
 
 .. automodule:: django_crucrudile.routers
    :noindex:
+   :no-members:
 
 Base router
------------
++++++++++++
 
 .. autoclass:: Router
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+Router mixins
++++++++++++++
+
+Model router mixin
+------------------
+
+.. automodule:: django_crucrudile.routers.mixins.model
+   :no-members:
+
+.. autoclass:: ModelMixin
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+
 
 Model router
-------------
++++++++++++++
 
-.. autoclass:: BaseModelRouter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: django_crucrudile.routers.model
+   :no-members:
 
 .. autoclass:: ModelRouter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+Generic model router
+--------------------
+
+.. automodule:: django_crucrudile.routers.model.generic
+   :no-members:
+
+.. autoclass:: GenericModelRouter
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 The following graph may help to explain the relation between the
 generic views, routes and routers :
 
-.. graphviz::
+.. graph2viz::
 
    digraph model_router {
        bgcolor="transparent"

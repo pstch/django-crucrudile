@@ -1,7 +1,7 @@
 """This module contains the "main" abstract route class, that provides
-:func:`Route.patterns`, yielding patterns made from the route
+:func:`BaseRoute.patterns`, yielding patterns made from the route
 metadata and using the callback returned by implementations of the
-abstract function :func:`Route.get_callback`.
+abstract function :func:`BaseRoute.get_callback`.
 
 .. note::
 
@@ -10,7 +10,6 @@ abstract function :func:`Route.get_callback`.
    of the :class:`django_crucrudile.entities.Entity` abstract class.
 
 """
-from functools import partial
 from itertools import product
 from abc import abstractmethod
 from django.conf.urls import url
@@ -19,38 +18,22 @@ from django_crucrudile.entities import Entity
 from django_crucrudile.urlutils import URLBuilder
 
 
-__all__ = [
-    'BaseRoute', 'Route',
-    'CallbackRoute',
-    'ViewRoute',
-    'ModelRoute', 'ModelViewRoute'
-]
-
 class BaseRoute(Entity):
-    """Abstract class for a :class:`django_crucrudile.entity.Entity` that
-    yields URL patterns that point to its implementation of
-    :func:`get_callback`
+    """Abstract class for a :class:`django_crucrudile.entities.Entity`
+    that URL patterns that point to its implementation of
+    :func:`get_callback`. Implements
+    :func:`django_crucrudile.entities.Entity.patterns` using
+    :func:`patterns`.
 
     .. warning::
 
        Abstract class ! Subclasses should define the
-       :func:`get_callback` function.
-
-    .. warning::
-
-       Because this is an abstract class, the **documentation tests**
-       use an implementation (``Route``) of :class:`BaseRoute`, with a
-       dummy :func:`get_callback` function.
-
-    .. testsetup::
-
-       class Route(BaseRoute):
-           def get_callback(self): pass
+       :func:`get_callback` function. See warning in :func:`__init__`.
 
     The URL part and URL name must be either set on class, or given at
     :func:`__init__`.
 
-    .. inheritance-diagram:: Route
+    .. inheritance-diagram:: BaseRoute
 
     """
     name = None
@@ -78,6 +61,9 @@ class BaseRoute(Entity):
         """Initialize Route, check that needed attributes/arguments are
         defined.
 
+        Also sets ``self.redirect`` to the URL name (using
+        :func:`get_url_name`).
+
         :argument name: See :attr:`name`
         :argument url_part: See :attr:`url_part`
 
@@ -95,23 +81,22 @@ class BaseRoute(Entity):
            it is an abstract class missing an implementation of
            :func:`get_callback` :
 
-           .. testcode ::
 
-              try:
-                  BaseRoute()
-              except Exception as catched:
-                  print(type(catched).__name__)
-                  print(catched)
-
-           .. testoutput ::
-
-              TypeError
-              Can't instantiate abstract class BaseRoute with abstract methods get_callback
+           >>> try:
+           ...   BaseRoute()
+           ... except Exception as catched:
+           ...   type(catched).__name__
+           ...   str(catched) == (
+           ...     "Can't instantiate abstract class BaseRoute "
+           ...     "with abstract methods get_callback"
+           ...   )
+           'TypeError'
+           True
 
         """
         if name is not None:
             self.name = name
-        elif self.name is None:
+        elif self.name is None:  # pragma: no cover
             raise ValueError(
                 "No ``name`` argument provided to __init__"
                 ", and no :attr:`name` defined as class attribute."
@@ -123,13 +108,14 @@ class BaseRoute(Entity):
             if self.auto_url_part:
                 self.url_part = self.name
             else:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "No ``url_part`` argument provided to __init__"
                     ", no :attr:`url_part` defined as class attribute."
                     " (in {}), and :attr:`auto_url_part` is set to False."
                     "".format(self)
                 )
         super().__init__(**kwargs)
+        self.redirect = self.get_url_name()
 
     def patterns(self, parents=None,
                  add_redirect=None,
@@ -152,14 +138,13 @@ class BaseRoute(Entity):
         :returns: Django URL patterns
         :rtype: iterable of ``RegexURLPattern``
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(list(route.patterns()))
-
-        .. testoutput::
-
-           [<RegexURLPattern name ^url_part$>]
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> list(route.patterns())
+        [<RegexURLPattern name ^url_part$>]
 
         """
         callback = self.get_callback()
@@ -183,14 +168,14 @@ class BaseRoute(Entity):
         .. warning::
 
            Abstract method ! Should be implemented in subclasses,
-           otherwise class instantiation will fail.
+           otherwise class instantiation will fail. See warning in
+           :func:`__init__`.
 
         :returns: Callable to use in the URL patter
         :rtype: callable
 
         """
         pass
-
 
     def get_url_name(self):
         """Get the main URL name, defined at class level (:attr:`name`) or
@@ -199,14 +184,13 @@ class BaseRoute(Entity):
         :returns: main URL name
         :rtype: str
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(route.get_url_name())
-
-        .. testoutput::
-
-           name
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> route.get_url_name()
+        'name'
 
         """
         return self.name
@@ -221,14 +205,13 @@ class BaseRoute(Entity):
         :returns: URL names (list of URL name)
         :rtype: iterable of str
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(list(route.get_url_names()))
-
-        .. testoutput::
-
-           ['name']
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> print(list(route.get_url_names()))
+        ['name']
 
         """
         yield self.get_url_name()
@@ -240,14 +223,13 @@ class BaseRoute(Entity):
         :returns: main URL part
         :rtype: str
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(route.get_url_part())
-
-        .. testoutput::
-
-           url_part
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> route.get_url_part()
+        'url_part'
 
         """
         return self.url_part
@@ -262,20 +244,20 @@ class BaseRoute(Entity):
         :returns: URL parts (list of URL part)
         :rtype: iterable of str
 
-        .. testcode::
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> list(route.get_url_parts())
+        ['url_part']
 
-           route = Route('name', 'url_part')
-           print(list(route.get_url_parts()))
-
-        .. testoutput::
-
-           ['url_part']
         """
         yield self.get_url_part()
 
     def get_url_specs(self):
         """Yield URL specifications. An URL specification is a 3-tuple,
-        containing 3 :class:`django_crucrudile.URLBuilder` instances :
+        containing 3 :class:`django_crucrudile.urlutils.URLBuilder` instances :
         ``prefix``, ``name`` and ``suffix``. These objects are used to
         join together different part of the URLs. Using them in a
         3-tuple allows building an URL part with a "central" name,
@@ -299,14 +281,13 @@ class BaseRoute(Entity):
         :returns: URL specifications
         :rtype: iterable of 3-tuple
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(list(route.get_url_specs()))
-
-        .. testoutput::
-
-           [([], ['url_part'], [])]
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> list(route.get_url_specs())
+        [([], ['url_part'], [])]
 
         """
         prefix = URLBuilder(None, '/')
@@ -349,15 +330,13 @@ class BaseRoute(Entity):
         :returns: URL regexs
         :rtype: iterable of string
 
-        .. testcode::
-
-           route = Route('name', 'url_part')
-           print(list(route.get_url_regexs()))
-
-        .. testoutput::
-
-           ['^url_part$']
-
+        >>> class Route(BaseRoute):
+        ...   def get_callback(self):
+        ...    pass
+        >>>
+        >>> route = Route('name', 'url_part')
+        >>> list(route.get_url_regexs())
+        ['^url_part$']
 
         """
         for prefix, name, suffix in self.get_url_specs():

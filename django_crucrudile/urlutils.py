@@ -3,11 +3,12 @@ building, and the aspect of handling several parts of the URL, each
 separated by different separators, that may be provided or not (thus,
 handling separators becomes a bit more complicated).
 
+
 """
-from pprint import pformat
 from copy import copy
 from itertools import chain
-from functools import reduce, partial, wraps
+from functools import partial, wraps
+
 
 def pass_tuple(count=1):
     """Returns a decorator that wraps a function to make it run witout the
@@ -24,23 +25,21 @@ def pass_tuple(count=1):
 
        This function is not the actual decorator, but a function that
        returns that decorator (with the given tuple slice index). If
-       you use it as a decorator, you should write ``@pass_tuple()``
-       instead of ``@pass_tuple``.
+       it is used as a decorator, it should be written
+       ``@pass_tuple()`` instead of ``@pass_tuple``.
 
-    .. testcode::
-
-       func_1 = lambda x: (42, x)
-       func_2 = pass_tuple()(lambda x: x + 2)
-       func_3 = pass_tuple()(lambda x: x*2)
-       func_4 = lambda x: x[0] + x[1]
-
-       func = compose([func_1, func_2, func_3, func_4])
-
-       print(func(8))
-
-    .. testoutput::
-
-       62
+    >>> pack_with_42 = lambda x: (42, x)
+    >>> pack_with_42(8)
+    (42, 8)
+    >>> add_2 = pass_tuple()(lambda x: x + 2)
+    >>> add_2(pack_with_42(8))
+    (42, 10)
+    >>> mul_2 = pass_tuple()(lambda x: x*2)
+    >>> mul_2(add_2(pack_with_42(8)))
+    (42, 20)
+    >>> unpack = lambda x: x[0] + x[1]
+    >>> unpack(mul_2(add_2(pack_with_42(8))))
+    62
 
     """
 
@@ -79,23 +78,16 @@ def compose(functions, *args, **kwargs):
 
     .. note::
 
-       This function will pass all other arguments and keyword arguments to the composed functions.
+       This function will pass all other arguments and keyword
+       arguments to the composed functions.
 
-    .. testcode::
-
-       funcs = [lambda x: x*2, lambda x: x+2]
-       composed = compose(funcs)
-       print(composed(5))
-
-    .. testoutput::
-
-       12
+    >>> compose([lambda x: x*2, lambda x: x+2])(5)
+    12
 
     """
-
-    if args is None:
+    if args is None:  # pragma: no cover
         args = []
-    if kwargs is None:
+    if kwargs is None:  # pragma: no cover
         kwargs = {}
 
     funcs = map(
@@ -110,6 +102,7 @@ def compose(functions, *args, **kwargs):
         return x
 
     return composed
+
 
 class Separated:
     """Accepts separator options in :func:`__init__`, and provide
@@ -155,11 +148,10 @@ class Separated:
             self.separator = separator
         if opt_separator:
             self.opt_separator = opt_separator
-        if required_default:
+        if required_default:  # pragma: no cover
             self.required_default = required_default
 
         super().__init__(*args, **kwargs)
-
 
     def get_separator(self, required=None):
         """Get the argument separator to use according to the :attr:`required`
@@ -173,17 +165,13 @@ class Separated:
         :returns: Separator
         :rtype: str
 
-        .. testcode::
 
-           obj = Separated()
-           print(obj.get_separator(True))
-           print(obj.get_separator(False))
-
-        .. testoutput::
-
-           /
-           /?
-
+        >>> Separated().get_separator()
+        '/'
+        >>> Separated().get_separator(True)
+        '/'
+        >>> Separated().get_separator(False)
+        '/?'
 
         """
         if required is None:
@@ -193,6 +181,7 @@ class Separated:
         else:
             return self.opt_separator
 
+
 class Parsable:
     """Class whose instances may be called, to return a "parsed" version,
     obtained by passing the original version in the parsers returned
@@ -200,18 +189,52 @@ class Parsable:
 
     .. inheritance-diagram:: Parsable
 
-    .. testcode::
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return [lambda x: x*2, lambda x: x+2]
+    >>>
+    >>> TestParsable(5)()
+    12
 
-       class TestParsable(Parsable, int):
-           def get_parsers(self):
-                return [lambda x: x*2, lambda x: x+2]
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return []
+    >>>
+    >>> TestParsable(5)()
+    5
 
-       parser = TestParsable(5)
-       print(parser())
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return [lambda x: None]
+    >>>
+    >>> TestParsable(5)()
 
-    .. testoutput::
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return [None]
+    >>>
+    >>> TestParsable(5)()
+    Traceback (most recent call last):
+      ...
+    TypeError: the first argument must be callable
 
-       12
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return [lambda x, y: None]
+    >>>
+    >>> TestParsable(5)()
+    Traceback (most recent call last):
+      ...
+    TypeError: <lambda>() missing 1 required positional argument: 'y'
+
+    >>> class TestParsable(Parsable, int):
+    ...   def get_parsers(self):
+    ...     return [lambda: None]
+    >>>
+    >>> TestParsable(5)()
+    Traceback (most recent call last):
+      ...
+    TypeError: <lambda>() takes 0 positional arguments but 1 was given
 
     """
     def get_parsers(self):
@@ -231,6 +254,12 @@ class Parsable:
         original version.
 
         :returns: output of parsers
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`Parsable`
+
 
         """
         items = self
@@ -257,14 +286,21 @@ class OptionalPartList(Separated, Parsable, list):
 
     .. inheritance-diagram:: OptionalPartList
 
-    .. testcode::
+    >>> builder = OptionalPartList(
+    ...   ["<1>", (None, "<2>"), (False, "<3>")]
+    ... )
+    >>>
+    >>> list(builder())
+    [(True, '<1>'), (True, '<2>'), (False, '<3>')]
 
-       builder = OptionalPartList(["<1>", (None, "<2>"), (False, "<3>")])
-       print(list(builder()))
-
-    .. testoutput::
-
-       [(True, '<1>'), (True, '<2>'), (False, '<3>')]
+    >>> failing_builder = OptionalPartList(
+    ...   ["<1>", (None, "<2>"), (False, "<3>", "fail")]
+    ... )
+    >>>
+    >>> list(failing_builder())
+    Traceback (most recent call last):
+      ...
+    ValueError: too many values to unpack (expected 2)
 
     """
     def __add__(self, other):
@@ -280,24 +316,23 @@ class OptionalPartList(Separated, Parsable, list):
         :return: Concatenated object
         :rtype: type(self)
 
-        .. testcode::
+        >>> a = OptionalPartList(['foo'])
+        >>> b = OptionalPartList(['bar'])
+        >>>
+        >>> a + b
+        ['foo', 'bar']
+        >>>
+        >>> type(a + b)
+        <class 'django_crucrudile.urlutils.OptionalPartList'>
+        >>>
+        >>> (a + b) is a
+        False
+        >>>
+        >>> (a + b) is b
+        False
 
-           a = OptionalPartList(['foo'])
-           b = OptionalPartList(['bar'])
-
-           c = a + b
-
-           assert c is not a
-           assert c is not b
-
-           print(type(c).__name__)
-           print(c)
-
-        .. testoutput::
-
-           OptionalPartList
-           ['foo', 'bar']
-
+        >>> (a + None) is a
+        True
         """
         if not other:
             return self
@@ -329,7 +364,6 @@ class OptionalPartList(Separated, Parsable, list):
             required_default=required_default
         )
 
-
     def get_parsers(self):
         """Complement :class:`OptionalPartList` parsers (from
         :func:`OptionalPartList.get_parsers`) with
@@ -340,7 +374,10 @@ class OptionalPartList(Separated, Parsable, list):
         """
         return super().get_parsers() + [
             self.transform_to_tuple,
-            partial(self.apply_required_default, default=self.required_default),
+            partial(
+                self.apply_required_default,
+                default=self.required_default
+            ),
             list
         ]
 
@@ -354,18 +391,12 @@ class OptionalPartList(Separated, Parsable, list):
         :returns: List of tuples
         :rtype: iterable of tuple
 
-        .. testcode::
 
-           output = list(OptionalPartList.transform_to_tuple([
-               '<1>',
-               (None, '<2>')
-           ]))
-
-           print(output)
-
-        .. testoutput::
-
-           [(None, '<1>'), (None, '<2>')]
+        >>> list(OptionalPartList.transform_to_tuple([
+        ...   '<1>',
+        ...   (None, '<2>')
+        ... ]))
+        [(None, '<1>'), (None, '<2>')]
 
         """
         for item in items:
@@ -386,21 +417,16 @@ class OptionalPartList(Separated, Parsable, list):
         :returns: List of tuples, with required default value applied
         :rtype: iterable of tuple
 
-        .. testcode::
-
-           output = list(
-               OptionalPartList.apply_required_default([
-                   ('<provided>', '<1>'),
-                   (None, '<2>')
-               ],
-               default='<default>')
-           )
-
-           print(output)
-
-        .. testoutput::
-
-           [('<provided>', '<1>'), ('<default>', '<2>')]
+        >>> list(
+        ...   OptionalPartList.apply_required_default(
+        ...     [
+        ...       ('<provided>', '<1>'),
+        ...       (None, '<2>')
+        ...     ],
+        ...     default='<default>'
+        ...   )
+        ... )
+        [('<provided>', '<1>'), ('<default>', '<2>')]
 
         """
         for required, args in items:
@@ -425,18 +451,42 @@ class URLBuilder(OptionalPartList):
 
     .. inheritance-diagram:: URLBuilder
 
-    .. testcode::
+    >>> builder = URLBuilder(
+    ...   ["<1>", (False, "<2>"), (True, "<3>")]
+    ... )
+    >>>
+    >>> builder()
+    (True, '<1>/?<2>/<3>')
 
-       builder = URLBuilder(["<1>", "<2>", (False, "<3>")])
-       print(builder())
+    >>> builder = URLBuilder(
+    ...   ["<1>", "<2>", (False, "<3>")]
+    ... )
+    >>>
+    >>> builder()
+    (True, '<1>/<2>/?<3>')
 
-       builder = URLBuilder([(False, "<1>"), "<2>", (False, "<3>")])
-       print(builder())
+    >>> builder = URLBuilder(
+    ...   [(False, "<1>"), "<2>", (False, "<3>")]
+    ... )
+    >>>
+    >>> builder()
+    (False, '<1>/<2>/?<3>')
 
-    .. testoutput::
+    >>> builder = URLBuilder(
+    ...   [(False, "<1>"), None, (True, None)]
+    ... )
+    >>>
+    >>> builder()
+    (False, '<1>')
 
-       (True, '<1>/<2>/?<3>')
-       (False, '<1>/<2>/?<3>')
+    >>> builder = URLBuilder(
+    ...   [(False, "<1>"), 1]
+    ... )
+    >>>
+    >>> builder()
+    Traceback (most recent call last):
+      ...
+    TypeError: sequence item 2: expected str instance, int found
 
     """
     def get_parsers(self):
@@ -471,23 +521,22 @@ class URLBuilder(OptionalPartList):
         :returns: List of URL part specs (with empty items cleared out)
         :rtype: list of tuple
 
-        .. testcode::
+        >>> list(URLBuilder.filter_empty_items([
+        ...   (None, ''),
+        ...   (None, '<not empty>'),
+        ...   (None, []),
+        ...   (None, None),
+        ...   (None, '<not empty 2>'),
+        ... ]))
+        [(None, '<not empty>'), (None, '<not empty 2>')]
 
-           output = URLBuilder.filter_empty_items(
-              [(None, ''),
-               (None, '<not empty>'),
-               (None, []),
-               (None, None),
-               (None, '<not empty 2>')],
-           )
-
-           output = list(output)
-
-           print(output)
-
-        .. testoutput::
-
-           [(None, '<not empty>'), (None, '<not empty 2>')]
+        >>> list(URLBuilder.filter_empty_items([
+        ...   (None, '<not empty>'),
+        ...   None
+        ... ]))
+        Traceback (most recent call last):
+          ...
+        TypeError: 'NoneType' object is not iterable
 
         """
         for required, item in items:
@@ -496,8 +545,8 @@ class URLBuilder(OptionalPartList):
 
     @staticmethod
     def add_first_item_required_flag(items):
-        """
-        Return a boolean indicating whether the first item is required, and the list of items.
+        """Return a boolean indicating whether the first item is required,
+        and the list of items.
 
         :argument items: List of tuples
         :type items: iterable
@@ -505,19 +554,27 @@ class URLBuilder(OptionalPartList):
         :returns: Tuple with "first item required" flag, and item list
         :rtype: tuple : (boolean, list)
 
-        .. testcode::
+        >>> output = URLBuilder.add_first_item_required_flag(
+        ...   [(False, '<opt>'), (True, '<req>')]
+        ... )
+        >>>
+        >>> output[0], list(output[1])
+        (False, [(False, '<opt>'), (True, '<req>')])
 
-           output = URLBuilder.add_first_item_required_flag(
-              [(False, '<opt>'), (True, '<req>')]
-           )
+        >>> output = URLBuilder.add_first_item_required_flag(
+        ...   []
+        ... )
+        >>>
+        >>> output[0], list(output[1])
+        (False, [])
 
-           output = output[0], list(output[1])
+        >>> output = URLBuilder.add_first_item_required_flag(
+        ...   [(None, )*3]
+        ... )
+        Traceback (most recent call last):
+          ...
+        ValueError: too many values to unpack (expected 2)
 
-           print(output)
-
-        .. testoutput::
-
-           (False, [(False, '<opt>'), (True, '<req>')])
         """
         items = iter(items)
         try:
@@ -549,24 +606,29 @@ class URLBuilder(OptionalPartList):
            automatically. See the documentation of :func:`pass_tuple`
            for more information.
 
-        .. testcode::
+        >>> get_separator = lambda x: '/'
 
-           get_separator = lambda x: '/'
+        >>> output = URLBuilder.flatten(
+        ...   (None, [(True, '<1>'), (True, '<2>')]),
+        ...   get_separator
+        ... )
+        >>>
+        >>> output[0], list(output[1])
+        (None, ['<1>', '/', '<2>'])
 
-           output = URLBuilder.flatten(
-              (
-                  None,
-                  [(True, '<1>'), (True, '<2>')]
-              ), get_separator
-           )
+        >>> from mock import Mock
+        >>>
+        >>> get_separator = Mock()
+        >>> get_separator.side_effect = ['/']
 
-           output = output[0], list(output[1])
-
-           print(output)
-
-        .. testoutput::
-
-           (None, ['<1>', '/', '<2>'])
+        >>> output = URLBuilder.flatten(
+        ...   (None, [(True, '<1>'), (True, '<2>')]),
+        ...   get_separator
+        ... )
+        >>>
+        >>> output[0], list(output[1])
+        (None, ['<1>', '/', '<2>'])
+        >>> get_separator.assert_called_once_with(True)
 
         """
         items = iter(items)
@@ -597,17 +659,19 @@ class URLBuilder(OptionalPartList):
            automatically. See the documentation of :func:`pass_tuple`
            for more information.
 
-        .. testcode::
+        >>> URLBuilder.join((None, ['a', 'b']))
+        (None, 'ab')
 
-           print(
-               URLBuilder.join(
-                   (None, ['a', 'b'])
-               )
-           )
+        >>> URLBuilder.join((None, [['a'], 'b']))
+        Traceback (most recent call last):
+          ...
+        TypeError: sequence item 0: expected str instance, list found
 
-        .. testoutput::
+        >>> URLBuilder.join((None, ['a', None]))
+        Traceback (most recent call last):
+          ...
+        TypeError: sequence item 1: expected str instance, NoneType found
 
-           (None, 'ab')
 
         """
         return ''.join(items)

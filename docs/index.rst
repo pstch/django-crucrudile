@@ -6,17 +6,11 @@ django-crucrudile
 .. toctree::
    installation
    quickstart
-   entities/entity_store
-   entities/entities
-   routers/routers
-   routers/app_router
-   routes/routes
-   urlutils
+   reference
    tests
-   examples/bookstore
 
-* :ref:`modindex`
-* :ref:`genindex`
+   * :ref:`modindex`
+   * :ref:`genindex`
 
 .. automodule:: django_crucrudile
    :noindex:
@@ -31,22 +25,34 @@ Class structure graph
      bgcolor="transparent"
 
      "Abstract" [color=black, fontcolor=white, style=filled]
+     "Concrete"
 
      "Entity" [color=black, fontcolor=white, style=filled]
-     "Route" [color=black, fontcolor=white, style=filled]
-     "ModelRoute" [color=black, fontcolor=white, style=filled]
+     "BaseRoute" [color=black, fontcolor=white, style=filled]
 
-     "Entity" -> "Route"
+     "Entity" -> "BaseRoute"
      "Entity" -> "Router"
      "EntityStore" -> "Router"
 
      "Router" -> "BaseModelRouter"
      "BaseModelRouter" -> "ModelRouter"
 
-     "Route" -> "ModelRoute"
-     "Route" -> "ViewRoute"
+     "ArgumentsMixin"[color=black, fontcolor=white, style=filled]
+     "ModelMixin"[color=black, fontcolor=white, style=filled]
+     "CallbackMixin"
+     "ViewMixin"
 
-     "ModelRoute" -> "ModelViewRoute"
-     "ViewRoute" -> "ModelViewRoute"
+     "BaseRoute" -> "CallbackRoute"
+     "ArgumentsMixin" -> "CallbackRoute"
+     "CallbackMixin" -> "CallbackRoute"
+
+     "BaseRoute" -> "ViewRoute"
+     "ArgumentsMixin" -> "ViewRoute"
+     "ViewMixin" -> "ViewRoute"
+
+     "BaseRoute" -> "ModelViewRoute"
+     "ArgumentsMixin" -> "ModelViewRoute"
+     "ViewMixin" -> "ModelViewRoute"
+     "ModelMixin" -> "ModelViewRoute"
 
    }

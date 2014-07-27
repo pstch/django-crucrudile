@@ -1,5 +1,5 @@
-Entity (``Entity``)
-===================
+Entity abstract class
+=====================
 
 .. contents::
 
@@ -7,9 +7,6 @@ Entity (``Entity``)
 
 .. automodule:: django_crucrudile.entities
    :noindex:
-
-Entity abstract class
----------------------
 
 .. autoclass:: Entity
     :members:
