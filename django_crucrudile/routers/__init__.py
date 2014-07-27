@@ -487,7 +487,7 @@ super implementation)
         ... # doctest: +NORMALIZE_WHITESPACE
         Traceback (most recent call last):
           ...
-        ValueError: No redirect attribute set and
+        ValueError: No redirect attribute set (and
         ``add_redirect_silent`` is ``False``).
         """
         # initialize default arguments

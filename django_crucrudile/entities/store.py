@@ -275,7 +275,7 @@ class EntityStore(metaclass=EntityStoreMetaclass):
           ...
         LookupError: Could not find matching key in register
         mapping. Used test 'issubclass', register mapping bases are
-        '', tested against 'SubClass'
+        'OtherClass', tested against 'SubClass'
 
         With subclass and no mappings (not silent) :
 
