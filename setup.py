@@ -46,6 +46,7 @@ setup(
         'coverage',
     ],
     classifiers=CLASSIFIERS,
-
+    download_url=('https://github.com/pstch/django-crucrudile/tarball/v' +
+                  django_crucrudile.__version__),
     test_suite='nose.collector',
 )
