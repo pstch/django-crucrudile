@@ -3,7 +3,7 @@ django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile
 
 Current release is `0.9.4`. `django-crucrudile` is available in PyPI : https://pypi.python.org/pypi/django-crucrudile/
 
-**NOTE :** Development is done on the `develop` branch, and when needed, merged into the `master` branch, which is more stable. **Code on the `develop` branch may not work at all !** (Which doesn't mean that the code on the `master` branch will work..)
+**NOTE :** Development is done on the `develop` branch, and when releasing a new version, merged into the `master` branch
 
 ## Documentation
 
