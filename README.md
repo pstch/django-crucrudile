@@ -1,21 +1,21 @@
 django-crucrudile [![Build Status](https://travis-ci.org/pstch/django-crucrudile.svg?branch=crucrudile)](https://travis-ci.org/pstch/django-crucrudile) [![Coverage Status](https://coveralls.io/repos/pstch/django-crucrudile/badge.png?branch=crucrudile)](https://coveralls.io/r/pstch/django-crucrudile?branch=crucrudile)
 =================
 
-Current release is `0.9.3`.
+Current release is `0.9.4`. `django-crucrudile` is available in PyPI : https://pypi.python.org/pypi/django-crucrudile/
 
 **NOTE :** Development is done on the `develop` branch, and when needed, merged into the `master` branch, which is more stable. **Code on the `develop` branch may not work at all !** (Which doesn't mean that the code on the `master` branch will work..)
 
 ## Documentation
 
-The documentation, available at [django-crucrudile.readthedocs.org](http://django-crucrudile.readthedocs.org/en/latest/), is automatically created from the docstrings present in the source code, using Sphinx (and some extensions).
+The documentation, available at https://django-crucrudile.readthedocs.org/en/latest/, is automatically created from the docstrings present in the source code, using Sphinx (and some extensions).
 
 ### Examples
 
-http://django-crucrudile.readthedocs.org/en/latest/quickstart.html#examples
+https://django-crucrudile.readthedocs.org/en/latest/quickstart.html#examples
 
 ### Tests
 
-http://django-crucrudile.readthedocs.org/en/latest/tests.html
+https://django-crucrudile.readthedocs.org/en/latest/tests.html
 
 ## Contributing
 
