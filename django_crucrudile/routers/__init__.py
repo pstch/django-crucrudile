@@ -333,10 +333,10 @@ super implementation)
         # initialize default arguments
         if silent is None:
             silent = self.get_redirect_silent
-        if namespaces is None:
-            namespaces = []
         if redirect_max_depth is None:
             redirect_max_depth = self.redirect_max_depth
+        if namespaces is None:
+            namespaces = []
         else:
             # need to copy because _follow_redirect appends namespaces
             # found when following redirect attributes
