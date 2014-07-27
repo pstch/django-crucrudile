@@ -1,1 +1,6 @@
+mock
+nose
+sphinx
 coverage
+colorama
+django_extensions

@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>
+      {% block head-title %}
+        Example app
+      {% endblock %}
+    </title>
+    <style type="text/css">
+     body {
+       padding: 10px;
+     }
+    </style>
+  </head>
+  <body>
+    <h1>
+      {% block body-title %}
+        Example app
+      {% endblock %}
+    </h1>
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
