@@ -12,6 +12,5 @@ install:
 script:
   - nosetests
 after_success:
-  - coverage report -m
   - pep8 django_crucrudile
   - coveralls
