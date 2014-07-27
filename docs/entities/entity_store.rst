@@ -1,5 +1,5 @@
-Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators) [TODO]
-==============================================================================
+Entity store and decorators
+===========================
 
 .. contents::
 
@@ -7,26 +7,13 @@ Entity store (``EntityStoreMetaclass``, ``EntityStore`` and decorators) [TODO]
 
 .. automodule:: django_crucrudile.entities.store
    :noindex:
+   :no-members:
 
 Decorators
 ----------
 
 .. autofunction:: provides
 
-Entity classes decorators
-+++++++++++++++++++++++++
-
-.. autofunction:: register_instances
-
-.. autofunction:: register_class
-
-
-Register mappings decorators
-++++++++++++++++++++++++++++
-
-.. autofunction:: add_to_register_map
-
-.. autofunction:: add_to_register_class_map
 
 Entity store
 ------------

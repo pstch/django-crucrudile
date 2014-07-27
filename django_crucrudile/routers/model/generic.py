@@ -36,4 +36,29 @@ generic views for each registered model.
 
     .. inheritance-diagram:: GenericModelRouter
 
+    >>> import tests.unit
+    >>> from django.db.models import Model
+    >>> from django_crucrudile.routers import Router, ModelRouter
+    >>>
+    >>> # needed to subclass Django Model
+    >>> __name__ = "tests.doctests"
+    >>>
+    >>> class TestModel(Model):
+    ...   pass
+
+    >>> router = Router(generic=True)
+    >>>
+    >>> router.register(TestModel)
+
+    >>> print(router.get_str_tree())
+    ... # doctest: +NORMALIZE_WHITESPACE
+     - Router  @ ^
+       - GenericModelRouter testmodel @ ^testmodel/
+         - testmodel-list-redirect @ ^$ RedirectView
+         - testmodel-delete @ ^delete$ DeleteView
+         - testmodel-update @ ^update$ UpdateView
+         - testmodel-create @ ^create$ CreateView
+         - testmodel-detail @ ^detail$ DetailView
+         - testmodel-list @ ^list$ ListView
+
     """

@@ -36,8 +36,6 @@ from django_crucrudile.routes import ViewRoute
 from django_crucrudile.entities import Entity
 from django_crucrudile.entities.store import EntityStore
 
-from .mixins.model import ModelMixin
-
 __all__ = [
     "Router",
     "ModelRouter",
@@ -57,8 +55,6 @@ class Router(EntityStore, Entity):
     :func:`get_redirect_pattern`).
 
     .. inheritance-diagram:: Router
-
-    ..
 
     """
     namespace = None
@@ -150,8 +146,10 @@ class Router(EntityStore, Entity):
         :argument url_part: Optional. See :attr:`url_part`
         :argument redirect: Optional. See :attr:`redirect`
         :argument add_redirect: Optional. See :attr:`add_redirect`
-        :argument add_redirect_silent: Optional. See :attr:`add_redirect_silent`
-        :argument get_redirect_silent: Optional. See :attr:`get_redirect_silent`
+        :argument add_redirect_silent: Optional. See
+                                       :attr:`add_redirect_silent`
+        :argument get_redirect_silent: Optional. See
+                                       :attr:`get_redirect_silent`
         :argument generic: Optional. See :attr:`generic`
 
         """
@@ -175,9 +173,13 @@ class Router(EntityStore, Entity):
         super().__init__(**kwargs)
 
     def get_register_map(self):
-        """Add two base register mappings (to the mappings returned by the super implementation) :
+        """Add two base register mappings (to the mappings returned by the
+super implementation)
 
-        - :class:`django.db.models.Model` subclasses are passed to a :class:`model.ModelRouter` (or :class:`model.generic.GenericModelRouter`) if :attr:`generic` is set to ``True``)
+        - :class:`django.db.models.Model` subclasses are passed to a
+          :class:`model.ModelRouter` (or
+          :class:`model.generic.GenericModelRouter`) if
+          :attr:`generic` is set to ``True``)
         - :class:`django.views.generic.View` subclasses are passed to a View
 
         :returns: Register mappings
@@ -193,7 +195,7 @@ class Router(EntityStore, Entity):
 
     def register(self, entity, index=False, map_kwargs=None):
         """Register routed entity, using
-        :func:`django_crucrudile.entities.store.entityStore.register`
+        :func:`django_crucrudile.entities.store.EntityStore.register`
 
         Set as index when ``index`` or ``entity.index`` is True.
 
@@ -205,6 +207,30 @@ class Router(EntityStore, Entity):
                               mapping value if entity gets
                               transformed.
         :type map_kwargs: dict
+
+        >>> from mock import Mock
+        >>> router = Router()
+
+        >>> entity = Mock()
+        >>> entity.index = False
+        >>>
+        >>> router.register(entity)
+        >>> router.redirect is None
+        True
+
+        >>> entity = Mock()
+        >>> entity.index = False
+        >>>
+        >>> router.register(entity, index=True)
+        >>> router.redirect is entity
+        True
+
+        >>> entity = Mock()
+        >>> entity.index = True
+        >>>
+        >>> router.register(entity)
+        >>> router.redirect is entity
+        True
 
         """
         entity = super().register(
@@ -218,7 +244,8 @@ class Router(EntityStore, Entity):
                              redirect_max_depth=None):
         """Compile the URL name to this router's redirect path (found by
         following :attr:`Router.redirect`), and that return a lazy
-        ``RedirectView`` that redirects to this URL name
+        :class:`django.views.generic.RedirectView` that redirects to
+        this URL name
 
         :argument namespaces: Optional. The list of namespaces will be
                               used to get the current namespaces when
@@ -240,6 +267,47 @@ class Router(EntityStore, Entity):
                            ``redirect`` attributes, and silent
                            mode is not enabled.
 
+        >>> from mock import Mock
+        >>> entity = Mock()
+        >>> entity.redirect.redirect = 'redirect_target'
+        >>>
+        >>> router = Router()
+        >>> router.register(entity)
+        >>>
+        >>> type(router.get_redirect_pattern()).__name__
+        'RegexURLPattern'
+        >>> router.get_redirect_pattern().callback.__name__
+        'RedirectView'
+
+        >>> entity = Mock()
+        >>> entity.redirect.redirect = entity
+        >>>
+        >>> router = Router()
+        >>> router.register(entity)
+        >>>
+        >>> router.get_redirect_pattern()
+        ... # doctest: +NORMALIZE_WHITESPACE
+        Traceback (most recent call last):
+          ...
+        OverflowError: Depth-first search reached its maximum (100)
+        depth, without returning a leaf item (string).Maybe the
+        redirect graph has a cycle ?
+
+        >>> entity = Mock()
+        >>> entity.__str__ = lambda x: 'mock redirect'
+        >>> entity.redirect = None
+        >>>
+        >>> router = Router()
+        >>> router.register(entity)
+        >>>
+        >>> router.get_redirect_pattern()
+        ... # doctest: +NORMALIZE_WHITESPACE
+        Traceback (most recent call last):
+          ...
+        ValueError: Failed following redirect attribute (mock
+        redirect) (last redirect found : mock redirect, redirect
+        value: None)) in Router
+
         """
         # initialize default arguments
         if silent is None:
@@ -259,7 +327,7 @@ class Router(EntityStore, Entity):
 
         redirect = self.redirect
         for i in range(redirect_max_depth):
-        # loop through redirect attributes
+            # loop through redirect attributes
             if isinstance(redirect, str):
                 break
             elif redirect is None:
@@ -336,13 +404,13 @@ class Router(EntityStore, Entity):
             # This will happen if self.redirect is None or if
             # following redirect attributes returned None somewhere
             raise ValueError(
-                "Failed following redirect attribute {} "
-                "(last redirect found : {} (redirect value: {})) in {}"
+                "Failed following redirect attribute ({}) "
+                "(last redirect found : {}, redirect value: {})) in {}"
                 "".format(
                     self.redirect,
                     _last_redirect_found,
                     getattr(_last_redirect_found, 'redirect', 'not defined'),
-                    self
+                    self.__class__.__name__
                 )
             )
 
@@ -361,6 +429,37 @@ class Router(EntityStore, Entity):
         :argument add_redirect_silent: Override
                                        :attr:`Router.add_redirect_silent`
         :type add_redirect: bool
+
+        >>> from mock import Mock
+        >>> router = Router()
+        >>> pattern = Mock()
+
+        >>> entity_1 = Mock()
+        >>> entity_1.index = False
+        >>> entity_1.patterns = lambda *args: ['MockPattern1']
+        >>>
+        >>> router.register(entity_1)
+        >>>
+        >>> list(router.patterns())
+        [<RegexURLResolver <str list> (None:None) ^>]
+        >>> next(router.patterns()).url_patterns
+        ['MockPattern1']
+
+        >>> entity_2 = Mock()
+        >>> entity_2.index = True
+        >>> entity_2.redirect = 'redirect_target'
+        >>> entity_2.patterns = lambda *args: ['MockPattern2']
+        >>>
+        >>> router.register(entity_2)
+        >>>
+        >>> list(router.patterns())
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [<RegexURLResolver <RegexURLPattern list> (None:None) ^>]
+        >>> next(router.patterns()).url_patterns
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [<RegexURLPattern redirect_target-redirect ^$>,
+         'MockPattern1', 'MockPattern2']
+
         """
         # initialize default arguments
 
@@ -411,7 +510,7 @@ class Router(EntityStore, Entity):
                     if add_redirect_silent is False:
                         raise ValueError(
                             "No redirect attribute set on {} "
-                            "(and :attr:`add_redirect_silent` is True)."
+                            "(and :attr:`add_redirect_silent` is False)."
                             "".format(self)
                         )
 

@@ -3,6 +3,10 @@ Running the tests
 
 .. contents::
 
+This package uses unit tests and doc tests.
+
+.. warning:: Documentation tests use an identation size of 2
+
 .. note:: If you are using a virtual environment, it should be activated before running the following code blocks.
 
 - `Online tests <https://travis-ci.org/pstch/django-crucrudile/builds>`_ (Travis-CI)

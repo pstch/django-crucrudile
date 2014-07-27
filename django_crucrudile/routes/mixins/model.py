@@ -3,6 +3,7 @@ to bind a model to a route, and use it when computing route metadata.
 
 """
 
+
 class ModelMixin:
     """Route mixin that requires a model to be set either on the class
     (:attr:`model` attribute), or to be passed in :func:`__init__`,
@@ -13,19 +14,6 @@ class ModelMixin:
        This mixin does not make
        :class:`django_crucrudile.routes.base.BaseRoute` a concrete
        class !
-
-    .. warning::
-
-       Because this is an abstract class, the **documentation tests**
-       use an implementation (``ModelRoute``) of
-       :class:`django_crucrudile.routes.base.BaseRoute` and
-       :class:`ModelMixin`, with a dummy :func:`get_callback`
-       function.
-
-    .. testsetup::
-
-       class ModelRoute(ModelMixin, BaseRoute):
-           def get_callback(self): pass
 
     .. inheritance-diagram:: ModelMixin
 
@@ -64,7 +52,6 @@ class ModelMixin:
             )
         super().__init__(*args, **kwargs)
 
-
     @property
     def model_url_name(self):
         """Return the model name to be used when building the URL name
@@ -72,20 +59,22 @@ class ModelMixin:
         :returns: URL name from model name, using Django internals
         :rtype: str
 
-        .. testcode::
-
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = ModelRoute(model=model, name='routename')
-           print(route.model_url_name)
-
-        .. testoutput::
-
-           testmodel
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>> from mock import Mock
+        >>>
+        >>> class ModelRoute(ModelMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = ModelRoute(model=model, name='routename')
+        >>>
+        >>> route.model_url_name
+        'testmodel'
 
         """
         return self.model._meta.model_name
-
 
     @property
     def model_url_part(self):
@@ -94,90 +83,68 @@ class ModelMixin:
         :returns: URL part from the URL name (:func:`model_url_name`)
         :rtype: str
 
-        .. testcode::
-
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = ModelRoute(model=model, name='routename')
-           print(route.model_url_part)
-
-        .. testoutput::
-
-           testmodel
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>> from mock import Mock
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = ModelMixin(model=model)
+        >>>
+        >>> route.model_url_part
+        'testmodel'
 
         """
         return self.model._meta.model_name
 
-
     def get_url_specs(self):
         """Return URL specs where the model URL name is appended to the prefix
-        part list
+        part list if needed
 
-        .. testcode::
+        :returns: URL specifications
+        :rtype: iterable of 3-tuple
 
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = ModelRoute(model=model, name='routename')
-           print(list(route.get_url_specs()))
-
-        .. testoutput::
-           :options: +NORMALIZE_WHITESPACE
-
-           [([], ['routename'], [])]
-
-        With arguments :
-
-        .. testsetup::
-
-           class ArgsModelRoute(ArgumentsMixin, ModelRoute):
-               pass
-
-        .. testcode::
-
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = ArgsModelRoute(
-               model=model, name='routename',
-               arguments_spec=["<pk>", "<slug>"]
-           )
-           print(list(route.get_url_specs()))
-
-        .. testoutput::
-           :options: +NORMALIZE_WHITESPACE
-
-           [([],
-             ['routename'],
-             [(True, '<pk>/<slug>')])]
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>> from mock import Mock
+        >>>
+        >>> class ModelRoute(ModelMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = ModelRoute(model=model, name='routename')
+        >>>
+        >>> list(route.get_url_specs())
+        [([], ['routename'], [])]
 
         With :attr:`prefix_url_part` set to ``True`` :
 
-        .. testsetup::
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>> from mock import Mock
+        >>>
+        >>> class PrefixModelRoute(ModelMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        ...   prefix_url_part = True
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = PrefixModelRoute(
+        ...     model=model, name='routename',
+        ... )
+        >>>
+        >>> list(route.get_url_specs())
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [(['testmodel'],
+          ['routename'],
+          [])]
 
-           class PrefixModelRoute(ModelRoute):
-               prefix_url_part = True
-
-        .. testcode::
-
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = PrefixModelRoute(
-               model=model, name='routename',
-           )
-           print(list(route.get_url_specs()))
-
-        .. testoutput::
-           :options: +NORMALIZE_WHITESPACE
-
-           [(['testmodel'],
-             ['routename'],
-             [])]
         """
         for prefix, name, suffix in super().get_url_specs():
             if self.prefix_url_part:
                 yield prefix + [self.model_url_part], name, suffix
             else:
                 yield prefix, name, suffix
-
 
     def get_url_name(self):
         """Return the URL name built :func:`model_url_name` and
@@ -186,18 +153,21 @@ class ModelMixin:
         :returns: compiled URL name
         :rtype: str
 
-        .. testcode::
-
-           model = Mock()
-           model._meta.model_name = 'testmodel'
-           route = ModelRoute(
-               model=model, name='routename',
-           )
-           print(route.get_url_name())
-
-        .. testoutput::
-
-           testmodel-routename
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>> from mock import Mock
+        >>>
+        >>> class ModelRoute(ModelMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = ModelRoute(
+        ...     model=model, name='routename',
+        ... )
+        >>>
+        >>> route.get_url_name()
+        'testmodel-routename'
 
         """
         return "{}-{}".format(self.model_url_name, self.name)

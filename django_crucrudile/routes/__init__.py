@@ -4,18 +4,18 @@ use route mixins to provide functionality :
 
 - :class:`CallbackRoute` provides a Route that needs a callback to be
   passed as argument or defined as
-  :attr:`django_crucrudile.routes.mixins.CallbackMixin.callback`
+  :attr:`mixins.CallbackMixin.callback`
   attribute, and that uses this callback in the URL patterns it
   returns.
 - :class:`ViewRoute` provides a Route that needs a view class to
   be passed as argument or defined as
-  :attr:`django_crucrudile.routes.mixins.ViewMixin.view_class`
+  :attr:`mixins.ViewMixin.view_class`
   attribute, and that uses a callback obtained from this view class in the URL
   patterns it returns.
 - :class:`ModelViewRoute` provides a Route that needs a view class and a
   model to be passed as arguments or defined as
-  :attr:`django_crucrudile.routes.mixins.ViewMixin.view_class` and
-  :attr:`django_crucrudile.routes.mixins.ModelMixin.model` attributes.
+  :attr:`mixins.ViewMixin.view_class` and
+  :attr:`mixins.ModelMixin.model` attributes.
   attribute, that uses a callback obtained from this view class (using
   the model), and that uses this callback in the URL pattern it
   generates. Also uses metadata from the model class to generate some
@@ -29,10 +29,10 @@ from .base import BaseRoute
 
 
 class CallbackRoute(ArgumentsMixin, CallbackMixin, BaseRoute):
-    """Implement :class:`django_crucrudile.routes.base.BaseRoute` using a
+    """Implement :class:`base.BaseRoute` using a
     callback function.
 
-    Also use :class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`
+    Also use :class:`mixins.arguments.ArgumentsMixin`
     to allow URL arguments to be specified.
 
 
@@ -42,19 +42,19 @@ class CallbackRoute(ArgumentsMixin, CallbackMixin, BaseRoute):
     def __init__(self, *args, **kwargs):
         """Initialize CallbackRoute, for a description of arguments see :
 
-        - :func:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin.__init__`
-        - :func:`django_crucrudile.routes.mixins.callback.CallbackMixin.__init__`
-        - :func:`django_crucrudile.routes.base.BaseRoute.__init__`
+        - :func:`mixins.arguments.ArgumentsMixin.__init__`
+        - :func:`mixins.callback.CallbackMixin.__init__`
+        - :func:`base.BaseRoute.__init__`
 
         """
         super().__init__(*args, **kwargs)
 
 
 class ViewRoute(ArgumentsMixin, ViewMixin, BaseRoute):
-    """Implement :class:`django_crucrudile.routes.base.BaseRoute` using a
+    """Implement :class:`base.BaseRoute` using a
     view class function.
 
-    Also use :class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`
+    Also use :class:`mixins.arguments.ArgumentsMixin`
     to allow URL arguments to be specified.
 
     .. inheritance-diagram:: ViewRoute
@@ -63,20 +63,20 @@ class ViewRoute(ArgumentsMixin, ViewMixin, BaseRoute):
     def __init__(self, *args, **kwargs):
         """Initialize ViewRoute, for a description of arguments see :
 
-        - :func:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin.__init__`
-        - :func:`django_crucrudile.routes.mixins.view.ViewMixin.__init__`
-        - :func:`django_crucrudile.routes.base.BaseRoute.__init__`
+        - :func:`mixins.arguments.ArgumentsMixin.__init__`
+        - :func:`mixins.view.ViewMixin.__init__`
+        - :func:`base.BaseRoute.__init__`
 
         """
         super().__init__(*args, **kwargs)
 
 
 class ModelViewRoute(ArgumentsMixin, ModelMixin, ViewMixin, BaseRoute):
-    """Combine :class:`django_crucrudile.routes.mixins.view.ViewMixin` and
+    """Combine :class:`mixins.view.ViewMixin` and
     :class:`django_crucrudile.routes.mixins.model.ModelMixin` to make a
     route that can easily be used with a model and a generic view.
 
-    Also use :class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`
+    Also use :class:`mixins.arguments.ArgumentsMixin`
     to allow URL arguments to be specified.
 
     .. inheritance-diagram:: ModelViewRoute
@@ -85,32 +85,27 @@ class ModelViewRoute(ArgumentsMixin, ModelMixin, ViewMixin, BaseRoute):
     def __init__(self, *args, **kwargs):
         """Initialize ModelViewRoute, for a description of arguments see :
 
-        - :func:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin.__init__`
-        - :func:`django_crucrudile.routes.mixins.model.ModelMixin.__init__`
-        - :func:`django_crucrudile.routes.mixins.view.ViewMixin.__init__`
-        - :func:`django_crucrudile.routes.base.BaseRoute.__init__`
+        - :func:`mixins.arguments.ArgumentsMixin.__init__`
+        - :func:`mixins.model.ModelMixin.__init__`
+        - :func:`mixins.view.ViewMixin.__init__`
+        - :func:`base.BaseRoute.__init__`
 
         """
         super().__init__(*args, **kwargs)
 
     def get_view_kwargs(self):
-        """Make the view use :attr:`ModelRoute.model`.
+        """Make the view use :attr:`mixins.model.ModelMixin.model`.
 
-        This is the effective combination of :class:`ModelRoute` and
+        This is the effective combination of :class:`mixins.model.ModelMixin` and
         :class:`ViewRoute`.
 
-        .. testcode::
-
-           model=Mock()
-           route = ModelViewRoute(model=model, view_class=Mock(),name='name')
-
-           view_kwargs = route.get_view_kwargs()
-
-           print(view_kwargs['model'] is model)
-
-        .. testoutput::
-
-           True
+        >>> from mock import Mock
+        >>>
+        >>> model = Mock()
+        >>> route = ModelViewRoute(model=model, view_class=Mock(),name='name')
+        >>>
+        >>> route.get_view_kwargs()['model'] is model
+        True
 
         """
         return {'model': self.model}

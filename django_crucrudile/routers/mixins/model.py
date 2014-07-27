@@ -22,22 +22,6 @@ class ModelMixin:
                       :func:`__init__`.
     :type model: model
     """
-    def get_register_map_kwargs(self):
-        """Give :attr:`model` as kwarg when applying register map. """
-        kwargs = super().get_register_map_kwargs()
-        kwargs['model'] = self.model
-        return kwargs
-
-    def get_base_store_kwargs(self):
-        """Add :attr:`model` to upstream auto register kwargs, so that the
-        route classes in the base store will get the model as a kwarg when
-        being instantiated.
-
-        """
-        kwargs = super().get_base_store_kwargs()
-        kwargs['model'] = self.model
-        return kwargs
-
     def __init__(self, model=None, url_part=None, **kwargs):
         """Read model (from args or class-level value (:attr:`model`), fail if
         none found.
@@ -68,13 +52,78 @@ class ModelMixin:
 
     @property
     def model_url_part(self):
-        """Return the model name to be used when building the URL part"""
+        """Return the model name to be used when building the URL part
+
+        :returns: URL part from the Django model name
+                  (``model._meta.model_name``)
+        :rtype: str
+
+        >>> from mock import Mock
+        >>>
+        >>> model = Mock()
+        >>> model._meta.model_name = 'testmodel'
+        >>> route = ModelMixin(model=model)
+        >>>
+        >>> route.model_url_part
+        'testmodel'
+
+        """
         return self.model._meta.model_name
 
+    def get_register_map_kwargs(self):
+        """Add :attr:`model` as kwarg when applying register map
+
+        :returns: Keyword arguments to pass to mapping value, when
+                  applying register map (from
+                  :func:`get_register_map`) in :func:`register`
+        :rtype: dict
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`django_crucrudile.routers.model.ModelRouter`
+
+        """
+        kwargs = super().get_register_map_kwargs()
+        kwargs['model'] = self.model
+        return kwargs
+
+    def get_base_store_kwargs(self):
+        """Add :attr:`model` so that the route classes in the base store will
+        get the model as a kwarg when being instantiated
+
+        :returns: Keyword arguments to pass to mapping value, when
+                  applying class register map (from
+                  :func:`get_register_class_map`) in
+                  :func:`register_class`
+        :rtype: dict
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`django_crucrudile.routers.model.ModelRouter`
+
+        """
+        kwargs = super().get_base_store_kwargs()
+        kwargs['model'] = self.model
+        return kwargs
+
     def get_register_map(self):
-        """Override to append mapping of ``SingleObjectMixin`` and
-        ``MultipleObjectMixin`` to
-        :class:`django_crucrudile.routes.ModelViewRoute`.
+        """Add :class:`django_crucrudile.routes.ModelViewRoute` mapping for
+        ``SingleObjectMixin`` and ``MultipleObjectMixin``.
+
+        This mapping allows registering Django generic views in the
+        base, making them register as
+        :class:`django_crucrudile.routes.ModelViewRoute` and
+        instantiate with :attr:`model`.
+
+        :returns: Entity store mappings
+        :rtype: dict
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`django_crucrudile.routers.model.ModelRouter`
 
         """
         mapping = super().get_register_map()
@@ -86,27 +135,28 @@ class ModelMixin:
 
     @classmethod
     def get_register_class_map(cls):
-        """Override to append mapping of ``SingleObjectMixin`` and
-        ``MultipleObjectMixin`` to
-        :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
-        .
+        """Add :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
+        mapping for ``SingleObjectMixin`` and ``MultipleObjectMixin``.
 
-        We use
-        :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
-        because we are here registering the class map (base store),
-        whose values are themselves classes (Entity classes), that
-        will be called the get the registered entity instance.
+        This mapping allows registering Django generic views in the
+        base store, so that entities made using
+        :class:`django_crucrudile.routes.ModelViewRoute` (and
+        instantiated with :attr:`model`) get registered in the entity
+        store when :class:`ModelMixin` gets instantiated (in
+        :func:`django_crucrudile.entities.store.EntityStore.register_base_store`).
 
         :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
         creates a new :class:`django_crucrudile.routes.ModelViewRoute`
         class, and uses its argument as the
-        :attr:`django_crucrudile.routes.ViewRoute.view_class` class
-        attribute.
+        :attr:`django_crucrudile.routes.ViewRoute.view_class` attribute.
 
-        (if we returned directly a
-        :class:`django_crucrudile.routes.ModelViewRoute` in the
-        mapping, the registered entity "class" would be an entity
-        **instance**).
+        :returns: Base store mappings
+        :rtype: dict
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`django_crucrudile.routers.model.ModelRouter`
 
         """
         mapping = super().get_register_class_map()

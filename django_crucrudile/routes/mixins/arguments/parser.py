@@ -27,16 +27,12 @@ def combine(iterable, separator):
     :returns: Joined string
     :rtype: str
 
-    .. testcode::
-
-       print(combine(['Foo', '', 'Bar', None, 'Xyz', 0], '/'))
-
-    .. testoutput::
-
-       Foo/Bar/Xyz
+    >>> combine(['Foo', '', 'Bar', None, 'Xyz', 0], '/')
+    'Foo/Bar/Xyz'
 
     """
     return separator.join(filter(None, iterable))
+
 
 class ArgumentsParser(OptionalPartList):
     """This parser reads a list of argument specification, and builds an
@@ -52,7 +48,8 @@ class ArgumentsParser(OptionalPartList):
     - ``string`` : converted to ``(True, list([string]))``
     - ``list`` : converted to ``(True, list)``
 
-    If ``bool`` is not defined, a default value will be used (see :attr:`django_crucrudile.urlutils.Separated.required_default`).
+    If ``bool`` is not defined, a default value will be used (see
+    :attr:`django_crucrudile.urlutils.Separated.required_default`).
 
     In ``(bool, list)`` :
 
@@ -74,47 +71,45 @@ class ArgumentsParser(OptionalPartList):
 
     Test, with first argument **required** :
 
-    .. testcode ::
-
-       parser = ArgumentsParser([
-           ["<arg1.1>", "<arg2.2>"],
-           "<arg3>",
-           (False, ["<arg4.1>", "<arg4.2>"]),
-           (True, ["<args5>"])
-       ])
-       print(list(parser()))
-
-    .. testoutput ::
-       :options: +NORMALIZE_WHITESPACE
-
-       [(True, '<arg1.1>/<arg3>/?<arg4.1>/<args5>'),
-        (True, '<arg1.1>/<arg3>/?<arg4.2>/<args5>'),
-        (True, '<arg2.2>/<arg3>/?<arg4.1>/<args5>'),
-        (True, '<arg2.2>/<arg3>/?<arg4.2>/<args5>')]
+    >>> parser = ArgumentsParser([
+    ...     ["<arg1.1>", "<arg2.2>"],
+    ...     "<arg3>",
+    ...     (False, ["<arg4.1>", "<arg4.2>"]),
+    ...     (True, ["<args5>"])
+    ... ])
+    >>>
+    >>> list(parser())
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [(True, '<arg1.1>/<arg3>/?<arg4.1>/<args5>'),
+     (True, '<arg1.1>/<arg3>/?<arg4.2>/<args5>'),
+     (True, '<arg2.2>/<arg3>/?<arg4.1>/<args5>'),
+     (True, '<arg2.2>/<arg3>/?<arg4.2>/<args5>')]
 
     Test, with first argument **not required** :
 
-    .. testcode ::
-
-       parser = ArgumentsParser([
-           (False, ["<arg1.1>", "<arg1.2>"]),
-           (None, ["<arg3>"]),
-           (False, ["<args4>"])
-       ])
-       print(list(parser()))
-
-    .. testoutput ::
-       :options: +NORMALIZE_WHITESPACE
-
-       [(False, '<arg1.1>/<arg3>/?<args4>'),
-        (False, '<arg1.2>/<arg3>/?<args4>')]
+    >>> parser = ArgumentsParser([
+    ...     (False, ["<arg1.1>", "<arg2.2>"]),
+    ...     "<arg3>",
+    ...     (False, ["<arg4.1>", "<arg4.2>"]),
+    ...     (True, ["<args5>"])
+    ... ])
+    >>>
+    >>> list(parser())
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [(False, '<arg1.1>/<arg3>/?<arg4.1>/<args5>'),
+     (False, '<arg1.1>/<arg3>/?<arg4.2>/<args5>'),
+     (False, '<arg2.2>/<arg3>/?<arg4.1>/<args5>'),
+     (False, '<arg2.2>/<arg3>/?<arg4.2>/<args5>')]
 
     """
     def get_parsers(self):
-        """Add :func:`transform_args_to_list`, :func:`cartesian_product` and :func:`consume_cartesian_product` to the parsers from :func:`django_crucrudile.urlutils.OptionalPartList.get_parsers`.
+        """Add :func:`transform_args_to_list`, :func:`cartesian_product` and
+        :func:`consume_cartesian_product` to the parsers from
+        :func:`django_crucrudile.urlutils.OptionalPartList.get_parsers`.
 
         :returns: Argument parsers list
         :rtype: list of callable
+
         """
         return super().get_parsers() + [
             # iterable(tuple (bool, str or list (str))) ->
@@ -129,7 +124,7 @@ class ArgumentsParser(OptionalPartList):
     @staticmethod
     def transform_args_to_list(items):
         """Transform second part of each item in items in a list if it's not
-one.
+        one.
 
         :argument items: List of items to transform
         :type items: iterable of 2-tuple
@@ -137,18 +132,13 @@ one.
         :returns: Transformed list
         :rtype: iterable of 2-tuple : [(bool, list)]
 
-        .. testcode ::
-
-           print(list(ArgumentsParser.transform_args_to_list([
-               (None, '<arg1>'),
-               (None, ['<arg2>', '<arg3>'])
-           ])))
-
-        .. testoutput ::
-           :options: +NORMALIZE_WHITESPACE
-
-           [(None, ['<arg1>']),
-            (None, ['<arg2>', '<arg3>'])]
+        >>> list(ArgumentsParser.transform_args_to_list([
+        ...   (None, '<arg1>'),
+        ...   (None, ['<arg2>', '<arg3>'])
+        ... ]))
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [(None, ['<arg1>']),
+         (None, ['<arg2>', '<arg3>'])]
 
         """
         for required, args in items:
@@ -156,10 +146,10 @@ one.
                 args = [args, ]
             yield required, args
 
-
     @staticmethod
     def cartesian_product(items, get_separator):
-        """Process cartesian product to get all possible combinations with argument lists in ``items``.
+        """Process cartesian product to get all possible combinations with
+        argument lists in ``items``.
 
         :argument items: List of tuple to transform (2-tuple with a
                          flag indicating if the argument specification
@@ -170,45 +160,39 @@ one.
                   item is required, and the joined list.
         :rtype: iterable of 2-tuple : [(bool, str)]
 
+        >>> get_separator = lambda x: '/' if x else '/?'
+
         With first spec **required** :
 
-        .. testcode ::
-
-           get_separator = lambda x: '/' if x else '/?'
-
-           print(list(ArgumentsParser.cartesian_product([
-               (True, ['<arg1>']),
-               (True, ['<arg2>', '<arg3>']),
-               (False, ['<arg4>', '<arg5>'])
-           ], get_separator=get_separator)))
-
-        .. testoutput ::
-           :options: +NORMALIZE_WHITESPACE
-
-            [(True, '<arg1>/<arg2>/?<arg4>'),
-             (True, '<arg1>/<arg2>/?<arg5>'),
-             (True, '<arg1>/<arg3>/?<arg4>'),
-             (True, '<arg1>/<arg3>/?<arg5>')]
+        >>> list(ArgumentsParser.cartesian_product(
+        ...   [
+        ...     (True, ['<arg1>']),
+        ...     (True, ['<arg2>', '<arg3>']),
+        ...     (False, ['<arg4>', '<arg5>'])
+        ...   ],
+        ...    get_separator=get_separator
+        ... ))
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [(True, '<arg1>/<arg2>/?<arg4>'),
+         (True, '<arg1>/<arg2>/?<arg5>'),
+         (True, '<arg1>/<arg3>/?<arg4>'),
+         (True, '<arg1>/<arg3>/?<arg5>')]
 
         With first spec **not required** :
 
-        .. testcode ::
-
-           get_separator = lambda x: '/' if x else '/?'
-
-           print(list(ArgumentsParser.cartesian_product([
-               (False, ['<arg1>']),
-               (True, ['<arg2>', '<arg3>']),
-               (False, ['<arg4>', '<arg5>'])
-           ], get_separator=get_separator)))
-
-        .. testoutput ::
-           :options: +NORMALIZE_WHITESPACE
-
-            [(False, '<arg1>/<arg2>/?<arg4>'),
-             (False, '<arg1>/<arg2>/?<arg5>'),
-             (False, '<arg1>/<arg3>/?<arg4>'),
-             (False, '<arg1>/<arg3>/?<arg5>')]
+        >>> list(ArgumentsParser.cartesian_product(
+        ...   [
+        ...     (False, ['<arg1>']),
+        ...     (True, ['<arg2>', '<arg3>']),
+        ...     (False, ['<arg4>', '<arg5>'])
+        ...   ],
+        ...   get_separator=get_separator
+        ... ))
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [(False, '<arg1>/<arg2>/?<arg4>'),
+         (False, '<arg1>/<arg2>/?<arg5>'),
+         (False, '<arg1>/<arg3>/?<arg4>'),
+         (False, '<arg1>/<arg3>/?<arg5>')]
 
         """
         combs = [None]
@@ -239,15 +223,8 @@ one.
         :returns: Consumed list
         :rtype: list
 
-        .. testcode::
-
-           def test_gen():
-               yield 1
-           print(ArgumentsParser.consume_cartesian_product(test_gen()))
-
-        .. testoutput::
-
-           [1]
+        >>> ArgumentsParser.consume_cartesian_product(iter([1]))
+        [1]
 
         """
         return list(items)

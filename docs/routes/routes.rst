@@ -14,37 +14,34 @@ made from the route attributes. When route classes provide
 :func:`django_crucrudile.entities.Entity.patterns`, it makes them
 become concrete implementations of the Entity abstract class. Route
 classes themselves are abstract by nature and need a definition of the
-abstract function :func:`django_crucrudile.routes.base.BaseRoute.get_callback`.
+abstract function :func:`base.BaseRoute.get_callback`.
 
 
-- :class:`CallbackRoute` : Implements :class:`BaseRoute`, provides an
-  implementation of :func:`BaseRoute.get_callback` that returns the
-  callback set on the route (either in :func:`CallbackRoute.__init__`
-  or as class attribute).
-- :class:`ViewRoute` : Implements :class:`BaseRoute`, provides an
-  implementation of :func:`Route.get_callback` that returns the a
-  callback obtaining from the view class set on the route (either in
-  :func:`ViewRoute.__init__` or as class attribute).
-- :class:`ModelViewRoute` : Implements :class:`BaseRoute` using
-  :class:`ViewMixin` and :class:`ModelMixin`, passes the model in the view keyword arguments,
-  and can be used with Django generic views. Can also be used in a
-  :class:`django_crucrudile.routers.ModelRouter` store.
+- :class:`CallbackRoute` : Implements :class:`base.BaseRoute` using
+  :class:`mixins.callback.CallbackMixin` that provides an
+  implementation of :func:`base.BaseRoute.get_callback` that returns
+  the callback set on the route (either in
+  :func:`CallbackRoute.__init__` or as class attribute)
+- :class:`ViewRoute` : Implements :class:`base.BaseRoute` using
+  :class:`mixins.view.ViewMixin` that provides an implementation of
+  :func:`base.BaseRoute.get_callback` that returns the a callback
+  obtaining from the view class set on the route (either in
+  :func:`mixins.view.ViewMixin.__init__` or as class attribute).
+- :class:`ModelViewRoute` : Implements :class:`base.BaseRoute` using
+  :class:`mixins.view.ViewMixin` and :class:`mixins.model.ModelMixin`,
+  passes the model in the view keyword arguments, and can be used with
+  Django generic views.
 
-.. testsetup::
+.. note ::
 
-   from mock import Mock
-
-   from django_crucrudile.routes.base import BaseRoute
-   from django_crucrudile.routes.mixins import (
-       ArgumentsMixin, CallbackMixin, ViewMixin, ModelMixin
-   )
-   from django_crucrudile.routes import (
-       CallbackRoute, ViewRoute, ModelViewRoute
-   )
-   from django_crucrudile.routes.mixins.arguments.parser import (
-       combine, ArgumentsParser
-   )
-
+  :class:`ModelViewRoute` Can also be used in a
+  :class:`django_crucrudile.routers.model.ModelRouter` store register
+  mapping, as it correctly uses the model given in
+  :class:`django_crucrudile.routers.mixins.model.ModelMixin.get_register_map_kwargs`
+  and
+  :class:`django_crucrudile.routers.mixins.model.ModelMixin.get_base_store_kwargs`,
+  and the view class that can then be registered in the resulting
+  router.
 
 Base route
 ----------

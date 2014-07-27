@@ -13,9 +13,9 @@ Base router
 +++++++++++
 
 .. autoclass:: Router
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 Router mixins
 +++++++++++++
@@ -27,25 +27,25 @@ Model router mixin
    :no-members:
 
 .. autoclass:: ModelMixin
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
-Application/project router mixin
-------------------------
+Application/project router mixin [TODO]
+---------------------------------------
 
 .. automodule:: django_crucrudile.routers.mixins.app
    :no-members:
 
 .. autoclass:: AppMixin
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 .. autoclass:: ProjectMixin
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 
 Model router
@@ -55,9 +55,9 @@ Model router
    :no-members:
 
 .. autoclass:: ModelRouter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 Generic model router
 --------------------
@@ -66,9 +66,9 @@ Generic model router
    :no-members:
 
 .. autoclass:: GenericModelRouter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 The following graph may help to explain the relation between the
 generic views, routes and routers :

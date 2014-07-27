@@ -1,5 +1,5 @@
 """This module contains the :class:`ArgumentsMixin` route mixin, that
-uses :class:`ArgumentsParser` to create a list of argument
+uses :class:`parser.ArgumentsParser` to create a list of argument
 combinations from the given argument list."""
 
 
@@ -7,11 +7,6 @@ from .parser import ArgumentsParser
 
 __all__ = ["ArgumentsMixin", "ArgumentsParser"]
 
-"""Should be a list that, if needed, contains argument
-specifications. An argument specification is a 2-tuple, contaning a
-boolean indicating if the argument is required or not,
-
-"""
 
 class ArgumentsMixin:
     """Route mixin, that builds the argument combination list when
@@ -28,20 +23,7 @@ class ArgumentsMixin:
        :class:`django_crucrudile.routes.base.BaseRoute` a concrete
        class !
 
-    .. warning::
-
-       Because this is an abstract class, the **documentation tests**
-       use an implementation (``ArgumentsRoute``) of
-       :class:`django_crucrudile.routes.base.BaseRoute` and :class:`ArgumentsMixin`, with a dummy
-       :func:`get_callback` function.
-
     .. inheritance-diagram:: ArgumentsMixin
-
-
-    .. testsetup::
-
-       class ArgumentsRoute(ArgumentsMixin, BaseRoute):
-           def get_callback(self): pass
 
     """
     arguments_spec = []
@@ -52,7 +34,7 @@ class ArgumentsMixin:
                                expects it.
     :type arguments_spec: list
     """
-    arguments_parser = parser.ArgumentsParser
+    arguments_parser = ArgumentsParser
     """
     :attribute arguments_parser: Argument parser to use to build the
                                  argument combinations from the
@@ -72,25 +54,28 @@ class ArgumentsMixin:
 
         :argument arguments_spec: See :attr:`arguments_spec`
 
-        Example using the default test parser
-        (:class:`parser.ArgumentsParser`) :
+        Example with the default test parser
+        (:class:`parser.ArgumentsParser`) used with
+        :class:`base.BaseRoute` :
 
-        .. testcode::
-
-           route = ArgumentsRoute(
-               'name', 'url_part',
-                arguments_spec=[
-                    ['<arg1.1>', '<arg1.2>'],
-                    '<arg2>'
-                ]
-           )
-           print(list(route.get_url_regexs()))
-
-        .. testoutput::
-           :options: +NORMALIZE_WHITESPACE
-
-           ['^url_part/<arg1.1>/<arg2>$',
-            '^url_part/<arg1.2>/<arg2>$']
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>>
+        >>> class ArgumentsRoute(ArgumentsMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        >>>
+        >>> route = ArgumentsRoute(
+        ...   'name', 'url_part',
+        ...   arguments_spec=[
+        ...     ['<arg1.1>', '<arg1.2>'],
+        ...     '<arg2>'
+        ...   ]
+        ... )
+        >>>
+        >>> list(route.get_url_regexs())
+        ... # doctest: +NORMALIZE_WHITESPACE
+        ['^url_part/<arg1.1>/<arg2>$',
+         '^url_part/<arg1.2>/<arg2>$']
 
         """
         if arguments_spec is not None:
@@ -100,7 +85,6 @@ class ArgumentsMixin:
         self.arguments = parser()
 
         super().__init__(*args, **kwargs)
-
 
     def get_url_specs(self):
         """Yield another URL specification for each argument in the argument
@@ -112,28 +96,28 @@ class ArgumentsMixin:
         Example using the default test parser
         (:class:`parser.ArgumentsParser`) :
 
-        .. testcode::
-
-           route = ArgumentsRoute(
-               'name', 'url_part',
-                arguments_spec=[
-                    ['<arg1.1>', '<arg1.2>'],
-                    '<arg2>'
-                ]
-           )
-           print(list(route.get_url_specs()))
-
-        .. testoutput::
-           :options: +NORMALIZE_WHITESPACE
-
-           [([],
-             ['url_part'],
-             [(True, '<arg1.1>/<arg2>')]),
-            ([],
-             ['url_part'],
-             [(True, '<arg1.2>/<arg2>')])]
-
-
+        >>> from django_crucrudile.routes.base import BaseRoute
+        >>>
+        >>> class ArgumentsRoute(ArgumentsMixin, BaseRoute):
+        ...   def get_callback(self):
+        ...     pass
+        ...   arguments_spec=[
+        ...     ['<arg1.1>', '<arg1.2>'],
+        ...     '<arg2>'
+        ...   ]
+        >>>
+        >>> route = ArgumentsRoute(
+        ...   'name', 'url_part',
+        ... )
+        >>>
+        >>> list(route.get_url_specs())
+        ... # doctest: +NORMALIZE_WHITESPACE
+        [([],
+          ['url_part'],
+          [(True, '<arg1.1>/<arg2>')]),
+         ([],
+          ['url_part'],
+          [(True, '<arg1.2>/<arg2>')])]
 
         """
         for prefix, name, suffix in super().get_url_specs():

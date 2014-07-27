@@ -6,16 +6,11 @@ django-crucrudile
 .. toctree::
    installation
    quickstart
-   entities/entity_store
-   entities/entities
-   routers/routers
-   urlutils
-   routes/routes
+   reference
    tests
-   examples/bookstore
 
-* :ref:`modindex`
-* :ref:`genindex`
+   * :ref:`modindex`
+   * :ref:`genindex`
 
 .. automodule:: django_crucrudile
    :noindex:

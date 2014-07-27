@@ -9,12 +9,13 @@ from importlib import import_module
 from django.conf import settings
 
 class AppMixin:
-    """Router that gets initialized with an application name, and
+    """Router mixin that gets initialized with an application name, and
     automatically registers entities that :func:`get_routing_entities` can
     find in :func:`get_routing_module`. By defaults, this results to a
     lookup on the ``entities`` attribute of ``routing`` module of the
     given application.
 
+    .. inheritance-diagram :: AppMixin
     """
     routing_module_name = "routing"
     """
