@@ -60,7 +60,7 @@ class ViewRoute(ArgumentsMixin, ViewMixin, BaseRoute):
     .. inheritance-diagram:: ViewRoute
 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         """Initialize ViewRoute, for a description of arguments see :
 
         - :func:`mixins.arguments.ArgumentsMixin.__init__`

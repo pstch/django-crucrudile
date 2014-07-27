@@ -96,7 +96,7 @@ class BaseRoute(Entity):
         """
         if name is not None:
             self.name = name
-        elif self.name is None:
+        elif self.name is None:  # pragma: no cover
             raise ValueError(
                 "No ``name`` argument provided to __init__"
                 ", and no :attr:`name` defined as class attribute."
@@ -108,7 +108,7 @@ class BaseRoute(Entity):
             if self.auto_url_part:
                 self.url_part = self.name
             else:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "No ``url_part`` argument provided to __init__"
                     ", no :attr:`url_part` defined as class attribute."
                     " (in {}), and :attr:`auto_url_part` is set to False."

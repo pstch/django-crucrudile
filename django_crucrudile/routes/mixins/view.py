@@ -90,7 +90,7 @@ class ViewMixin:
             self.view_class = view_class
         if auto_url_name_from_view is not None:
             self.auto_url_name_from_view = auto_url_name_from_view
-        elif self.view_class is None:
+        elif self.view_class is None:  # pragma: no cover
             raise ValueError(
                 "No ``view_class`` argument provided to __init__"
                 ", and no view_class defined as class attribute (in {})"

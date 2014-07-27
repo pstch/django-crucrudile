@@ -139,7 +139,7 @@ class Router(EntityStore, Entity):
                  add_redirect_silent=None,
                  get_redirect_silent=None,
                  generic=None,
-                 **kwargs):
+                 **kwargs):  # pragma: no cover
         """Initialize Router base attributes from given arguments
 
         :argument namespace: Optional. See :attr:`namespace`

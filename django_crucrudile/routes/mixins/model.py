@@ -44,7 +44,7 @@ class ModelMixin:
         """
         if model is not None:
             self.model = model
-        elif self.model is None:
+        elif self.model is None:  # pragma: no cover
             raise ValueError(
                 "No ``model`` argument provided to __init__"
                 ", and no model defined as class attribute (in {})"

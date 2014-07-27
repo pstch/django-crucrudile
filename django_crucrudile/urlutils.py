@@ -330,6 +330,9 @@ class OptionalPartList(Separated, Parsable, list):
         >>>
         >>> (a + b) is b
         False
+
+        >>> (a + None) is a
+        True
         """
         if not other:
             return self

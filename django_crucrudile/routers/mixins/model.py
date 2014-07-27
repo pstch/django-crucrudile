@@ -38,13 +38,13 @@ class ModelMixin:
         # self.get_auto_register_kwargs() which needs self.model
         if model is not None:
             self.model = model
-        elif self.model is None:
+        elif self.model is None:  # pragma: no cover
             raise ValueError(
                 "No ``model`` argument provided to __init__"
                 ", and no model defined as class attribute (in {})"
                 "".format(self)
             )
-        if url_part is not None:
+        if url_part is not None:  # pragma: no cover
             self.url_part = url_part
         else:
             self.url_part = self.model_url_part
