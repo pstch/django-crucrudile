@@ -44,9 +44,6 @@ setup(
         'mock',
         'nose',
         'coverage',
-        'sphinx',
-        'colorama',
-        'django_extensions',
     ],
     classifiers=CLASSIFIERS,
 
