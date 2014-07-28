@@ -124,3 +124,5 @@ class ArgumentsMixin:
             if self.arguments:
                 for arg in self.arguments:
                     yield prefix, name, suffix + [arg]
+            else:
+                yield prefix, name, suffix
