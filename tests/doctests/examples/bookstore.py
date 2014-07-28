@@ -1,11 +1,12 @@
 """Bookstore example, with three simple models.
 
+>>> # these two lines are required to subclass Django model in doctests
 >>> import tests.unit
+>>> __name__ = "tests.doctests"
+
 >>> from django.db.models import Model
 >>> from django_crucrudile.routers import Router, ModelRouter
 >>>
->>> # needed to subclass Django Model
->>> __name__ = "tests.doctests"
 >>>
 >>> class Book(Model):
 ...   pass
