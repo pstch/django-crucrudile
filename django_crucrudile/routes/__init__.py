@@ -96,8 +96,8 @@ class ModelViewRoute(ArgumentsMixin, ModelMixin, ViewMixin, BaseRoute):
     def get_view_kwargs(self):
         """Make the view use :attr:`mixins.model.ModelMixin.model`.
 
-        This is the effective combination of :class:`mixins.model.ModelMixin` and
-        :class:`ViewRoute`.
+        This is the effective combination of
+        :class:`mixins.model.ModelMixin` and :class:`ViewRoute`.
 
         >>> from mock import Mock
         >>>
