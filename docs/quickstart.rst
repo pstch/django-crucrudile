@@ -35,7 +35,7 @@ A router can also contain other routers :
 
 .. graphviz::
 
-   digraph intro_ex_nested {
+   digraph intro_nested {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -51,7 +51,6 @@ A router can also contain other routers :
    }
 
 This allows us to define complex routing graphs using combinations of route and router objects. The route and router objects handle :
-
  - URL namespaces (in routers)
  - URL regex building (with multiple parts, routers can also prefix the routes they contain using their own URL regex part)
  - building a Django URL pattern tree
@@ -68,7 +67,6 @@ Routes and router
 Here, we defined a routing graph, but we never actually defined what to point our routes to. In fact, the above structure could not be created in django-crucrudile, because a route is an abstract object (Python abstract class) that doesn't know what callback to use in its generated patterns.
 
 As the route is an abstract object, we use "implementations" of this object (they know what callback to use in the generated patterns, they are "concrete"). django-crucrudile provides two basic implementations of the route class :
-p
  - Callback route : a simple route that uses a given callback
  - View route : a route that uses a callback from a given Django view class.
 
@@ -76,7 +74,7 @@ If we take that previous example, using view routes in lieu of routes, we get :
 
 .. graphviz::
 
-   digraph intro_ex_viewroutes {
+   digraph viewroutes {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -97,7 +95,7 @@ If we take that previous example, using view routes in lieu of routes, we get :
 
 Here is the code corresponding to that example :
 
-.. automodule:: tests.doctests.examples.quickstart.intro_ex
+.. automodule:: tests.doctests.examples.quickstart.intro
 
 As you can see, we can pass the URL part to the help router, to prefix the resulting URL patterns. Here are the URLs corresponding to that example :
 
@@ -126,19 +124,19 @@ Index URLs and redirections
 
 The base route and router objects support setting an object as "index", which means that when it is added to a router, the router set it as its redirect target.
 
-In the previous example, if the home route was as index, requests to ``/`` would get redirected to ``/home``.
+In the previous example, if the home route was as index, requests to "/" would get redirected to "/home".
 
 To achieve this, a route is added in each router that has a rediect. This route is a view route that uses a Django generic redirection view that points to the redirect target. If the redirect target is itself a router, we use this router's redirect target, and so on, until we find a route.
 
 To mark a route or router as "index", set its ``index`` attribute to ``True``. You can also add it as index, using the ``index`` argument of the register method : that won't alter the ``index`` attribute, but will still add as index.
 
-Here is what the previous example would look like, with a redirection from ``/`` to "/home" and from "/help/" to "/help/help" :
+Here is what the previous example would look like, with a redirection from "/" to "/home" and from "/help/" to "/help/help" :
 
-.. automodule:: tests.doctests.examples.quickstart.intro_ex_redir
+.. automodule:: tests.doctests.examples.quickstart.redirections
 
 .. graphviz::
 
-   digraph intro_ex_redirs {
+   digraph redirs {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -163,7 +161,7 @@ Here is what the previous example would look like, with a redirection from ``/``
 Using with models
 -----------------
 
-The route and router classes can be extended using "model mixins", that implement model-related functionality. Model mixins make the object require a model class (set as class attribute or passed in constructor).
+The base route and router classes can be extended using "model mixins", that implement model-related functionality. Model mixins make the object require a model class (set as class attribute or passed in constructor).
 
 For a router, this means in particular that it will use the model to get its URL part.
 
@@ -173,11 +171,11 @@ Route mixins can be used with view mixins. If the view with a generic view, the 
 
 Example :
 
-.. automodule:: tests.doctests.examples.quickstart.intro_ex_redir
+.. automodule:: tests.doctests.examples.quickstart.models
 
 .. graphviz::
 
-   digraph intro_ex_models {
+   digraph models {
        size="10, 4"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -233,23 +231,119 @@ As you see, it is required to pass to model to the router **and** to the route. 
 Arguments
 ---------
 
+The base route class can be extended using an arguments mixin, that allows to give the route an arguments specification, that will be used in the URL regex.
+
 .. warning::
 
-   TODO
+   WIP
+
+.. note:: The arguments route mixin is included in the default concrete route classes
+
+The arguments mixin uses an arguments parser, to create the possible
+arguments regexs from the argument specification. The default arguments parser uses a cartesian product to allow variants of an arguments to be used, and allows arguments to be optional, meaning that their separator (``/``) will be optional (``/?``).
+
+It is absolutely not required to use these features, you can define the arguments regex yourself as well : just use your argument regex as a single item in the arguments spec, and it won't be processed.
+
+For more information on how argument specifications are parsed, and more examples of argument specifications, see :class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`.
+
+The following example uses this argument specification :
+ - a required argument, that can be either "<pk>" or "<slug>"
+ - an optional argument, "<format>"
+
+.. automodule:: tests.doctests.examples.quickstart.arguments
+
+.. graphviz::
+
+   digraph arguments {
+       size="6, 3"
+       bgcolor="transparent"
+       edge[fontsize=10]
+       node[fontsize=12]
+
+       "/" -> "/home"
+       "/" -> "/status/<pk>/<format>"
+       "/" -> "/status/<slug>/<format>"
+
+   }
 
 Register mappings
 -----------------
 
-.. warning::
+   A router instance, when registering an object, checks if the object matches any of the register mappings. If it finds a match, it calls the mapping value using the object as argument, and registers the resulting object in its store.
 
-   TODO
+   This allows to create routers on which you can register models, or view classes, or any object for which you want to abstract the route definition in a class.
+
+   In the following example, we give view classes as arguments to the register functions, also passing the arguments to pass when calling the mapping value :
+
+.. automodule:: tests.doctests.examples.quickstart.register_mappings
+
+.. graphviz::
+
+   digraph arguments {
+       size="6, 3"
+       bgcolor="transparent"
+       edge[fontsize=10]
+       node[fontsize=12]
+
+       "/" -> "/home"
+       "/" -> "/status"
+       "/" -> "/testmodel/list"
+       "/" -> "/help/"
+
+       "/help/" -> "/help/help"
+       "/help/" -> "/help/app-version
+   }
 
 Predefined routers (base store)
 -------------------------------
 
-.. warning::
+.. warning:: TODO
 
-   TODO
+.. automodule:: tests.doctests.examples.quickstart.base_store
+
+.. graphviz::
+
+   digraph arguments {
+       size="6, 3"
+       bgcolor="transparent"
+       edge[fontsize=10]
+       node[fontsize=12]
+
+       "/" -> "/home"
+       "/" -> "/status/<pk>/<format>"
+       "/" -> "/testmodel/list"
+       "/" -> "/help/"
+
+       "/help/help"
+       "/help/app-version
+   }
+
+
+
+Base store mappings
+~~~~~~~~~~~~~~~~~~~
+
+.. warning:: TODO
+
+.. automodule:: tests.doctests.examples.quickstart.register_class_mappings
+
+.. graphviz::
+
+   digraph arguments {
+       size="6, 3"
+       bgcolor="transparent"
+       edge[fontsize=10]
+       node[fontsize=12]
+
+       "/" -> "/home"
+       "/" -> "/status/<pk>/<format>"
+       "/" -> "/testmodel/list"
+       "/" -> "/help/"
+
+       "/help/help"
+       "/help/app-version
+   }
+
 
 More examples
 -------------
