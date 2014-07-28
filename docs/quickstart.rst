@@ -3,7 +3,7 @@ Getting started
 
 .. contents::
 
-.. warning:: TODO
+.. warning:: WIP
 
 Introduction
 ------------
@@ -35,7 +35,7 @@ A router can also contain other routers :
 
 .. graphviz::
 
-   digraph intro_ex_2 {
+   digraph intro_ex_nested {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -76,7 +76,7 @@ If we take that previous example, using view routes in lieu of routes, we get :
 
 .. graphviz::
 
-   digraph intro_ex_2 {
+   digraph intro_ex_viewroutes {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -138,7 +138,7 @@ Here is what the previous example would look like, with a redirection from ``/``
 
 .. graphviz::
 
-   digraph intro_ex_urls_redirs {
+   digraph intro_ex_redirs {
        size="6, 3"
        bgcolor="transparent"
        edge[fontsize=10]
@@ -163,7 +163,93 @@ Here is what the previous example would look like, with a redirection from ``/``
 Using with models
 -----------------
 
-.. warning:: TODO
+The route and router classes can be extended using "model mixins", that implement model-related functionality. Model mixins make the object require a model class (set as class attribute or passed in constructor).
+
+For a router, this means in particular that it will use the model to get its URL part.
+
+For a route, this implies that it will use the model to get the the URL name.
+
+Route mixins can be used with view mixins. If the view with a generic view, the model argument should also be passed (a "model view route" is provided, that already implements this). In the following example, we naively use the model and view mixins, and assume that the views are not generic (that they already know which model to use).
+
+Example :
+
+.. automodule:: tests.doctests.examples.quickstart.intro_ex_redir
+
+.. graphviz::
+
+   digraph intro_ex_models {
+       size="10, 4"
+       bgcolor="transparent"
+       edge[fontsize=10]
+       node[fontsize=12]
+
+       "Router" -> "View route : home page"
+       "Router" -> "Model router : books"
+
+       "Model router : books" -> "Model view route : list"
+       "Model router : books" -> "Model view route : detail"
+
+       subgraph models {
+           node[color="blue"]
+           "Book model"
+       }
+       subgraph models_rels {
+           edge[dir="back", color="blue", label="uses"]
+           "Model router : books" -> "Book model"
+           "Model view route : list" -> "Book model"
+           "Model view route : detail" -> "Book model"
+       }
+
+       subgraph views {
+           node[color="green"]
+           "List view"
+           "Detail view"
+       }
+       subgraph views_rels {
+           edge[dir="back", color="green", label="uses"]
+           "Model view route : list" -> "List view"
+           "Model view route : detail" -> "Detail view"
+       }
+
+   }
+
+As you see, it is required to pass to model to the router **and** to the route. It's not actually required to use the model route and in a model router, and the model route actually supports this use case by being able to prefix the URL itself (not relying on the parent router, as it does by default).
+
+.. note::
+
+   It's not possible to automatically pass attributes from a router to its children, as the routes and routers are already instantiated when they get registered to the router.
+
+   However, a similar pattern, that is very useful for defining "generic" routers (that can automatically create the router and routes for an object), can be achieved using "register mappings". A register mapping is a mapping of a type to a callable, that is used when registering objects in a router. If the object matches a type in the mapping, the object is passed to the callable value, and the return value of this callable is registered.  You could for example map ``Model`` to a view route class, and call the register function with the model class. The object that will be registered will be an instance of a view route, constructed using the model class.
+
+   Please refer to `Register mappings`_ documentation for more information.
+
+.. note::
+
+   Predefined routers can also be defined : when they get instantiated, they automatically instantiate classes that are present in their "base store" (a class-level attribute), and register thems in their store. For example, you could create a predefined model router that contains model view route classes that use for Django generic views, and then instantiate that model router with a model class as argument. The result would be a model router that contains model view route instances, that use the model router model with Django generic views.
+
+   Please refer to `Predefined routers (base store)`_ documentation for more information.
+
+
+Arguments
+---------
+
+.. warning::
+
+   TODO
+
+Register mappings
+-----------------
+
+.. warning::
+
+   TODO
+
+Predefined routers (base store)
+-------------------------------
+
+.. warning::
+
+   TODO
 
 More examples
 -------------
