@@ -210,8 +210,9 @@ class ArgumentsParser(OptionalPartList):
                 product(combs, args)
             )
 
-        for comb in combs:
-            yield first_item_required, comb
+        if combs != [None]:
+            for comb in combs:
+                yield first_item_required, comb
 
     @staticmethod
     def consume_cartesian_product(items):
