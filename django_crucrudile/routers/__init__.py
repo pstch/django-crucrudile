@@ -28,13 +28,17 @@ from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
 from django.db.models import Model
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.list import MultipleObjectMixin
+
 from django.views.generic import (
     View, RedirectView,
 )
 
-from django_crucrudile.routes import ViewRoute
+from django_crucrudile.routes import ViewRoute, ModelViewRoute
 from django_crucrudile.entities import Entity
 from django_crucrudile.entities.store import EntityStore
+
 
 __all__ = [
     "Router",
@@ -180,17 +184,32 @@ super implementation)
           :class:`model.ModelRouter` (or
           :class:`model.generic.GenericModelRouter`) if
           :attr:`generic` is set to ``True``)
+        - :class:`django.views.generic.detail.SingleObjectMixin` or
+          :class:`django.views.generic.list.MultipleObjectMixin`
+          subclasses are to passed to a
+          :class:`django_crucrudile.routes.ModelViewRoute`
         - :class:`django.views.generic.View` subclasses are passed to a View
 
         :returns: Register mappings
         :rtype: dict
 
+        .. warning::
+
+           When overriding, remember that the first matching mapping
+           (in the order they are added, as the superclass returns a
+           :class:`collections.OrderedDict`) will be used.
+
+           Because of this, to override mappings, methods should add
+           the super mappings to another OrderedDict, containing the
+           overrides.
+
         """
         mapping = super().get_register_map()
-        mapping.update({
-            Model: ModelRouter if not self.generic else GenericModelRouter,
-            View: ViewRoute,
-        })
+        mapping[Model] = (
+            ModelRouter if not self.generic else GenericModelRouter
+        )
+        mapping[SingleObjectMixin, MultipleObjectMixin] = ModelViewRoute
+        mapping[View] = ViewRoute
         return mapping
 
     def register(self, entity, index=False, map_kwargs=None):
