@@ -32,6 +32,7 @@ good idea of what the entity, entity store and entity graph concepts
 mean.
 
 """
+from collections import OrderedDict
 from abc import ABCMeta
 
 __all__ = ['provides', 'EntityStoreMetaclass', 'EntityStore']
@@ -99,19 +100,27 @@ class EntityStoreMetaclass(ABCMeta):
 
     """
     _base_store = []
-    _base_register_map = {}
-    _base_register_class_map = {}
+    _base_register_map = OrderedDict()
+    _base_register_class_map = OrderedDict()
     """
     :attribute _base_store: Routed entity class store, instantiated
                                upon Router instantiation.
     :type _base_store: list
     :attribute _base_register_map: Base register map (see
                                    :func:`get_register_map` and
-                                   :func:`register`)
+                                   :func:`register`). Use OrderedDict
+                                   because mappings should be used in
+                                   the order they are added (as
+                                   multiple mappings may match).
     :type _base_store: dict
     :attribute _base_register_class_map: Base register class map (see
                                          :func:`get_register_class_map`
-                                         and :func:`register_class`)
+                                         and
+                                         :func:`register_class`). Use
+                                         OrderedDict because mappings
+                                         should be used in the order
+                                         they are added (as multiple
+                                         mappings may match).
     :type _base_store: dict
     """
     def __init__(cls, name, bases, attrs):
@@ -373,13 +382,19 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         The base implementation returns a copy of the stored mapping,
         so overriding implementations may append to the return value.
 
+        .. warning::
+
+           The matching mapping will be used. This is why this method
+           must return an :class:`collections.OrderedDict`, so that
+           the adding order is used.
+
         .. seealso::
 
            For doctests that use this member, see
            :func:`django_crucrudile.entities.store.EntityStore.register_class`
 
         """
-        return dict(self._base_register_class_map)
+        return OrderedDict(self._base_register_class_map)
 
     @classmethod
     def get_register_class_map_kwargs(cls):
@@ -406,13 +421,19 @@ class EntityStore(metaclass=EntityStoreMetaclass):
         The base implementation returns a copy of the stored mapping,
         so overriding implementations may append to the return value.
 
+        .. warning::
+
+           The matching mapping will be used. This is why this method
+           must return an :class:`collections.OrderedDict`, so that
+           the adding order is used.
+
         .. seealso::
 
            For doctests that use this member, see
            :func:`django_crucrudile.entities.store.EntityStore.register`
 
         """
-        return dict(self._base_register_map)
+        return OrderedDict(self._base_register_map)
 
     def get_register_map_kwargs(self):
         """Arguments passed when applying register map, in :func:`register`
