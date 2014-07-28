@@ -20,7 +20,7 @@ https://django-crucrudile.readthedocs.org/en/master/.
 __title__ = 'django-crucrudile'
 __description__ = 'Django URL routing classes',
 
-__version__ = '0.9.2'
+__version__ = '0.9.4'
 
 __author__ = 'Hugo Geoffroy'
 __author_email__ = 'hugo@pstch.net'

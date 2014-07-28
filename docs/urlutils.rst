@@ -7,6 +7,7 @@ URL utils
 
 .. automodule:: django_crucrudile.urlutils
    :noindex:
+   :no-members:
 
 .. testsetup::
 
