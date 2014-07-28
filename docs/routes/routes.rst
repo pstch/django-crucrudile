@@ -60,6 +60,8 @@ Route mixins
 Abstract
 >>>>>>>>
 
+.. _arguments-mixin-spec:
+
 Arguments
 ~~~~~~~~~
 
