@@ -18,6 +18,16 @@ Decorators
 Entity store
 ------------
 
+.. autoclass:: BaseStoreMetaclassMixin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: EntityStoreMetaclassMixin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. autoclass:: EntityStoreMetaclass
     :members:
     :undoc-members:
