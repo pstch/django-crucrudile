@@ -9,9 +9,6 @@ django-crucrudile
    reference
    tests
 
-   * :ref:`modindex`
-   * :ref:`genindex`
-
 .. automodule:: django_crucrudile
    :noindex:
 
