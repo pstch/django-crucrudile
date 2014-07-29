@@ -16,6 +16,12 @@ Use the following command to build the documentation in ``docs/_build``::
 The documentation can also be viewed online, at
 https://django-crucrudile.readthedocs.org/en/master/.
 
+Versionning
+-----------
+
+Starting from version ``0.9.4``, this package uses semantic version
+(http://semver.org).
+
 """
 __title__ = 'django-crucrudile'
 __description__ = 'Django URL routing classes',
