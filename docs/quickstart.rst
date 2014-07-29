@@ -428,6 +428,55 @@ the router.
 Quick routes and routers reference
 ----------------------------------
 
+These two tables show the objects used the most frequently in django-crucrudile.
+
+.. note:: There are many other classes though, as functionality is
+          splitted into specific classes and mixins. For more
+          information, see the :ref:`reference`.
+
+Routers
+~~~~~~~
+
+.. note:: These classes are stored in the ``routers`` module. For more
+          information, see :mod:`django_crucrudile.routers`
+
++--------------------+------------------+------------------------------------+
+| Router class       | Mixins           | Description                        |
++====================+==================+====================================+
+| ``Router``         | None             | Base router, is a container for    |
+|                    |                  | other routers and routes.          |
++--------------------+------------------+------------------------------------+
+| ``ModelRouter``    | ``ModelMixin``   | Model router, passes model when    |
+|                    |                  | instantiating routed entities      |
++--------------------+------------------+------------------------------------+
+
+
+Routes
+~~~~~~
+
+.. note:: These classes are stored in the ``routes`` module. For more
+          information, see :mod:`django_crucrudile.routes`.
+
++---------------------------+------------------------------+------------------------------------+
+| Router class              | Mixins                       | Description                        |
++===========================+==============================+====================================+
+| ``CallbackRoute``         | - ``ArgumentsMixin``         | Route that points to a             |
+|                           | - ``CallbackMixin``          | given callback                     |
++---------------------------+------------------------------+------------------------------------+
+| ``ViewRoute``             | - ``ArgumentsMixin``         | Route that points to a callback    |
+|                           | - ``ViewMixin``              | obtained from a given view class   |
++---------------------------+------------------------------+------------------------------------+
+| ``ModelViewRoute``        | - ``ArgumentsMixin``         | Route that points to a callback    |
+|                           | - ``ModelMixin``             | obtained from a given view class   |
+|                           | - ``ViewMixin``              | obtained, and that uses a given    |
+|                           |                              | model class                        |
++---------------------------+------------------------------+------------------------------------+
+| ``GenericModelViewRoute`` | - ``ArgumentsMixin``         | Same as ``ModelViewRoute``, but    |
+|                           | - ``ModelMixin``             | guesses URL arguments from the     |
+|                           | - ``ViewMixin``              | class, that should be a Django     |
+|                           | - ``GenericViewArgsMixin``   | generic view.                      |
++---------------------------+------------------------------+------------------------------------+
+
 .. warning:: TODO
 
 More examples
