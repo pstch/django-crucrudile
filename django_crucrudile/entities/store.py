@@ -59,20 +59,15 @@ def provides(provided, **kwargs):
     return register_obj_in_store
 
 
-class EntityStoreMetaclass(ABCMeta):
-    """EntityStoreMetaclass allows :class:`EntityStore` to use a different
-    :attr:`_base_store` store (list instance) for each class definitions
+class BaseStoreMetaclassMixin(type):
+    """Allows :class:`EntityStore` to use different
+    :attr:`_base_register_map` and :attr:`_base_register_map`
+    class-level mappings (list instance) for each class definitions.
     (``cls`` instantiation)
 
-    .. note::
+    .. inheritance-diagram:: BaseStoreMetaclassMixin
 
-       Subclasses :class:`abc.ABCMeta` because it will be used as the
-       metaclass for an entity, and entity are abstract classes, which
-       needs the :class:`âbc.ABCMeta` base class.
-
-    .. inheritance-diagram:: EntityStoreMetaclass
-
-    >>> class Store(metaclass=EntityStoreMetaclass):
+    >>> class Store(metaclass=BaseStoreMetaclassMixin):
     ...   pass
     >>>
     >>> class FailStore:
@@ -84,9 +79,6 @@ class EntityStoreMetaclass(ABCMeta):
     >>> class FailNewStore(FailStore):
     ...   pass
 
-    >>> (NewStore._base_store is
-    ...  Store._base_store)
-    False
     >>> (NewStore._base_register_map is
     ...  Store._base_register_map)
     False
@@ -99,29 +91,26 @@ class EntityStoreMetaclass(ABCMeta):
     True
 
     """
-    _base_store = []
     _base_register_map = OrderedDict()
     _base_register_class_map = OrderedDict()
     """
-    :attribute _base_store: Routed entity class store, instantiated
-                               upon Router instantiation.
-    :type _base_store: list
     :attribute _base_register_map: Base register map (see
-                                   :func:`get_register_map` and
-                                   :func:`register`). Use OrderedDict
-                                   because mappings should be used in
-                                   the order they are added (as
-                                   multiple mappings may match).
+                                   :func:`EntityStore.get_register_map`
+                                   and
+                                   :func:`EntityStore.register`). Use
+                                   OrderedDict because mappings should
+                                   be used in the order they are added
+                                   (as multiple mappings may match).
     :type _base_store: dict
     :attribute _base_register_class_map: Base register class map (see
-                                         :func:`get_register_class_map`
+                                         :func:`EntityStore.get_register_class_map`
                                          and
-                                         :func:`register_class`). Use
-                                         OrderedDict because mappings
-                                         should be used in the order
-                                         they are added (as multiple
-                                         mappings may match).
-    :type _base_store: dict
+                                         :func:`EntityStore.register_class`).
+                                         Use OrderedDict because
+                                         mappings should be used in
+                                         the order they are added (as
+                                         multiple mappings may match).
+    :type _base_register_class_map: dict
     """
     def __init__(cls, name, bases, attrs):
         """Replace :attr:`_base_store`, :attr:`_base_register_map` and
@@ -137,13 +126,87 @@ class EntityStoreMetaclass(ABCMeta):
         .. seealso::
 
            For doctests that use this member, see
-           :class:`django_crucrudile.entities.store.EntityStoreMetaclass`
+           :class:`django_crucrudile.entities.store.BaseStoreMetaclassMixin`
 
         """
         super().__init__(name, bases, attrs)
         cls._base_register_map = cls._base_register_map.copy()
         cls._base_register_class_map = cls._base_register_class_map.copy()
+
+
+class EntityStoreMetaclassMixin(type):
+    """Allows :class:`EntityStore` to use a different
+    :attr:`_base_store` store (list instance) for each class
+    definitions (``cls`` instantiation)
+
+    .. inheritance-diagram:: EntityStoreMetaclassMixin
+
+    >>> class Store(metaclass=EntityStoreMetaclassMixin):
+    ...   pass
+    >>>
+    >>> class FailStore:
+    ...   _fail_store = []
+    >>>
+    >>> class NewStore(Store):
+    ...   pass
+    >>>
+    >>> class FailNewStore(FailStore):
+    ...   pass
+
+    >>> (NewStore._base_store is
+    ...  Store._base_store)
+    False
+
+    >>> (FailNewStore._fail_store is
+    ...  FailStore._fail_store)
+    True
+
+    """
+    _base_store = []
+    """
+    :attribute _base_store: Routed entity class store, instantiated
+                               upon Router instantiation.
+    :type _base_store: list
+    """
+    def __init__(cls, name, bases, attrs):
+        """Replace :attr:`_base_store`, :attr:`_base_register_map` and
+        :attr:`_base_register_class_map` by copies of themselves
+
+        :argument name: New class name
+        :type name: str
+        :argument bases: New class bases
+        :type bases: tuple
+        :argument attrs: New class attributes
+        :type attrs: dict
+
+        .. seealso::
+
+           For doctests that use this member, see
+           :class:`django_crucrudile.entities.store.EntityStoreMetaclassMixin`
+
+        """
+        super().__init__(name, bases, attrs)
         cls._base_store = cls._base_store.copy()
+
+
+class EntityStoreMetaclass(EntityStoreMetaclassMixin,
+                           BaseStoreMetaclassMixin,
+                           ABCMeta):
+    """Use the entity store and base store metaclass mixins, that handle
+    creating a new instance of the stores for each class definition.
+
+    See :class:`EntityStoreMetaclassMixin` and
+    :class:`BaseStoreMetaclassMixin` for more information.
+
+    .. note::
+
+       Also subclasses :class:`abc.ABCMeta` because it will be used as
+       the metaclass for an entity, and entity are abstract classes,
+       which needs the :class:`âbc.ABCMeta` base class.
+
+    .. inheritance-diagram:: EntityStoreMetaclass
+
+    """
 
 
 class EntityStore(metaclass=EntityStoreMetaclass):
