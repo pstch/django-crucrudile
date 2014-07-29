@@ -19,9 +19,12 @@
 
 >>> router = Router(generic=True)
 >>>
->>> router.register(Author, index=True)
->>> router.register(Book)
->>> router.register(Editor)
+>>> router.register(Author, index=True) is not None
+True
+>>> router.register(Book) is not None
+True
+>>> router.register(Editor) is not None
+True
 
 >>> print(router.get_str_tree())
 ... # doctest: +NORMALIZE_WHITESPACE

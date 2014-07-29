@@ -20,15 +20,20 @@
 
 >>> router = Router()
 >>>
->>> router.register(ViewRoute(HomeView), index=True)
->>> router.register(ViewRoute(StatusView))
+>>> router.register(ViewRoute(HomeView), index=True) is not None
+True
+>>> router.register(ViewRoute(StatusView)) is not None
+True
 >>>
 >>> help_router = Router(url_part='help')
 >>>
->>> help_router.register(ViewRoute(HelpView), index=True)
->>> help_router.register(ViewRoute(VersionView))
+>>> help_router.register(ViewRoute(HelpView), index=True) is not None
+True
+>>> help_router.register(ViewRoute(VersionView)) is not None
+True
 >>>
->>> router.register(help_router)
+>>> router.register(help_router) is help_router
+True
 
 >>> print(router.get_str_tree())
 ... # doctest: +NORMALIZE_WHITESPACE

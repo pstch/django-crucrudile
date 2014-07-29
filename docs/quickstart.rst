@@ -3,7 +3,7 @@ Getting started
 
 .. contents::
 
-.. warning:: WIP
+.. warning:: WIP (final draft done, needs rereading)
 
 Introduction
 ------------
@@ -11,7 +11,9 @@ Introduction
 Abstract
 ~~~~~~~~
 
-This package can be used to simplify Django's URL pattern definitions. It's able to generate a Django URL pattern structure from a directed acylic graph represented using :
+This package can be used to simplify Django's URL pattern
+definitions. It's able to generate a Django URL pattern structure from
+a directed acylic graph represented using :
 
  - Routes (leaves in the graph), contain URL patterns
  - Routers (nodes in the graph), contain routes
@@ -50,9 +52,11 @@ A router can also contain other routers :
 
    }
 
-This allows us to define complex routing graphs using combinations of route and router objects. The route and router objects handle :
+This allows us to define complex routing graphs using combinations of
+route and router objects. The route and router objects handle :
  - URL namespaces (in routers)
- - URL regex building (with multiple parts, routers can also prefix the routes they contain using their own URL regex part)
+ - URL regex building (with multiple parts, routers can also prefix
+   the routes they contain using their own URL regex part)
  - building a Django URL pattern tree
 
 .. warning::
@@ -64,18 +68,27 @@ This allows us to define complex routing graphs using combinations of route and 
 Routes and router
 ~~~~~~~~~~~~~~~~~
 
-Here, we defined a routing graph, but we never actually defined what to point our routes to. In fact, the above structure could not be created in django-crucrudile, because a route is an abstract object (Python abstract class) that doesn't know what callback to use in its generated patterns.
+Here, we defined a routing graph, but we never actually defined what
+to point our routes to. In fact, the above structure could not be
+created in django-crucrudile, because a route is an abstract object
+(Python abstract class) that doesn't know what callback to use in its
+generated patterns.
 
-As the route is an abstract object, we use "implementations" of this object (they know what callback to use in the generated patterns, they are "concrete"). django-crucrudile provides two basic implementations of the route class :
+As the route is an abstract object, we use "implementations" of this
+object (they know what callback to use in the generated patterns, they
+are "concrete"). django-crucrudile provides two basic implementations
+of the route class :
  - Callback route : a simple route that uses a given callback
- - View route : a route that uses a callback from a given Django view class.
+ - View route : a route that uses a callback from a given Django view
+   class.
 
-If we take that previous example, using view routes in lieu of routes, we get :
+If we take that previous example, using view routes in lieu of routes,
+we get :
 
 .. graphviz::
 
    digraph viewroutes {
-       size="6, 3"
+       size="7, 3"
        bgcolor="transparent"
        edge[fontsize=10]
        node[fontsize=12]
@@ -89,20 +102,32 @@ If we take that previous example, using view routes in lieu of routes, we get :
 
    }
 
-.. note:: The view route leaves in this example are **instances of the view route class**. They need a view_class to get instantiated. The route names (that will be used to build the URL regex as well as the URL name) should also be passed to the constructor (otherwise the route name will be built from the view class name, stripping of the tailing "View" if needed).
+.. note:: The view route leaves in this example are **instances of the
+          view route class**. They need a view_class to get
+          instantiated. The route names (that will be used to build
+          the URL regex as well as the URL name) should also be passed
+          to the constructor (otherwise the route name will be built
+          from the view class name, stripping of the tailing "View" if
+          needed).
 
-.. note::  The router nodes in this example are **instances of the router class**. They don't need anything to get instantantiated, but they can take a router name (used to build the router URL part) and a router namespace (used to wrap routers in Django URL namespaces).
+.. note:: The router nodes in this example are **instances of the
+          router class**. They don't need anything to get
+          instantantiated, but they can take a router name (used to
+          build the router URL part) and a router namespace (used to
+          wrap routers in Django URL namespaces).
 
 Here is the code corresponding to that example :
 
 .. automodule:: tests.doctests.examples.quickstart.intro
 
-As you can see, we can pass the URL part to the help router, to prefix the resulting URL patterns. Here are the URLs corresponding to that example :
+As you can see, we can pass the URL part to the help router, to prefix
+the resulting URL patterns. Here are the URLs corresponding to that
+example :
 
 .. graphviz::
 
    digraph intro_ex_urls {
-       size="6, 3"
+       size="4, 3"
        bgcolor="transparent"
        edge[fontsize=10]
        node[fontsize=12]
@@ -117,27 +142,40 @@ As you can see, we can pass the URL part to the help router, to prefix the resul
 
    }
 
-The generator returned the ``patterns()`` function of the router yields URL objects that can be used in the ``url_patterns`` attribute of ``urls.py``.
+The generator returned the ``patterns()`` function of the router
+yields URL objects that can be used in the ``url_patterns`` attribute
+of ``urls.py``.
 
 Index URLs and redirections
 ---------------------------
 
-The base route and router objects support setting an object as "index", which means that when it is added to a router, the router set it as its redirect target.
+The base route and router objects support setting an object as
+"index", which means that when it is added to a router, the router set
+it as its redirect target.
 
-In the previous example, if the home route was as index, requests to "/" would get redirected to "/home".
+In the previous example, if the home route was as index, requests to
+"/" would get redirected to "/home".
 
-To achieve this, a route is added in each router that has a rediect. This route is a view route that uses a Django generic redirection view that points to the redirect target. If the redirect target is itself a router, we use this router's redirect target, and so on, until we find a route.
+To achieve this, a route is added in each router that has a
+rediect. This route is a view route that uses a Django generic
+redirection view that points to the redirect target. If the redirect
+target is itself a router, we use this router's redirect target, and
+so on, until we find a route.
 
-To mark a route or router as "index", set its ``index`` attribute to ``True``. You can also add it as index, using the ``index`` argument of the register method : that won't alter the ``index`` attribute, but will still add as index.
+To mark a route or router as "index", set its ``index`` attribute to
+``True``. You can also add it as index, using the ``index`` argument
+of the register method : that won't alter the ``index`` attribute, but
+will still add as index.
 
-Here is what the previous example would look like, with a redirection from "/" to "/home" and from "/help/" to "/help/help" :
+Here is what the previous example would look like, with a redirection
+from "/" to "/home" and from "/help/" to "/help/help" :
 
 .. automodule:: tests.doctests.examples.quickstart.redirections
 
 .. graphviz::
 
    digraph redirs {
-       size="6, 3"
+       size="4, 3"
        bgcolor="transparent"
        edge[fontsize=10]
        node[fontsize=12]
@@ -161,13 +199,22 @@ Here is what the previous example would look like, with a redirection from "/" t
 Using with models
 -----------------
 
-The base route and router classes can be extended using "model mixins", that implement model-related functionality. Model mixins make the object require a model class (set as class attribute or passed in constructor).
+The base route and router classes can be extended using "model
+mixins", that implement model-related functionality. Model mixins make
+the object require a model class (set as class attribute or passed in
+constructor).
 
-For a router, this means in particular that it will use the model to get its URL part.
+For a router, this means in particular that it will use the model to
+get its URL part.
 
-For a route, this implies that it will use the model to get the the URL name.
+For a route, this implies that it will use the model to get the the
+URL name.
 
-Route mixins can be used with view mixins. If the view with a generic view, the model argument should also be passed (a "model view route" is provided, that already implements this). In the following example, we naively use the model and view mixins, and assume that the views are not generic (that they already know which model to use).
+Route mixins can be used with view mixins. If the view with a generic
+view, the model argument should also be passed (a "model view route"
+is provided, that already implements this). In the following example,
+we naively use the model and view mixins, and assume that the views
+are not generic (that they already know which model to use).
 
 Example :
 
@@ -176,7 +223,7 @@ Example :
 .. graphviz::
 
    digraph models {
-       size="10, 4"
+       size="6, 4"
        bgcolor="transparent"
        edge[fontsize=10]
        node[fontsize=12]
@@ -211,40 +258,70 @@ Example :
 
    }
 
-As you see, it is required to pass to model to the router **and** to the route. It's not actually required to use the model route and in a model router, and the model route actually supports this use case by being able to prefix the URL itself (not relying on the parent router, as it does by default).
+As you see, it is required to pass to model to the router **and** to
+the route. It's not actually required to use the model route and in a
+model router, and the model route actually supports this use case by
+being able to prefix the URL itself (not relying on the parent router,
+as it does by default).
 
 .. note::
 
-   It's not possible to automatically pass attributes from a router to its children, as the routes and routers are already instantiated when they get registered to the router.
+   It's not possible to automatically pass attributes from a router to
+   its children, as the routes and routers are already instantiated
+   when they get registered to the router.
 
-   However, a similar pattern, that is very useful for defining "generic" routers (that can automatically create the router and routes for an object), can be achieved using "register mappings". A register mapping is a mapping of a type to a callable, that is used when registering objects in a router. If the object matches a type in the mapping, the object is passed to the callable value, and the return value of this callable is registered.  You could for example map ``Model`` to a view route class, and call the register function with the model class. The object that will be registered will be an instance of a view route, constructed using the model class.
+   However, a similar pattern, that is very useful for defining
+   "generic" routers (that can automatically create the router and
+   routes for an object), can be achieved using "register mappings". A
+   register mapping is a mapping of a type to a callable, that is used
+   when registering objects in a router. If the object matches a type
+   in the mapping, the object is passed to the callable value, and the
+   return value of this callable is registered.  You could for example
+   map ``Model`` to a view route class, and call the register function
+   with the model class. The object that will be registered will be an
+   instance of a view route, constructed using the model class.
 
-   Please refer to `Register mappings`_ documentation for more information.
+   Please refer to `Register mappings`_ documentation for more
+   information.
 
 .. note::
 
-   Predefined routers can also be defined : when they get instantiated, they automatically instantiate classes that are present in their "base store" (a class-level attribute), and register thems in their store. For example, you could create a predefined model router that contains model view route classes that use for Django generic views, and then instantiate that model router with a model class as argument. The result would be a model router that contains model view route instances, that use the model router model with Django generic views.
+   Predefined routers can also be defined : when they get
+   instantiated, they automatically instantiate classes that are
+   present in their "base store" (a class-level attribute), and
+   register thems in their store. For example, you could create a
+   predefined model router that contains model view route classes that
+   use for Django generic views, and then instantiate that model
+   router with a model class as argument. The result would be a model
+   router that contains model view route instances, that use the model
+   router model with Django generic views.
 
-   Please refer to `Predefined routers (base store)`_ documentation for more information.
+   Please refer to `Predefined routers (base store)`_ documentation
+   for more information.
 
 
 Arguments
 ---------
 
-The base route class can be extended using an arguments mixin, that allows to give the route an arguments specification, that will be used in the URL regex.
-
-.. warning::
-
-   WIP
+The base route class can be extended using an arguments mixin, that
+allows to give the route an arguments specification, that will be used
+in the URL regex.
 
 .. note:: The arguments route mixin is included in the default concrete route classes
 
 The arguments mixin uses an arguments parser, to create the possible
-arguments regexs from the argument specification. The default arguments parser uses a cartesian product to allow variants of an arguments to be used, and allows arguments to be optional, meaning that their separator (``/``) will be optional (``/?``).
+arguments regexs from the argument specification. The default
+arguments parser uses a cartesian product to allow variants of an
+arguments to be used, and allows arguments to be optional, meaning
+that their separator (``/``) will be optional (``/?``).
 
-It is absolutely not required to use these features, you can define the arguments regex yourself as well : just use your argument regex as a single item in the arguments spec, and it won't be processed.
+It is absolutely not required to use these features, you can define
+the arguments regex yourself as well : just use your argument regex as
+a single item in the arguments spec, and it won't be processed.
 
-For more information on how argument specifications are parsed, and more examples of argument specifications, see :class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`.
+For more information on how argument specifications are parsed, and
+more examples of argument specifications, see
+:class:`django_crucrudile.routes.mixins.arguments.ArgumentsMixin`.
 
 The following example uses this argument specification :
  - a required argument, that can be either "<pk>" or "<slug>"
@@ -269,11 +346,18 @@ The following example uses this argument specification :
 Register mappings
 -----------------
 
-   A router instance, when registering an object, checks if the object matches any of the register mappings. If it finds a match, it calls the mapping value using the object as argument, and registers the resulting object in its store.
+   A router instance, when registering an object, checks if the object
+   matches any of the register mappings. If it finds a match, it calls
+   the mapping value using the object as argument, and registers the
+   resulting object in its store.
 
-   This allows to create routers on which you can register models, or view classes, or any object for which you want to abstract the route definition in a class.
+   This allows to create routers on which you can register models, or
+   view classes, or any object for which you want to abstract the
+   route definition in a class.
 
-   In the following example, we give view classes as arguments to the register functions, also passing the arguments to pass when calling the mapping value :
+   In the following example, we give view classes as arguments to the
+   register functions, also passing the arguments to pass when calling
+   the mapping value :
 
 .. automodule:: tests.doctests.examples.quickstart.register_mappings
 
@@ -294,56 +378,42 @@ Register mappings
        "/help/" -> "/help/app-version
    }
 
-Predefined routers (base store)
--------------------------------
+   As shown here, some register mappings are already defined in the
+   base router, they allow to transform view classes in view routes,
+   model view classes in model view routes, and model classes in a
+   generic model router (see `Predefined routers`_).
 
-.. warning:: TODO
+   To provide your own register mappings, just override the
+   corresponding function (see
+   :class:`django_crucrudile.routers.Router`).
+
+Predefined routers
+------------------
+
+   It is also possible for router classes to contain classes in a
+   "base store" (the base store is specific to each subclass). When
+   the router is instantiated, these classes will be instantiated and
+   registered.
+
+   This base store uses "register functions", as the standard store :
+   to add a class, call the class register method. The base store
+   supports register mappings, as the standard store. These mappings
+   are separate from the standard register mappings, and usually
+   called "class register mappings".
 
 .. automodule:: tests.doctests.examples.quickstart.base_store
 
-.. graphviz::
+This allows easily creating generic, reusable routers that
+automatically implement specific features (as routes, or even other
+routers).
 
-   digraph arguments {
-       size="6, 3"
-       bgcolor="transparent"
-       edge[fontsize=10]
-       node[fontsize=12]
+This feature is used in django-crucrudile to provide a generic model
+router, that requires a model and creates routes for Django generic
+views. Here is an example showing how such a generic model router can
+be created (the implementation by django-crucrudile is actually the
+same as this code) :
 
-       "/" -> "/home"
-       "/" -> "/status/<pk>/<format>"
-       "/" -> "/testmodel/list"
-       "/" -> "/help/"
-
-       "/help/help"
-       "/help/app-version
-   }
-
-
-
-Base store mappings
-~~~~~~~~~~~~~~~~~~~
-
-.. warning:: TODO
-
-.. automodule:: tests.doctests.examples.quickstart.register_class_mappings
-
-.. graphviz::
-
-   digraph arguments {
-       size="6, 3"
-       bgcolor="transparent"
-       edge[fontsize=10]
-       node[fontsize=12]
-
-       "/" -> "/home"
-       "/" -> "/status/<pk>/<format>"
-       "/" -> "/testmodel/list"
-       "/" -> "/help/"
-
-       "/help/help"
-       "/help/app-version
-   }
-
+.. automodule:: tests.doctests.examples.quickstart.generic_model_router
 
 More examples
 -------------

@@ -14,14 +14,15 @@
 >>>
 >>> router = Router()
 >>>
->>> router.register(ViewRoute(HomeView))
+>>> router.register(ViewRoute(HomeView)) is not None
+True
 >>> router.register(
 ...   ViewRoute(
 ...     StatusView,
 ...     arguments_spec=[["<pk>", "<slug>"], (False, "<format>")]
 ...   )
-... )
->>>
+... ) is not None
+True
 
 >>> print(router.get_str_tree())
 ... # doctest: +NORMALIZE_WHITESPACE

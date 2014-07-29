@@ -25,8 +25,10 @@
 
 >>> router = Router()
 >>>
->>> router.register(HomeView)
->>> router.register(StatusView)
+>>> router.register(HomeView) is not None
+True
+>>> router.register(StatusView) is not None
+True
 >>>
 >>> router.register(
 ...   ListView,
@@ -34,17 +36,21 @@
 ...     model=TestModel,
 ...     prefix_url_part=True
 ...   )
-... )
+... ) is not None
+True
 >>>
 >>> help_router = Router(url_part='help')
 >>>
->>> help_router.register(HelpView)
+>>> help_router.register(HelpView) is not None
+True
 >>> help_router.register(
 ...   VersionView,
 ...   map_kwargs=dict(name='app-version')
-... )
+... ) is not None
+True
 >>>
->>> router.register(help_router)
+>>> router.register(help_router) is help_router
+True
 
 >>> print(router.get_str_tree())
 ... # doctest: +NORMALIZE_WHITESPACE
