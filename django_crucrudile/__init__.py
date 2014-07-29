@@ -26,7 +26,7 @@ Starting from version ``0.9.5``, this package uses semantic version
 __title__ = 'django-crucrudile'
 __description__ = 'Django URL routing classes',
 
-__version__ = '0.9.5'
+__version__ = '1.0.0-rc1'
 
 __author__ = 'Hugo Geoffroy'
 __author_email__ = 'hugo@pstch.net'
