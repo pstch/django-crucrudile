@@ -44,7 +44,7 @@ def provides(provided, **kwargs):
 
     :argument provided: Class (or object) to register in the base store. This
                         can be an object since it may be transformed
-                        by :func:`EntityStore.register_apply_map`d
+                        by :func:`EntityStore.register_apply_map`
     :type provided: object
 
     """
