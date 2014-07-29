@@ -69,7 +69,25 @@ class ArgumentsParser(OptionalPartList):
 
     .. inheritance-diagram:: ArgumentsParser
 
-    Test, with first argument **required** :
+    With empty specifition (o
+
+    >>> parser = ArgumentsParser([])
+    >>>
+    >>> parser() == ArgumentsParser()()
+    True
+    >>>
+    >>> parser()
+    ... # doctest: +NORMALIZE_WHITESPACE
+    []
+
+    With single item :
+
+    >>> parser = ArgumentsParser(["<my>/<arg>/<spec>"])
+    >>> list(parser())
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [(True, '<my>/<arg>/<spec>')]
+
+    With first argument **required** :
 
     >>> parser = ArgumentsParser([
     ...     ["<arg1.1>", "<arg2.2>"],
@@ -78,28 +96,12 @@ class ArgumentsParser(OptionalPartList):
     ...     (True, ["<args5>"])
     ... ])
     >>>
-    >>> list(parser())
+    >>> parser()
     ... # doctest: +NORMALIZE_WHITESPACE
     [(True, '<arg1.1>/<arg3>/?<arg4.1>/<args5>'),
      (True, '<arg1.1>/<arg3>/?<arg4.2>/<args5>'),
      (True, '<arg2.2>/<arg3>/?<arg4.1>/<args5>'),
      (True, '<arg2.2>/<arg3>/?<arg4.2>/<args5>')]
-
-    Test, with first argument **not required** :
-
-    >>> parser = ArgumentsParser([
-    ...     (False, ["<arg1.1>", "<arg2.2>"]),
-    ...     "<arg3>",
-    ...     (False, ["<arg4.1>", "<arg4.2>"]),
-    ...     (True, ["<args5>"])
-    ... ])
-    >>>
-    >>> list(parser())
-    ... # doctest: +NORMALIZE_WHITESPACE
-    [(False, '<arg1.1>/<arg3>/?<arg4.1>/<args5>'),
-     (False, '<arg1.1>/<arg3>/?<arg4.2>/<args5>'),
-     (False, '<arg2.2>/<arg3>/?<arg4.1>/<args5>'),
-     (False, '<arg2.2>/<arg3>/?<arg4.2>/<args5>')]
 
     """
     def get_parsers(self):
@@ -210,8 +212,9 @@ class ArgumentsParser(OptionalPartList):
                 product(combs, args)
             )
 
-        for comb in combs:
-            yield first_item_required, comb
+        if combs != [None]:
+            for comb in combs:
+                yield first_item_required, comb
 
     @staticmethod
     def consume_cartesian_product(items):

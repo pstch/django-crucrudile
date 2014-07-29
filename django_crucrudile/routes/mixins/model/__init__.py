@@ -2,6 +2,10 @@
 to bind a model to a route, and use it when computing route metadata.
 
 """
+from .generic import GenericViewArgsMixin
+
+
+__all__ = ["ModelMixin", "GenericViewArgsMixin"]
 
 
 class ModelMixin:
@@ -32,11 +36,13 @@ class ModelMixin:
     def __init__(self,
                  *args,
                  model=None,
+                 prefix_url_part=None,
                  **kwargs):
         """Initialize ModelRoute, check that model is defined at class-level
         or passed as argument.
 
         :argument model: See :attr:`model`
+        :argument prefix_url_part: See :attr:`prefix_url_part`
 
         :raises ValueError: ``model`` argument is None, and no model
                             defined in :attr:`model`
@@ -44,6 +50,8 @@ class ModelMixin:
         """
         if model is not None:
             self.model = model
+        if prefix_url_part is not None:
+            self.prefix_url_part = prefix_url_part
         elif self.model is None:  # pragma: no cover
             raise ValueError(
                 "No ``model`` argument provided to __init__"

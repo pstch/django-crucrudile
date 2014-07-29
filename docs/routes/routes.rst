@@ -60,6 +60,8 @@ Route mixins
 Abstract
 >>>>>>>>
 
+.. _arguments-mixin-spec:
+
 Arguments
 ~~~~~~~~~
 
@@ -88,6 +90,13 @@ Model
    :exclude-members: __abstractmethods__, __module__,
                      __dict__, __weakref__
 
+Generic view arguments
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: django_crucrudile.routes.mixins.model.generic
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
 
 Concrete
 >>>>>>>>
@@ -134,6 +143,14 @@ Model view route
 ----------------
 
 .. autoclass:: django_crucrudile.routes.ModelViewRoute
+   :special-members:
+   :exclude-members: __abstractmethods__, __module__,
+                     __dict__, __weakref__
+
+Generic model view route
+------------------------
+
+.. autoclass:: django_crucrudile.routes.GenericModelViewRoute
    :special-members:
    :exclude-members: __abstractmethods__, __module__,
                      __dict__, __weakref__

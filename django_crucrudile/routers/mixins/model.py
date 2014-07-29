@@ -108,31 +108,6 @@ class ModelMixin:
         kwargs['model'] = self.model
         return kwargs
 
-    def get_register_map(self):
-        """Add :class:`django_crucrudile.routes.ModelViewRoute` mapping for
-        ``SingleObjectMixin`` and ``MultipleObjectMixin``.
-
-        This mapping allows registering Django generic views in the
-        base, making them register as
-        :class:`django_crucrudile.routes.ModelViewRoute` and
-        instantiate with :attr:`model`.
-
-        :returns: Entity store mappings
-        :rtype: dict
-
-        .. seealso::
-
-           For doctests that use this member, see
-           :class:`django_crucrudile.routers.model.ModelRouter`
-
-        """
-        mapping = super().get_register_map()
-        mapping.update({
-            (SingleObjectMixin, MultipleObjectMixin):
-            ModelViewRoute,
-        })
-        return mapping
-
     @classmethod
     def get_register_class_map(cls):
         """Add :func:`django_crucrudile.routes.ModelViewRoute.make_for_view`
@@ -153,6 +128,16 @@ class ModelMixin:
         :returns: Base store mappings
         :rtype: dict
 
+        .. warning::
+
+           When overriding, remember that the first matching mapping
+           (in the order they are added, as the superclass returns a
+           :class:`collections.OrderedDict`) will be used.
+
+           Because of this, to override mappings, methods should add
+           the super mappings to another OrderedDict, containing the
+           overrides.
+
         .. seealso::
 
            For doctests that use this member, see
@@ -160,8 +145,7 @@ class ModelMixin:
 
         """
         mapping = super().get_register_class_map()
-        mapping.update({
-            (SingleObjectMixin, MultipleObjectMixin):
+        mapping[SingleObjectMixin, MultipleObjectMixin] = (
             ModelViewRoute.make_for_view
-        })
+        )
         return mapping

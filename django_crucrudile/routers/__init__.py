@@ -28,13 +28,17 @@ from django.conf.urls import url, include
 from django.core.urlresolvers import reverse_lazy
 
 from django.db.models import Model
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.list import MultipleObjectMixin
+
 from django.views.generic import (
     View, RedirectView,
 )
 
-from django_crucrudile.routes import ViewRoute
+from django_crucrudile.routes import ViewRoute, ModelViewRoute
 from django_crucrudile.entities import Entity
 from django_crucrudile.entities.store import EntityStore
+
 
 __all__ = [
     "Router",
@@ -180,17 +184,32 @@ super implementation)
           :class:`model.ModelRouter` (or
           :class:`model.generic.GenericModelRouter`) if
           :attr:`generic` is set to ``True``)
+        - :class:`django.views.generic.detail.SingleObjectMixin` or
+          :class:`django.views.generic.list.MultipleObjectMixin`
+          subclasses are to passed to a
+          :class:`django_crucrudile.routes.ModelViewRoute`
         - :class:`django.views.generic.View` subclasses are passed to a View
 
         :returns: Register mappings
         :rtype: dict
 
+        .. warning::
+
+           When overriding, remember that the first matching mapping
+           (in the order they are added, as the superclass returns a
+           :class:`collections.OrderedDict`) will be used.
+
+           Because of this, to override mappings, methods should add
+           the super mappings to another OrderedDict, containing the
+           overrides.
+
         """
         mapping = super().get_register_map()
-        mapping.update({
-            Model: ModelRouter if not self.generic else GenericModelRouter,
-            View: ViewRoute,
-        })
+        mapping[Model] = (
+            ModelRouter if not self.generic else GenericModelRouter
+        )
+        mapping[SingleObjectMixin, MultipleObjectMixin] = ModelViewRoute
+        mapping[View] = ViewRoute
         return mapping
 
     def register(self, entity, index=False, map_kwargs=None):
@@ -214,21 +233,24 @@ super implementation)
         >>> entity = Mock()
         >>> entity.index = False
         >>>
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>> router.redirect is None
         True
 
         >>> entity = Mock()
         >>> entity.index = False
         >>>
-        >>> router.register(entity, index=True)
+        >>> router.register(entity, index=True) is not None
+        True
         >>> router.redirect is entity
         True
 
         >>> entity = Mock()
         >>> entity.index = True
         >>>
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>> router.redirect is entity
         True
 
@@ -239,6 +261,8 @@ super implementation)
         )
         if index or entity.index:
             self.redirect = entity
+
+        return entity
 
     def get_redirect_pattern(self, namespaces=None, silent=None,
                              redirect_max_depth=None):
@@ -272,7 +296,8 @@ super implementation)
         >>> entity.redirect.redirect = 'redirect_target'
         >>>
         >>> router = Router()
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>>
         >>> pattern = router.get_redirect_pattern()
         >>>
@@ -288,7 +313,8 @@ super implementation)
         >>> entity.redirect.redirect = 'redirect_target'
         >>>
         >>> router = Router()
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>>
         >>> pattern = router.get_redirect_pattern(
         ...  namespaces=['ns1', 'ns2']
@@ -304,7 +330,8 @@ super implementation)
         >>> entity.redirect.redirect = entity
         >>>
         >>> router = Router()
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>>
         >>> router.get_redirect_pattern()
         ... # doctest: +NORMALIZE_WHITESPACE
@@ -319,7 +346,8 @@ super implementation)
         >>> entity.redirect = None
         >>>
         >>> router = Router()
-        >>> router.register(entity)
+        >>> router.register(entity) is not None
+        True
         >>>
         >>> router.get_redirect_pattern()
         ... # doctest: +NORMALIZE_WHITESPACE
@@ -459,7 +487,8 @@ super implementation)
         >>> entity_1.index = False
         >>> entity_1.patterns = lambda *args: ['MockPattern1']
         >>>
-        >>> router.register(entity_1)
+        >>> router.register(entity_1) is not None
+        True
         >>>
         >>> list(router.patterns())
         [<RegexURLResolver <str list> (None:None) ^>]
@@ -471,7 +500,8 @@ super implementation)
         >>> entity_2.redirect = 'redirect_target'
         >>> entity_2.patterns = lambda *args: ['MockPattern2']
         >>>
-        >>> router.register(entity_2)
+        >>> router.register(entity_2) is not None
+        True
         >>>
         >>> list(router.patterns())
         ... # doctest: +NORMALIZE_WHITESPACE

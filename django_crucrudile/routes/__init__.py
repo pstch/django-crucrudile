@@ -20,12 +20,26 @@ use route mixins to provide functionality :
   the model), and that uses this callback in the URL pattern it
   generates. Also uses metadata from the model class to generate some
   of the URL metadata.
-
+- :class:`GenericModelViewRoute` provides a Route similar to
+  :class:`ModelViewRoute`, but that automatically gets the needed URL
+  arguments using the view class.
 
 """
 
-from .mixins import CallbackMixin, ViewMixin, ModelMixin, ArgumentsMixin
+from .mixins import (
+    ArgumentsMixin,
+    CallbackMixin, ViewMixin,
+    ModelMixin, GenericViewArgsMixin,
+)
+
 from .base import BaseRoute
+
+__all__ = [
+    "CallbackRoute",
+    "ViewRoute",
+    "ModelViewRoute",
+    "GenericModelViewRoute",
+]
 
 
 class CallbackRoute(ArgumentsMixin, CallbackMixin, BaseRoute):
@@ -96,8 +110,8 @@ class ModelViewRoute(ArgumentsMixin, ModelMixin, ViewMixin, BaseRoute):
     def get_view_kwargs(self):
         """Make the view use :attr:`mixins.model.ModelMixin.model`.
 
-        This is the effective combination of :class:`mixins.model.ModelMixin` and
-        :class:`ViewRoute`.
+        This is the effective combination of
+        :class:`mixins.model.ModelMixin` and :class:`ViewRoute`.
 
         >>> from mock import Mock
         >>>
@@ -109,3 +123,11 @@ class ModelViewRoute(ArgumentsMixin, ModelMixin, ViewMixin, BaseRoute):
 
         """
         return {'model': self.model}
+
+
+class GenericModelViewRoute(GenericViewArgsMixin, ModelViewRoute):
+    """Combine :class:`ModelViewRoute` with
+:class:`django_crucrudile.routes.mixins.model.generic.GenericViewArgsMixin`
+to automatically get the needed URL arguments for route instances.
+
+    """
