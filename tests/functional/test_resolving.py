@@ -39,6 +39,14 @@ ACTION_NAME_DICT = {
     'delete': DeleteView,
 }
 
+ACTION_ARGS_DICT = {
+    'list': None,
+    'detail': ["42", r"slug-test-42"],
+    'create': None,
+    'update': ["42", r"slug-test-42"],
+    'delete': ["42", r"slug-test-42"],
+}
+
 
 class ResolveTestCase:
     router = base_router
@@ -51,16 +59,23 @@ class ResolveTestCase:
         )
 
     def _test_model_view(self,
-                         model_name, action_name, view_name,
+                         model_name, action_name, view_name, args,
                          prefix):
-        if prefix:
-            path = "/{}/{}/{}".format(prefix, model_name, action_name)
+        if args:
+            args = "/{}".format(args)
         else:
-            path = "/{}/{}".format(model_name, action_name)
+            args = ""
+        if prefix:
+            path = "/{}/{}/{}{}".format(prefix, model_name, action_name, args)
+        else:
+            path = "/{}/{}{}".format(model_name, action_name, args)
 
-        match = self.url.resolve(
-            path
-        )
+        try:
+            match = self.url.resolve(
+                path
+            )
+        except:
+            import ipdb; ipdb.set_trace()
 
         assert_equal(
             match.func.__name__,
@@ -83,7 +98,16 @@ class ResolveTestCase:
                 model_name = model_class._meta.model_name
                 for action_name, view_class in ACTION_NAME_DICT.items():
                     view_name = view_class.__name__
-                    yield (
-                        self._test_model_view,
-                        model_name, action_name, view_name, prefix
-                    )
+                    if ACTION_ARGS_DICT.get(action_name):
+                        for args in ACTION_ARGS_DICT[action_name]:
+                            yield (
+                                self._test_model_view,
+                                model_name, action_name,
+                                view_name, args, prefix
+                            )
+                    else:
+                        yield (
+                            self._test_model_view,
+                            model_name, action_name,
+                            view_name, None, prefix
+                        )

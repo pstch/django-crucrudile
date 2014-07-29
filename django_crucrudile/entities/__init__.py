@@ -101,10 +101,13 @@ an URL pattern tree.
          - Router  @ ^
            - GenericModelRouter testmodel @ ^testmodel/
              - testmodel-list-redirect @ ^$ RedirectView
-             - testmodel-delete @ ^delete$ DeleteView
-             - testmodel-update @ ^update$ UpdateView
+             - testmodel-delete @ ^delete/(?P<pk>\d+)$ DeleteView
+             - testmodel-delete @ ^delete/(?P<slug>[\w-]+)$ DeleteView
+             - testmodel-update @ ^update/(?P<pk>\d+)$ UpdateView
+             - testmodel-update @ ^update/(?P<slug>[\w-]+)$ UpdateView
              - testmodel-create @ ^create$ CreateView
-             - testmodel-detail @ ^detail$ DetailView
+             - testmodel-detail @ ^detail/(?P<pk>\d+)$ DetailView
+             - testmodel-detail @ ^detail/(?P<slug>[\w-]+)$ DetailView
              - testmodel-list @ ^list$ ListView
 
         """

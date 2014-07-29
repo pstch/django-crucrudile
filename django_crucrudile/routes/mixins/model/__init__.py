@@ -2,6 +2,10 @@
 to bind a model to a route, and use it when computing route metadata.
 
 """
+from .generic import GenericViewArgsMixin
+
+
+__all__ = ["ModelMixin", "GenericViewArgsMixin"]
 
 
 class ModelMixin:

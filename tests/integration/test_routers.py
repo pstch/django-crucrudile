@@ -104,5 +104,5 @@ class RouterTestCase:
         # compare to reference hash
         assert_equal(
             tree_hash,
-            "33e058d3ed3a0b25990b879a2c4943d760b57b04fab8fb11598ad0db12f169af"
+            "87e2e955bdf56a63227461d11a05fc6983e426b2b5b9419e1bc271b21a075a02"
         )

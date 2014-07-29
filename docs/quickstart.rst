@@ -309,7 +309,8 @@ The base route class can be extended using an arguments mixin, that
 allows to give the route an arguments specification, that will be used
 in the URL regex.
 
-.. note:: The arguments route mixin is included in the default concrete route classes
+.. note:: The arguments route mixin is included in the default
+          concrete route classes
 
 The arguments mixin uses an arguments parser, to create the possible
 arguments regexs from the argument specification. The default
@@ -348,18 +349,18 @@ The following example uses this argument specification :
 Register mappings
 -----------------
 
-   A router instance, when registering an object, checks if the object
-   matches any of the register mappings. If it finds a match, it calls
-   the mapping value using the object as argument, and registers the
-   resulting object in its store.
+A router instance, when registering an object, checks if the object
+matches any of the register mappings. If it finds a match, it calls
+the mapping value using the object as argument, and registers the
+resulting object in its store.
 
-   This allows to create routers on which you can register models, or
-   view classes, or any object for which you want to abstract the
-   route definition in a class.
+This allows to create routers on which you can register models, or
+view classes, or any object for which you want to abstract the route
+definition in a class.
 
-   In the following example, we give view classes as arguments to the
-   register functions, also passing the arguments to pass when calling
-   the mapping value :
+In the following example, we give view classes as arguments to the
+register functions, also passing the arguments to pass when calling
+the mapping value :
 
 .. automodule:: tests.doctests.examples.quickstart.register_mappings
 
@@ -380,28 +381,26 @@ Register mappings
        "/help/" -> "/help/app-version"
    }
 
-   As shown here, some register mappings are already defined in the
-   base router, they allow to transform view classes in view routes,
-   model view classes in model view routes, and model classes in a
-   generic model router (see `Predefined routers`_).
+As shown here, some register mappings are already defined in the base
+router, they allow to transform view classes in view routes, model
+view classes in model view routes, and model classes in a generic
+model router (see `Predefined routers`_).
 
-   To provide your own register mappings, just override the
-   corresponding function (see
-   :class:`django_crucrudile.routers.Router`).
+To provide your own register mappings, just override the corresponding
+function (see :class:`django_crucrudile.routers.Router`).
 
 Predefined routers
 ------------------
 
-   It is also possible for router classes to contain classes in a
-   "base store" (the base store is specific to each subclass). When
-   the router is instantiated, these classes will be instantiated and
-   registered.
+It is also possible for router classes to contain classes in a "base
+store" (the base store is specific to each subclass). When the router
+is instantiated, these classes will be instantiated and registered.
 
-   This base store uses "register functions", as the standard store :
-   to add a class, call the class register method. The base store
-   supports register mappings, as the standard store. These mappings
-   are separate from the standard register mappings, and usually
-   called "class register mappings".
+This base store uses "register functions", as the standard store : to
+add a class, call the class register method. The base store supports
+register mappings, as the standard store. These mappings are separate
+from the standard register mappings, and usually called "class
+register mappings".
 
 .. automodule:: tests.doctests.examples.quickstart.base_store
 
@@ -411,11 +410,25 @@ routers).
 
 This feature is used in django-crucrudile to provide a generic model
 router, that requires a model and creates routes for Django generic
-views. Here is an example showing how such a generic model router can
-be created (the implementation by django-crucrudile is actually the
-same as this code) :
+views. The following example shows how such a generic model router can
+be created. **The implementation in django-crucrudile is actually very
+similar (if not identical) to this code, and in most cases you should
+be able to directly use the generic model router provided by
+django-crucrudile.**
 
-.. automodule:: tests.doctests.examples.quickstart.generic_model_router
+This example also shows another route : the generic model view
+route. This route uses a mixin that provides automatic URL arguments
+based on the generic view class. By making the transformed view
+classes use this generic model view route, instead of the default
+model view route, it also shows how to add a register class mapping to
+the router.
+
+   .. automodule:: tests.doctests.examples.quickstart.generic_model_router
+
+Quick routes and routers reference
+----------------------------------
+
+.. warning:: TODO
 
 More examples
 -------------

@@ -5,10 +5,10 @@ This module contains route mixins, that implement specific functionality for abs
 from .arguments import ArgumentsMixin
 from .callback import CallbackMixin
 from .view import ViewMixin
-from .model import ModelMixin
+from .model import ModelMixin, GenericViewArgsMixin
 
 
 __all__ = [
     "ArgumentsMixin", "CallbackMixin",
-    "ViewMixin", "ModelMixin"
+    "ViewMixin", "ModelMixin", "GenericViewArgsMixin"
 ]

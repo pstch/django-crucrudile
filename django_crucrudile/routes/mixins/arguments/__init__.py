@@ -26,7 +26,7 @@ class ArgumentsMixin:
     .. inheritance-diagram:: ArgumentsMixin
 
     """
-    arguments_spec = []
+    arguments_spec = None
     """
     :attribute arguments_spec: Argument list that will be passed to
                                :attr:`arguments_parser`. Should be
@@ -80,11 +80,28 @@ class ArgumentsMixin:
         """
         if arguments_spec is not None:
             self.arguments_spec = arguments_spec
+        if self.arguments_spec is None:
+            self.arguments_spec = []
 
-        parser = self.arguments_parser(self.arguments_spec)
+        parser = self.arguments_parser(self.get_arguments_spec())
         self.arguments = parser()
 
         super().__init__(*args, **kwargs)
+
+    def get_arguments_spec(self):
+        """Yield argument specifications. By default, return specifications
+        from :attr:`arguments_spec`. Subclasses or mixins may override this
+        method to add their own argument specifications.
+
+        :returns: Argument specifications
+        :rtype: iterable
+
+        >>> list(ArgumentsMixin().get_arguments_spec())
+        []
+
+        """
+        for spec in self.arguments_spec:
+            yield spec
 
     def get_url_specs(self):
         """Yield another URL specification for each argument in the argument
