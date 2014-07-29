@@ -377,7 +377,7 @@ Register mappings
        "/" -> "/help/"
 
        "/help/" -> "/help/help"
-       "/help/" -> "/help/app-version
+       "/help/" -> "/help/app-version"
    }
 
    As shown here, some register mappings are already defined in the
