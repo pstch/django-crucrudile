@@ -36,19 +36,19 @@ generic views for each registered model.
 
     .. inheritance-diagram:: GenericModelRouter
 
+    >>> # these two lines are required to subclass Django model in doctests
     >>> import tests.unit
+    >>> __name__ = "tests.doctests"
     >>> from django.db.models import Model
     >>> from django_crucrudile.routers import Router, ModelRouter
-    >>>
-    >>> # needed to subclass Django Model
-    >>> __name__ = "tests.doctests"
     >>>
     >>> class TestModel(Model):
     ...   pass
 
     >>> router = Router(generic=True)
     >>>
-    >>> router.register(TestModel)
+    >>> router.register(TestModel) is not None
+    True
 
     >>> print(router.get_str_tree())
     ... # doctest: +NORMALIZE_WHITESPACE

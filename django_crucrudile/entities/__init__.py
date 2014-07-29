@@ -93,7 +93,8 @@ an URL pattern tree.
 
         >>> router = Router(generic=True)
         >>>
-        >>> router.register(TestModel)
+        >>> router.register(TestModel) is not None
+        True
 
         >>> print(router.get_str_tree())
         ... # doctest: +NORMALIZE_WHITESPACE

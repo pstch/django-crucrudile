@@ -28,7 +28,8 @@ class ModelRouter(ModelMixin, Router):
     >>> router.model_url_part
     'modelname'
 
-    >>> router.register(GenericView)
+    >>> router.register(GenericView) is not None
+    True
 
     """
     pass
