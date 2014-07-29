@@ -19,14 +19,14 @@ https://django-crucrudile.readthedocs.org/en/master/.
 Versionning
 -----------
 
-Starting from version ``0.9.4``, this package uses semantic version
+Starting from version ``0.9.5``, this package uses semantic version
 (http://semver.org).
 
 """
 __title__ = 'django-crucrudile'
 __description__ = 'Django URL routing classes',
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 
 __author__ = 'Hugo Geoffroy'
 __author_email__ = 'hugo@pstch.net'
