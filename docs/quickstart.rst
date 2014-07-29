@@ -54,6 +54,7 @@ A router can also contain other routers :
 
 This allows us to define complex routing graphs using combinations of
 route and router objects. The route and router objects handle :
+
  - URL namespaces (in routers)
  - URL regex building (with multiple parts, routers can also prefix
    the routes they contain using their own URL regex part)
@@ -78,6 +79,7 @@ As the route is an abstract object, we use "implementations" of this
 object (they know what callback to use in the generated patterns, they
 are "concrete"). django-crucrudile provides two basic implementations
 of the route class :
+
  - Callback route : a simple route that uses a given callback
  - View route : a route that uses a callback from a given Django view
    class.
@@ -296,7 +298,7 @@ as it does by default).
    router that contains model view route instances, that use the model
    router model with Django generic views.
 
-   Please refer to `Predefined routers (base store)`_ documentation
+   Please refer to `Predefined routers`_ documentation
    for more information.
 
 
