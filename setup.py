@@ -25,8 +25,9 @@ CLASSIFIERS = [
 setup(
     name=django_crucrudile.__title__,
     version=django_crucrudile.__version__,
-    description='Define URL patterns in DJango models',
-
+    description=django_crucrudile.__description__,
+    long_description=django_crucrudile.__long_description__,
+    
     url=django_crucrudile.__url__,
 
     author=django_crucrudile.__author__,
