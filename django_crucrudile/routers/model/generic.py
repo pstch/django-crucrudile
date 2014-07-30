@@ -17,7 +17,7 @@ from . import ModelRouter
 @provides(UpdateView)
 @provides(DeleteView)
 class GenericModelRouter(ModelRouter):
-    """Generic model router, subclasses
+    r"""Generic model router, subclasses
     :class:`django_crucrudile.routers.model.ModelRouter` and use 5 Django
     generic views for each registered model.
 
