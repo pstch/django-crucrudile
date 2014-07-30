@@ -5,7 +5,7 @@
 >>> __name__ = "tests.doctests"
 
 >>> from django.db.models import Model
->>> from django_crucrudile.routers import Router, ModelRouter
+>>> from django_crucrudile.routers import Router
 >>>
 >>>
 >>> class Book(Model):
