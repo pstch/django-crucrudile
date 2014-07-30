@@ -24,13 +24,8 @@ Starting from version ``0.9.5``, this package uses semantic version
 
 """
 __title__ = 'django-crucrudile'
-__description__ = 'Django URL routing classes',
-__long_description__ = """
-django-crucrudile provides URL routing classes, which allows you 
-to define your URL routing structure using Router and Route classes, 
-and then to automatically generate an URL pattern structure.
-"""
-
+__description__ = 'Django URL routing classes'
+__long_description__ = globals()['__doc__']
 __version__ = '1.0.0-rc1'
 
 __author__ = 'Hugo Geoffroy'
